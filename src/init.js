@@ -32,6 +32,15 @@ function preload() {
     /* Image loading */
     this.load.image('player', "./assets/player.png");
     this.load.image('laser', "./assets/laser.png");
+
+    /* Scenario 1 */
+    this.load.image('topleft1', "./assets/topleft1.png");
+    this.load.image('topright1', "./assets/topright1.png");
+    this.load.image('botleft1', "./assets/botleft1.png");
+    this.load.image('botright1', "./assets/botright1.png");
+    this.load.image('topbot1', "./assets/topbot1.png");
+    this.load.image('leftright1', "./assets/leftright1.png");
+    this.load.image('floor1', "./assets/floor1.png");
 }
 
 function create() {
