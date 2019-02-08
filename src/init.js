@@ -35,9 +35,15 @@ function preload() {
 }
 
 function create() {
-    cursors = this.input.keyboard.createCursorKeys();
+    cursors = this.input.keyboard.addKeys(
+        {
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
     player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
-    player.setScale(0.5);
+    player.setScale(0.3);
     player.setOrigin(0.5, 0.5);
     player.setCollideWorldBounds(true);
 
@@ -48,14 +54,15 @@ function create() {
         initialize:
             function Laser(scene) {
                 Phaser.GameObjects.Image.call(this, scene, 0, 0, 'laser');
+                this.setScale(0.5);
                 this.speedX = 0;
                 this.speedY = 0;
                 this.born = 0;
             },
         fire: function (player, velocity, angle) {
             this.setPosition(
-                player.x + velocity.x * player.body.width/2,
-                player.y + velocity.y * player.body.height/2);
+                player.x + velocity.x * player.body.width / 2,
+                player.y + velocity.y * player.body.height / 2);
             this.rotation = angle;
             this.speedX = velocity.x;
             this.speedY = velocity.y;
