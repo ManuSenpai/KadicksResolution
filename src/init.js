@@ -8,7 +8,7 @@ const config = {
         arcade: {
             debug: false
         }
-    },      // El navegador sabrá si debe tirar de OpenGL o CANVAS
+    },
     scene: {
         preload: preload,
         create: create,
@@ -17,27 +17,77 @@ const config = {
 }
 
 var game = new Phaser.Game(config);
-var cursors;
-var player;
 
-// Preparamos las instancias para todas las escenas
+var cursors;                    // Set keys to be pressed
+var player;                     // Player game object
+var lasers;                     // Pool of bullets shot by the player
+var mouseTouchDown = false;     // Mouse is being left clicked
+var lastFired = 0;              // Time instant when last shot was fired
+
+const LASER_SPEED = 2;          // Laser speed
+const FIRE_RATE = 250;          // Fire rate for the speed;
+
+
 function preload() {
-    // Metemos los elementos en la caché de phaser para usarlos luego.
-    this.load.image("player", "./assets/player.png");
+    /* Image loading */
+    this.load.image('player', "./assets/player.png");
+    this.load.image('laser', "./assets/laser.png");
 }
 
 function create() {
     cursors = this.input.keyboard.createCursorKeys();
-    // player = this.add.image(window.innerWidth / 2, window.innerHeight / 2, "player");
     player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
     player.setScale(0.5);
-    player.setOrigin(0.5, 0.5); // Ponemos el eje de rotación en el centro.
+    player.setOrigin(0.5, 0.5);
     player.setCollideWorldBounds(true);
-    // this.input.on('pointermove', (pointer) => {
-    //     let cursor = pointer;
-    //     let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
-    //     player.rotation = angle;
-    // }, this);
+
+    /* LASERS */
+
+    var Laser = new Phaser.Class({
+        Extends: Phaser.GameObjects.Image,
+        initialize:
+            function Laser(scene) {
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'laser');
+                this.speedX = 0;
+                this.speedY = 0;
+                this.born = 0;
+            },
+        fire: function (player, velocity, angle) {
+            this.setPosition(
+                player.x + velocity.x * player.body.width/2,
+                player.y + velocity.y * player.body.height/2);
+            this.rotation = angle;
+            this.speedX = velocity.x;
+            this.speedY = velocity.y;
+        },
+        update: function (time, delta) {
+            this.x += this.speedX * delta;
+            this.y += this.speedY * delta;
+            if (this.x < 0 || this.x > window.innerWidth || this.y < 0 || this.y > window.innerHeight) {
+                this.setActive(false);
+                this.setVisible(false);
+            }
+        }
+    })
+    lasers = this.add.group({
+        classType: Laser, runChildUpdate: true
+    });
+}
+
+/**
+ * Deletes the laser that has collided from the displayed pool of lasers
+ * @param {*} laser laser object that got out of bounds or collided 
+ */
+function resetLaser(laser) {
+    laser.kill();
+}
+
+function fireLaser() {
+    var laser = lasers.getFirstExists(false);
+    if (laser) {
+        laser.reset(player.x, player.y - 20);
+        game.physics.arcade.moveToPointer(laser, 500);
+    }
 }
 
 /**
@@ -48,6 +98,7 @@ function create() {
 function update(time, delta) {
     let cursor = game.input.mousePointer;
     let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
+    this.lastFired += delta;
     player.rotation = angle;
     if (cursors.left.isDown) {
         player.setVelocityX(-300);
@@ -65,20 +116,26 @@ function update(time, delta) {
         player.setVelocityY(300);
         // player.anims.play('turn');
     }
+    if (game.input.activePointer.isDown && time > lastFired) {
+        var currentLaser = lasers.get();
+        if (currentLaser) {
+            currentLaser.setActive(true);
+            currentLaser.setVisible(true);
+            var velocity = this.physics.velocityFromRotation(angle, LASER_SPEED);
+            currentLaser.fire(player, velocity, angle);
+            lastFired = time + FIRE_RATE;
+        }
+    }
     if (cursors.left.isUp) {
-        if( player.body.velocity.x < 0 ) { player.setVelocityX(0); }
+        if (player.body.velocity.x < 0) { player.setVelocityX(0); }
     }
     if (cursors.right.isUp) {
-        if( player.body.velocity.x > 0 ) { player.setVelocityX(0); }
+        if (player.body.velocity.x > 0) { player.setVelocityX(0); }
     }
     if (cursors.up.isUp) {
-        if( player.body.velocity.y < 0 ) { player.setVelocityY(0); }
+        if (player.body.velocity.y < 0) { player.setVelocityY(0); }
     }
     if (cursors.down.isUp) {
-        if( player.body.velocity.y > 0 ) { player.setVelocityY(0); }
+        if (player.body.velocity.y > 0) { player.setVelocityY(0); }
     }
-
-    // if (cursors.up.isDown && player.body.touching.down) {
-    //     player.setVelocityY(-330);
-    // }
 }
