@@ -1,0 +1,23 @@
+{
+  "name": "KadicksResolution",
+  "version": "1.0.0",
+  "description": "End-of-degree Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManuSenpai/KadicksResolution.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ManuSenpai/KadicksResolution/issues"
+  },
+  "homepage": "https://github.com/ManuSenpai/KadicksResolution#readme",
+  "dependencies": {
+    "phaser": "^3.16.1"
+  }
+}
