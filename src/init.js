@@ -24,6 +24,17 @@ var lasers;                     // Pool of bullets shot by the player
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
 
+// SCENARIO
+var topleft;
+var topright;
+var botleft;
+var botright;
+var topwall;
+var botwall;
+var leftwall;
+var rightwall;
+var floor;
+
 const LASER_SPEED = 2;          // Laser speed
 const FIRE_RATE = 250;          // Fire rate for the speed;
 
@@ -51,13 +62,31 @@ function create() {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
+    
+
+    /* SCENARIO: BASIC */
+    // FLOOR
+    floor = this.add.tileSprite(0, 0, window.innerWidth*2, window.innerWidth*2, 'floor1');
+
+    // WALLS
+    topwall = this.add.tileSprite(0, 0, window.innerWidth*2, 64, 'topbot1');
+    botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth*2, 64, 'topbot1');
+    leftwall = this.add.tileSprite(0, 0, 64, window.innerHeight * 2, 'leftright1');
+    rightwall = this.add.tileSprite(window.innerWidth, 0, 64, window.innerHeight * 2, 'leftright1');
+
+    // CORNERS
+    topleft = this.physics.add.sprite(0, 0, 'topleft1');
+    topright = this.physics.add.sprite(window.innerWidth, 0, 'topright1');
+    botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+    botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+
+    /* PLAYER */
     player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
     player.setScale(0.3);
     player.setOrigin(0.5, 0.5);
     player.setCollideWorldBounds(true);
 
     /* LASERS */
-
     var Laser = new Phaser.Class({
         Extends: Phaser.GameObjects.Image,
         initialize:
