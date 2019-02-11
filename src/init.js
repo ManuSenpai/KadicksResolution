@@ -1,3 +1,5 @@
+import Turret from './GameObjects/turret.js';
+
 const config = {
     width: window.innerWidth,
     height: window.innerHeight - 5,
@@ -41,9 +43,9 @@ var rightwall;
 var floor;
 
 const LASER_SPEED = 2;          // Laser speed
-const FIRE_RATE = 250;          // Fire rate for the speed
+const FIRE_RATE = 250;          // Player fire rate
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
-const TURRET_FIRE_RATE = 1000;
+const TURRET_FIRE_RATE = 1000;  // Turret fire rate
 
 
 function preload() {
@@ -93,19 +95,8 @@ function create() {
     /* ### TURRETS ### */
 
     TURRET_VALUES.forEach((turret) => {
-        // let newTurret = new Turret( this.scene.scene, 1, turret.x, turret.y, turret.health, turret.damage);
-        // newTurret.setActive(true);
-        // newTurret.setVisible(true);
-        // turrets.push( newTurret );
-        let newTurret = this.physics.add.sprite(turret.x, turret.y, 'turret');
-        newTurret.setOrigin(0.25, 0.5);
-        newTurret.setScale(0.3);
-        turrets.push({
-            sprite: newTurret,
-            health: turret.health,
-            damage: turret.damage,
-            lastFired: 0
-        });
+        let newTurret = new Turret(this, turret.x, turret.y, 'turret', 0.3, turret.health, turret.damage);
+        turrets.push(newTurret);
     })
 
     /* ### PLAYER ### */
@@ -127,11 +118,13 @@ function create() {
                 this.speedY = 0;
                 this.born = 0;
             },
-        fire: function (originBody, velocity, angle, offsetX, offsetY) {
+        fire: function (originBody, velocity, angle, offsetX, offsetY, scale = null, tint = null ) {
             this.setPosition(
                 originBody.x + velocity.x * offsetX,
                 originBody.y + velocity.y * offsetY);
             this.rotation = angle;
+            if ( scale !== null ) { this.setScale(scale); }
+            if ( tint !== null ) { this.setTint(tint); }
             this.speedX = velocity.x;
             this.speedY = velocity.y;
         },
@@ -148,6 +141,10 @@ function create() {
     lasers = this.add.group({
         classType: Laser, runChildUpdate: true
     });
+
+    /*COLLIDERS */
+    this.physics.add.collider(player, lasers);
+    this.physics.add.overlap(player, lasers, hitPlayer, null, this);
 }
 
 /**
@@ -156,6 +153,10 @@ function create() {
  */
 function resetLaser(laser) {
     laser.kill();
+}
+
+function hitPlayer(player, laser) {
+    laser.disableBody(true, true);
 }
 
 function fireLaser() {
@@ -176,20 +177,20 @@ function update(time, delta) {
     let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
 
     turrets.forEach((turret) => {
-        let turretSprite = turret.sprite;
-        let turretAngle = Phaser.Math.Angle.Between(turretSprite.x, turretSprite.y, player.x, player.y);
-        turretSprite.rotation = turretAngle;
+        let turretAngle = Phaser.Math.Angle.Between(turret.x, turret.y, player.x, player.y);
+        turret.rotation = turretAngle;
         if (time > turret.lastFired) {
             var turretLaser = lasers.get();
             if (turretLaser) {
                 turretLaser.setActive(true);
                 turretLaser.setVisible(true);
                 let turretVelocity = this.physics.velocityFromRotation(turretAngle, TURRET_LASER_SPEED);
-                turretLaser.fire(turretSprite, turretVelocity, turretAngle, turretSprite.body.width / 2, turretSprite.body.width / 2);
+                turretLaser.fire(turret, turretVelocity, turretAngle, turret.width * 0.3, turret.width * 0.3, 0.4, '0x00ddff');
             }
             turret.lastFired = time + TURRET_FIRE_RATE;
         }
     })
+
     this.lastFired += delta;
     player.rotation = angle;
     if (cursors.left.isDown) {
@@ -214,7 +215,7 @@ function update(time, delta) {
             currentLaser.setActive(true);
             currentLaser.setVisible(true);
             var velocity = this.physics.velocityFromRotation(angle, LASER_SPEED);
-            currentLaser.fire(player, velocity, angle, player.body.width / 2, player.body.height / 2);
+            currentLaser.fire(player, velocity, angle, player.body.width / 2, player.body.height / 2, 0.5, '0xff00ae');
             lastFired = time + FIRE_RATE;
         }
     }
