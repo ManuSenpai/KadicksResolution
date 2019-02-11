@@ -27,6 +27,7 @@ const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 2 }, { x: (window.inn
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
+var enemyLasers;                // Pool of bullets shot by enemiess
 var turrets = [];               // Turrets at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
@@ -96,6 +97,7 @@ function create() {
 
     TURRET_VALUES.forEach((turret) => {
         let newTurret = new Turret(this, turret.x, turret.y, 'turret', 0.3, turret.health, turret.damage);
+        // this.physics.add.collider(lasers, newTurret);
         turrets.push(newTurret);
     })
 
@@ -104,8 +106,7 @@ function create() {
     player.setScale(0.3);
     player.setOrigin(0.5, 0.5);
     player.setCollideWorldBounds(true);
-
-
+    this.physics.world.enable( player );
 
     /* ### LASERS ### */
     var Laser = new Phaser.Class({
@@ -117,6 +118,7 @@ function create() {
                 this.speedX = 0;
                 this.speedY = 0;
                 this.born = 0;
+                scene.physics.world.enable( this );
             },
         fire: function (originBody, velocity, angle, offsetX, offsetY, scale = null, tint = null ) {
             this.setPosition(
@@ -142,9 +144,13 @@ function create() {
         classType: Laser, runChildUpdate: true
     });
 
+    enemyLasers = this.add.group({
+        classType: Laser, runChildUpdate: true
+    })
+
     /*COLLIDERS */
-    this.physics.add.collider(player, lasers);
-    this.physics.add.overlap(player, lasers, hitPlayer, null, this);
+    this.physics.add.collider(player, enemyLasers);
+    this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
 }
 
 /**
@@ -152,19 +158,12 @@ function create() {
  * @param {*} laser laser object that got out of bounds or collided 
  */
 function resetLaser(laser) {
-    laser.kill();
+    laser.setActive(false);
+    laser.setVisible(false);
 }
 
 function hitPlayer(player, laser) {
-    laser.disableBody(true, true);
-}
-
-function fireLaser() {
-    var laser = lasers.getFirstExists(false);
-    if (laser) {
-        laser.reset(player.x, player.y - 20);
-        game.physics.arcade.moveToPointer(laser, 500);
-    }
+    resetLaser(laser);
 }
 
 /**
@@ -177,15 +176,15 @@ function update(time, delta) {
     let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
 
     turrets.forEach((turret) => {
-        let turretAngle = Phaser.Math.Angle.Between(turret.x, turret.y, player.x, player.y);
+        let turretAngle = Phaser.Math.Angle.Between(turret.x, turret.y, player.x + this.cameras.main.scrollX, player.y + this.cameras.main.scrollY);
         turret.rotation = turretAngle;
         if (time > turret.lastFired) {
-            var turretLaser = lasers.get();
+            var turretLaser = enemyLasers.get();
             if (turretLaser) {
                 turretLaser.setActive(true);
                 turretLaser.setVisible(true);
-                let turretVelocity = this.physics.velocityFromRotation(turretAngle, TURRET_LASER_SPEED);
-                turretLaser.fire(turret, turretVelocity, turretAngle, turret.width * 0.3, turret.width * 0.3, 0.4, '0x00ddff');
+                let turretVelocity = this.physics.velocityFromRotation(turret.rotation, TURRET_LASER_SPEED);
+                turretLaser.fire(turret, turretVelocity, turret.rotation, 64, 64, 0.4, '0x00ddaff');
             }
             turret.lastFired = time + TURRET_FIRE_RATE;
         }

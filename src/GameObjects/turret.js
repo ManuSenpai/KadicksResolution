@@ -6,14 +6,9 @@ class Turret extends Phaser.GameObjects.Sprite {
         this.health = health;
         this.damage = damage;
         this.lastFired = 0;
+        this.angle = 0;
         scene.add.existing(this);
         scene.physics.world.enable(this);
-    }
-    setLastFired( newTime ){
-        this.lastFired = newTime;
-    }
-    getLastFired( newTime ){
-        return this.lastFired;
     }
 }
 
