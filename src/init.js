@@ -1,5 +1,7 @@
 import Turret from './GameObjects/turret.js';
 import Laser from './GameObjects/laser.js';
+import Bootloader from './bootloader.js';
+import Scene_play from './scenes/scene.play.js';
 
 const config = {
     width: window.innerWidth,
@@ -12,14 +14,11 @@ const config = {
             debug: false
         }
     },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
+    scene: [
+        Bootloader,
+        Scene_play
+    ]
 }
-
-
 
 var game = new Phaser.Game(config);
 
