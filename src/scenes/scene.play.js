@@ -7,7 +7,7 @@ var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
 var enemyLasers;                // Pool of bullets shot by enemiess
-var turrets = [];                    // Turrets at stage
+var turrets = [];               // Turrets at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
 
@@ -27,6 +27,8 @@ const LASER_SPEED = 2;          // Laser speed
 const FIRE_RATE = 250;          // Player fire rate
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
+
+var score;
 
 /**
     * Deletes the laser that has collided from the displayed pool of lasers
@@ -57,6 +59,9 @@ function hitTurret(enemy, laser) {
 class Scene_play extends Phaser.Scene {
     constructor() {
         super({ key: "Scene_play" });
+    }
+    init(data){
+        score = data.score;
     }
     create() {
         cursors = this.input.keyboard.addKeys(
@@ -107,6 +112,8 @@ class Scene_play extends Phaser.Scene {
         enemyLasers = this.physics.add.group({
             classType: Laser
         });
+
+        this.add.text(200, 8, 'SCORE: ' + score);
 
         /*COLLIDERS */
         this.physics.add.collider(player, enemyLasers);

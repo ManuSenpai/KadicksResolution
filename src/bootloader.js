@@ -1,10 +1,12 @@
+var score;
 class Bootloader extends Phaser.Scene {
     constructor() {
         super({ key: 'Bootloader' });
     }
     preload() {
+        score = 0;
         this.load.on("complete", () => {
-            this.scene.start("Scene_play");
+            this.scene.start("Scene_play", { score: score });
         })
         /* Image loading */
         this.load.image('player', "./assets/player.png");
