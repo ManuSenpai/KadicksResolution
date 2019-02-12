@@ -22,25 +22,23 @@ var leftwall;
 var rightwall;
 var floor;
 
-var PLAYER_DAMAGE = 15;       // Damage caused by the player
+var PLAYER_DAMAGE = 15;         // Damage caused by the player 
+// TODO: Player stats object
+
 const LASER_SPEED = 2;          // Laser speed
 const FIRE_RATE = 250;          // Player fire rate
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
 
 var score;
+var scoreText;
+var configScoreText;
 
-/**
-    * Deletes the laser that has collided from the displayed pool of lasers
-    * @param {*} laser laser object that got out of bounds or collided 
-    */
-function resetLaser(laser) {
-    laser.setActive(false);
-    laser.setVisible(false);
-}
 
 function hitPlayer(player, laser){
-    resetLaser(laser);
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
 }
 
 function hitTurret(enemy, laser) {
@@ -48,12 +46,19 @@ function hitTurret(enemy, laser) {
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
+    score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
-        turrets.splice(enemy, 1);
+        let index = turrets.findIndex( (turret) => { return turret.health <= 0; } );
+        turrets.splice(index, 1);
+        score += 200;
     }
-    resetLaser(laser);
+    scoreText.setText('SCORE: ' + score);
+}
+
+function initializeText() {
+    scoreText.setText('SCORE: ' + score);
 }
 
 class Scene_play extends Phaser.Scene {
@@ -62,6 +67,7 @@ class Scene_play extends Phaser.Scene {
     }
     init(data){
         score = data.score;
+        configScoreText = data.configScoreText;
     }
     create() {
         cursors = this.input.keyboard.addKeys(
@@ -112,8 +118,9 @@ class Scene_play extends Phaser.Scene {
         enemyLasers = this.physics.add.group({
             classType: Laser
         });
-
-        this.add.text(200, 8, 'SCORE: ' + score);
+        scoreText = this.make.text(configScoreText);
+        scoreText.setFontFamily('kadick');
+        initializeText();
 
         /*COLLIDERS */
         this.physics.add.collider(player, enemyLasers);

@@ -1,4 +1,16 @@
 var score;
+var scoreText;
+var configScoreText = {
+    x: 64,
+    y: 2,
+    text: 'SCORE: ' + 0,
+    style: {
+        fontFamily: 'kadick',
+        fontSize: 30,
+        fontStyle: 'bold'
+    }
+};
+
 class Bootloader extends Phaser.Scene {
     constructor() {
         super({ key: 'Bootloader' });
@@ -6,7 +18,7 @@ class Bootloader extends Phaser.Scene {
     preload() {
         score = 0;
         this.load.on("complete", () => {
-            this.scene.start("Scene_play", { score: score });
+            this.scene.start("Scene_play", { score: score, configScoreText: configScoreText });
         })
         /* Image loading */
         this.load.image('player', "./assets/player.png");
@@ -23,6 +35,9 @@ class Bootloader extends Phaser.Scene {
         this.load.image('topbot1', "./assets/topbot1.png");
         this.load.image('leftright1', "./assets/leftright1.png");
         this.load.image('floor1', "./assets/floor1.png");
+    }
+    create() {
+        scoreText = this.make.text(configScoreText);
     }
 }
 

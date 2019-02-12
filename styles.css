@@ -6,3 +6,13 @@ body {
 html {
     padding: 0px !important;
 }
+@font-face {
+    font-family: 'kadick';
+    src: url('./ExanRegular.ttf') format('truetype');
+}
+
+.fuentes {
+    font-family: 'kadick';
+    position: absolute;
+    top: -3000px;
+}
