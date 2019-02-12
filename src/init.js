@@ -29,7 +29,7 @@ var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
 var enemyLasers;                // Pool of bullets shot by enemiess
-var turrets = [];               // Turrets at stage
+var turrets = [];                    // Turrets at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
 
@@ -44,6 +44,7 @@ var leftwall;
 var rightwall;
 var floor;
 
+var PLAYER_DAMAGE = 15;       // Damage caused by the player
 const LASER_SPEED = 2;          // Laser speed
 const FIRE_RATE = 250;          // Player fire rate
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
@@ -77,7 +78,6 @@ function create() {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-
     /* ### SCENARIO: BASIC ### */
     // FLOOR
     floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
@@ -97,10 +97,10 @@ function create() {
     /* ### TURRETS ### */
 
     TURRET_VALUES.forEach((turret) => {
-        let newTurret = new Turret(this, turret.x, turret.y, 'turret', 0.3, turret.health, turret.damage);
+        let newTurret = new Turret(this, turret.x, turret.y, 'turret', 1, 0, turret.health, turret.damage);
         this.physics.world.enable(newTurret);
-        this.physics.add.collider(newTurret, lasers);
-        this.physics.add.overlap(newTurret, lasers, hitEnemy, null, this);
+        newTurret.displayHeight *= 0.5;
+        newTurret.displayWidth *= 0.5;
         turrets.push(newTurret);
     })
 
@@ -122,6 +122,8 @@ function create() {
     /*COLLIDERS */
     this.physics.add.collider(player, enemyLasers);
     this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
+    this.physics.add.collider(turrets, lasers);
+    this.physics.add.overlap(turrets, lasers, hitTurret, null, this);
 }
 
 /**
@@ -137,7 +139,16 @@ function hitPlayer(player, laser) {
     resetLaser(laser);
 }
 
-function hitEnemy(enemy, laser) {
+function hitTurret(enemy, laser) {
+    enemy.health -= PLAYER_DAMAGE;
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
+    if ( enemy.health <= 0 ) {
+        enemy.setActive(false);
+        enemy.setVisible(false); 
+        turrets.splice(enemy, 1);
+    }
     resetLaser(laser);
 }
 
