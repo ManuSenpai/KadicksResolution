@@ -1,4 +1,5 @@
 import Turret from './GameObjects/turret.js';
+import Laser from './GameObjects/laser.js';
 
 const config = {
     width: window.innerWidth,
@@ -97,7 +98,9 @@ function create() {
 
     TURRET_VALUES.forEach((turret) => {
         let newTurret = new Turret(this, turret.x, turret.y, 'turret', 0.3, turret.health, turret.damage);
-        // this.physics.add.collider(lasers, newTurret);
+        this.physics.world.enable(newTurret);
+        this.physics.add.collider(newTurret, lasers);
+        this.physics.add.overlap(newTurret, lasers, hitEnemy, null, this);
         turrets.push(newTurret);
     })
 
@@ -106,47 +109,15 @@ function create() {
     player.setScale(0.3);
     player.setOrigin(0.5, 0.5);
     player.setCollideWorldBounds(true);
-    this.physics.world.enable( player );
+    this.physics.world.enable(player);
 
-    /* ### LASERS ### */
-    var Laser = new Phaser.Class({
-        Extends: Phaser.GameObjects.Image,
-        initialize:
-            function Laser(scene) {
-                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'laser');
-                this.setScale(0.5);
-                this.speedX = 0;
-                this.speedY = 0;
-                this.born = 0;
-                scene.physics.world.enable( this );
-            },
-        fire: function (originBody, velocity, angle, offsetX, offsetY, scale = null, tint = null ) {
-            this.setPosition(
-                originBody.x + velocity.x * offsetX,
-                originBody.y + velocity.y * offsetY);
-            this.rotation = angle;
-            if ( scale !== null ) { this.setScale(scale); }
-            if ( tint !== null ) { this.setTint(tint); }
-            this.speedX = velocity.x;
-            this.speedY = velocity.y;
-        },
-        update: function (time, delta) {
-            this.x += this.speedX * delta;
-            this.y += this.speedY * delta;
-            if (this.x < 0 || this.x > window.innerWidth || this.y < 0 || this.y > window.innerHeight) {
-                this.setActive(false);
-                this.setVisible(false);
-            }
-        }
-    })
-
-    lasers = this.add.group({
-        classType: Laser, runChildUpdate: true
+    /* LASERS */
+    lasers = this.physics.add.group({
+        classType: Laser
     });
-
-    enemyLasers = this.add.group({
-        classType: Laser, runChildUpdate: true
-    })
+    enemyLasers = this.physics.add.group({
+        classType: Laser
+    });
 
     /*COLLIDERS */
     this.physics.add.collider(player, enemyLasers);
@@ -166,6 +137,10 @@ function hitPlayer(player, laser) {
     resetLaser(laser);
 }
 
+function hitEnemy(enemy, laser) {
+    resetLaser(laser);
+}
+
 /**
  * 
  * @param {*} time 
@@ -174,21 +149,6 @@ function hitPlayer(player, laser) {
 function update(time, delta) {
     let cursor = game.input.mousePointer;
     let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
-
-    turrets.forEach((turret) => {
-        let turretAngle = Phaser.Math.Angle.Between(turret.x, turret.y, player.x + this.cameras.main.scrollX, player.y + this.cameras.main.scrollY);
-        turret.rotation = turretAngle;
-        if (time > turret.lastFired) {
-            var turretLaser = enemyLasers.get();
-            if (turretLaser) {
-                turretLaser.setActive(true);
-                turretLaser.setVisible(true);
-                let turretVelocity = this.physics.velocityFromRotation(turret.rotation, TURRET_LASER_SPEED);
-                turretLaser.fire(turret, turretVelocity, turret.rotation, 64, 64, 0.4, '0x00ddaff');
-            }
-            turret.lastFired = time + TURRET_FIRE_RATE;
-        }
-    })
 
     this.lastFired += delta;
     player.rotation = angle;
@@ -209,14 +169,10 @@ function update(time, delta) {
         // player.anims.play('turn');
     }
     if (game.input.activePointer.isDown && time > lastFired) {
-        var currentLaser = lasers.get();
-        if (currentLaser) {
-            currentLaser.setActive(true);
-            currentLaser.setVisible(true);
-            var velocity = this.physics.velocityFromRotation(angle, LASER_SPEED);
-            currentLaser.fire(player, velocity, angle, player.body.width / 2, player.body.height / 2, 0.5, '0xff00ae');
-            lastFired = time + FIRE_RATE;
-        }
+        var velocity = this.physics.velocityFromRotation(angle, LASER_SPEED);
+        var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0');
+        lasers.add(currentLaser);
+        lastFired = time + FIRE_RATE;
     }
     if (cursors.left.isUp) {
         if (player.body.velocity.x < 0) { player.setVelocityX(0); }
@@ -230,4 +186,18 @@ function update(time, delta) {
     if (cursors.down.isUp) {
         if (player.body.velocity.y > 0) { player.setVelocityY(0); }
     }
+
+    turrets.forEach((turret) => {
+        let turretAngle = Phaser.Math.Angle.Between(turret.x, turret.y, player.x, player.y);
+        turret.rotation = turretAngle;
+        if (time > turret.lastFired) {
+            var velocity = this.physics.velocityFromRotation(turretAngle, TURRET_LASER_SPEED);
+            var currentLaser = new Laser(this, turret.x, turret.y, 'laser', 0.5, turretAngle, velocity, '0x77abff');
+            enemyLasers.add(currentLaser);
+            turret.lastFired = time + TURRET_FIRE_RATE;
+        }
+    })
+
+    lasers.children.iterate( (laser) => {laser.move(delta)} )
+    enemyLasers.children.iterate( (laser) => {laser.move(delta)} )
 }
