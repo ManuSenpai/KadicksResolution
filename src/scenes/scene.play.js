@@ -31,7 +31,8 @@ var armorBar;
 var armorBarBg;
 var playerStats;
 var playerIsHit = false;
-var timeLastHit = 0;
+var recoverArmor;               // Event that will recover armor if armor < max armor.
+var timerUntilRecovery;
 
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
@@ -42,8 +43,10 @@ var configScoreText;
 
 
 function hitPlayer(player, laser){
-
-    if( laser.active && playerStats.ARMOR > 0 ){ 
+    recoverArmor.paused = true;
+    if( timerUntilRecovery ) { timerUntilRecovery.remove(false); }
+    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
+    if( playerStats.ARMOR > 0 ){ 
         playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
         armorBar.width -= laser.damage * 2;
     } else {
@@ -81,6 +84,20 @@ function initializeText() {
     scoreText.setText('SCORE: ' + score);
 }
 
+function onRecover() {
+    if ( playerStats.ARMOR < playerStats.MAX_ARMOR ) {
+        playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
+        if( playerStats.ARMOR > playerStats.MAX_ARMOR ) { 
+            playerStats.ARMOR = playerStats.MAX_ARMOR;
+        }
+        armorBar.width = playerStats.ARMOR * 2;
+    }
+}
+
+function startRecovery( ) {
+    recoverArmor.paused = false;
+}
+
 class Scene_play extends Phaser.Scene {
     constructor() {
         super({ key: "Scene_play" });
@@ -91,6 +108,9 @@ class Scene_play extends Phaser.Scene {
         playerStats = data.playerStats;
     }
     create() {
+
+        recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
+
         cursors = this.input.keyboard.addKeys(
             {
                 up: Phaser.Input.Keyboard.KeyCodes.W,

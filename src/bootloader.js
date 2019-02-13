@@ -19,8 +19,11 @@ const PLAYER_STATS = {
     MAX_ARMOR: 100,                     // Maximum armor value
     DAMAGE: 15,                         // Damage caused by the player
     KEYCODES : [false, false, false],   // Collected Key Codes: true = collected; false = not collected yet
-    FIRE_RATE: 250,
-    LASER_SPEED: 2
+    FIRE_RATE: 250,                     // Fire rate
+    LASER_SPEED: 2,                     // Laser speed
+    ARMOR_RECOVERY_TIMER: 3000,         // Time untile armor recovery begins when player is unharmed
+    TIME_RECOVER_ARMOR: 250,            // Time until armor recovers the armor recovery value
+    ARMOR_RECOVERY: 5                   // Armor recovery value per time unit
 }
 
 class Bootloader extends Phaser.Scene {
