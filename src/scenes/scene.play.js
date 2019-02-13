@@ -1,7 +1,7 @@
 import Turret from '../GameObjects/turret.js';
 import Laser from '../GameObjects/laser.js';
 
-const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 2 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 2 }];
+const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 5 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 5 }];
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -22,11 +22,17 @@ var leftwall;
 var rightwall;
 var floor;
 
-var PLAYER_DAMAGE = 15;         // Damage caused by the player 
-// TODO: Player stats object
+// UI
+var healthIcon;
+var healthBar;
+var healthBarBg;
+var armorIcon;
+var armorBar;
+var armorBarBg;
+var playerStats;
+var playerIsHit = false;
+var timeLastHit = 0;
 
-const LASER_SPEED = 2;          // Laser speed
-const FIRE_RATE = 250;          // Player fire rate
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
 
@@ -36,21 +42,35 @@ var configScoreText;
 
 
 function hitPlayer(player, laser){
+
+    if( laser.active && playerStats.ARMOR > 0 ){ 
+        playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
+        armorBar.width -= laser.damage * 2;
+    } else {
+        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;;
+        healthBar.width -= laser.damage * 2;
+        if ( playerStats.HEALTH < 0 ) {
+            // TODO: GAME OVER
+        }
+    }
     laser.setVisible(false);
     laser.setActive(false);
+    laser.destroy();
     lasers.remove(laser);
 }
 
 function hitTurret(enemy, laser) {
-    enemy.health -= PLAYER_DAMAGE;
+    enemy.health -= laser.damage;
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
+    laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
         let index = turrets.findIndex( (turret) => { return turret.health <= 0; } );
+        enemy.destroy();
         turrets.splice(index, 1);
         score += 200;
     }
@@ -68,6 +88,7 @@ class Scene_play extends Phaser.Scene {
     init(data){
         score = data.score;
         configScoreText = data.configScoreText;
+        playerStats = data.playerStats;
     }
     create() {
         cursors = this.input.keyboard.addKeys(
@@ -118,9 +139,26 @@ class Scene_play extends Phaser.Scene {
         enemyLasers = this.physics.add.group({
             classType: Laser
         });
+
+        /* UI */
         scoreText = this.make.text(configScoreText);
-        scoreText.setFontFamily('kadick');
         initializeText();
+        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 30), 'armorIcon');
+        armorIcon.displayWidth = 12;
+        armorIcon.displayHeight = 12;
+        armorBarBg = this.add.rectangle( 80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');
+        armorBarBg.setOrigin(0, 0.5);
+        armorBarBg.alpha = 0.4;
+        armorBar = this.add.rectangle( 80, (window.innerHeight - 30), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar.setOrigin(0, 0.5);
+        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 14), 'healthIcon');
+        healthIcon.displayWidth = 12;
+        healthIcon.displayHeight = 12;
+        healthBarBg = this.add.rectangle( 80, (window.innerHeight - 14), playerStats.MAX_HEALTH * 2, 12, '0x000000');
+        healthBarBg.setOrigin(0, 0.5);
+        healthBarBg.alpha = 0.4;
+        healthBar = this.add.rectangle( 80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
+        healthBar.setOrigin(0, 0.5);
 
         /*COLLIDERS */
         this.physics.add.collider(player, enemyLasers);
@@ -130,6 +168,10 @@ class Scene_play extends Phaser.Scene {
     }
 
     update(time, delta) {
+        if (playerIsHit) {
+            timeLastHit = time;
+            playerIsHit = false;
+        }
         let cursor = this.input.mousePointer;
         let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
 
@@ -152,10 +194,10 @@ class Scene_play extends Phaser.Scene {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
-            var velocity = this.physics.velocityFromRotation(angle, LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0');
+            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
+            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
             lasers.add(currentLaser);
-            lastFired = time + FIRE_RATE;
+            lastFired = time + playerStats.FIRE_RATE;
         }
         if (cursors.left.isUp) {
             if (player.body.velocity.x < 0) { player.setVelocityX(0); }
@@ -175,14 +217,18 @@ class Scene_play extends Phaser.Scene {
             turret.rotation = turretAngle;
             if (time > turret.lastFired) {
                 var velocity = this.physics.velocityFromRotation(turretAngle, TURRET_LASER_SPEED);
-                var currentLaser = new Laser(this, turret.x, turret.y, 'laser', 0.5, turretAngle, velocity, '0x77abff');
+                var currentLaser = new Laser(this, turret.x, turret.y, 'laser', 0.5, turretAngle, velocity, '0x77abff', turret.damage);
                 enemyLasers.add(currentLaser);
                 turret.lastFired = time + TURRET_FIRE_RATE;
             }
         })
 
-        lasers.children.iterate((laser) => { laser.move(delta) })
-        enemyLasers.children.iterate((laser) => { laser.move(delta) })
+        lasers.children.iterate((laser) => { 
+            if (laser){ laser.move(delta) } else { lasers.remove(laser); }
+        })
+        enemyLasers.children.iterate((laser) => {
+            if (laser){ laser.move(delta) } else { lasers.remove(laser); }
+        })
     }
 }
 
