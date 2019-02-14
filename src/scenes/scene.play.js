@@ -1,12 +1,18 @@
 import Turret from '../GameObjects/turret.js';
 import Laser from '../GameObjects/laser.js';
+import LaserTrap from '../GameObjects/lasertrap.js';
 
 const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 5 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 5 }];
+const LASER_VALUES = [
+    {x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
+    {x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
+];
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
 var enemyLasers;                // Pool of bullets shot by enemiess
+var laserTraps = [];            // Laser traps at stage
 var turrets = [];               // Turrets at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
@@ -144,6 +150,11 @@ class Scene_play extends Phaser.Scene {
             newTurret.displayWidth *= 0.5;
             turrets.push(newTurret);
         })
+
+        LASER_VALUES.forEach( (trap) => {
+            let newTrap = new LaserTrap ( this, trap.x1, trap.y1, trap.x2, trap.y2, trap.color, trap.damage, trap.thickness, trap.timeOfBlink, trap.timeOfLaser );
+            laserTraps.push(newTrap);
+        });
 
         /* ### PLAYER ### */
         player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');

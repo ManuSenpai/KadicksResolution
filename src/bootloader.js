@@ -54,6 +54,7 @@ class Bootloader extends Phaser.Scene {
         /* UI */
         this.load.image('healthIcon', "./assets/healthIcon.png");
         this.load.image('armorIcon', "./assets/shieldIcon.png");
+        this.load.image('flares', "./assets/flares.png");
     }
     create() {
         scoreText = this.make.text(configScoreText);
