@@ -2,6 +2,7 @@ import Turret from './GameObjects/turret.js';
 import Laser from './GameObjects/laser.js';
 import Bootloader from './bootloader.js';
 import Scene_play from './scenes/scene.play.js';
+import Main_menu from './scenes/scene.mainmenu.js';
 
 const config = {
     width: window.innerWidth,
@@ -11,12 +12,13 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: false
         }
     },
     scene: [
         Bootloader,
-        Scene_play
+        Scene_play,
+        Main_menu
     ]
 }
 
