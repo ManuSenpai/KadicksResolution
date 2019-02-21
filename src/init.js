@@ -3,6 +3,7 @@ import Laser from './GameObjects/laser.js';
 import Bootloader from './bootloader.js';
 import Scene_play from './scenes/scene.play.js';
 import Main_menu from './scenes/scene.mainmenu.js';
+import Settings from './scenes/scene.settings.js';
 
 const config = {
     width: window.innerWidth,
@@ -18,7 +19,8 @@ const config = {
     scene: [
         Bootloader,
         Scene_play,
-        Main_menu
+        Main_menu,
+        Settings
     ]
 }
 
