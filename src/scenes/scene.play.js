@@ -1,11 +1,16 @@
 import Turret from '../GameObjects/turret.js';
 import Laser from '../GameObjects/laser.js';
 import LaserTrap from '../GameObjects/lasertrap.js';
+import Enemy from '../GameObjects/Enemies/enemy.js';
+import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
+
+const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 1.5 },
+{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 1.5 }];
 
 const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 5 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 5 }];
 const LASER_VALUES = [
-    {x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
-    {x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
+    { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
+    { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
 ];
 
 var cursors;                    // Set keys to be pressed
@@ -16,6 +21,8 @@ var laserTraps = [];            // Laser traps at stage
 var turrets = [];               // Turrets at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
+
+var enemies;                    // Enemies on scene
 
 // SCENARIO
 var topleft;
@@ -48,17 +55,17 @@ var scoreText;
 var configScoreText;
 
 
-function hitPlayer(player, laser){
+function hitPlayer(player, laser) {
     recoverArmor.paused = true;
-    if( timerUntilRecovery ) { timerUntilRecovery.remove(false); }
+    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if( playerStats.ARMOR > 0 ){ 
+    if (playerStats.ARMOR > 0) {
         playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
         armorBar.width -= laser.damage * 2;
     } else {
         playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;;
         healthBar.width -= laser.damage * 2;
-        if ( playerStats.HEALTH < 0 ) {
+        if (playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
@@ -78,7 +85,7 @@ function hitTurret(enemy, laser) {
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
-        let index = turrets.findIndex( (turret) => { return turret.health <= 0; } );
+        let index = turrets.findIndex((turret) => { return turret.health <= 0; });
         enemy.destroy();
         turrets.splice(index, 1);
         score += 200;
@@ -91,16 +98,16 @@ function initializeText() {
 }
 
 function onRecover() {
-    if ( playerStats.ARMOR < playerStats.MAX_ARMOR ) {
+    if (playerStats.ARMOR < playerStats.MAX_ARMOR) {
         playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
-        if( playerStats.ARMOR > playerStats.MAX_ARMOR ) { 
+        if (playerStats.ARMOR > playerStats.MAX_ARMOR) {
             playerStats.ARMOR = playerStats.MAX_ARMOR;
         }
         armorBar.width = playerStats.ARMOR * 2;
     }
 }
 
-function startRecovery( ) {
+function startRecovery() {
     recoverArmor.paused = false;
 }
 
@@ -108,7 +115,7 @@ class Scene_play extends Phaser.Scene {
     constructor() {
         super({ key: "Scene_play" });
     }
-    init(data){
+    init(data) {
         score = data.score;
         configScoreText = data.configScoreText;
         playerStats = data.playerStats;
@@ -151,8 +158,8 @@ class Scene_play extends Phaser.Scene {
             turrets.push(newTurret);
         })
 
-        LASER_VALUES.forEach( (trap) => {
-            let newTrap = new LaserTrap ( this, trap.x1, trap.y1, trap.x2, trap.y2, trap.color, trap.damage, trap.thickness, trap.timeOfBlink, trap.timeOfLaser );
+        LASER_VALUES.forEach((trap) => {
+            let newTrap = new LaserTrap(this, trap.x1, trap.y1, trap.x2, trap.y2, trap.color, trap.damage, trap.thickness, trap.timeOfBlink, trap.timeOfLaser);
             laserTraps.push(newTrap);
         });
 
@@ -171,24 +178,33 @@ class Scene_play extends Phaser.Scene {
             classType: Laser
         });
 
+        /* ENEMIES */
+        enemies = this.physics.add.group({
+            classType: Enemy
+        });
+
+        ENEMY_VALUES.forEach( (enem) => {
+            enemies.add( new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed) );
+        });
+
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
         armorIcon = this.physics.add.sprite(64, (window.innerHeight - 30), 'armorIcon');
         armorIcon.displayWidth = 12;
         armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle( 80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');
+        armorBarBg = this.add.rectangle(80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle( 80, (window.innerHeight - 30), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(80, (window.innerHeight - 30), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
         armorBar.setOrigin(0, 0.5);
         healthIcon = this.physics.add.sprite(64, (window.innerHeight - 14), 'healthIcon');
         healthIcon.displayWidth = 12;
         healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle( 80, (window.innerHeight - 14), playerStats.MAX_HEALTH * 2, 12, '0x000000');
+        healthBarBg = this.add.rectangle(80, (window.innerHeight - 14), playerStats.MAX_HEALTH * 2, 12, '0x000000');
         healthBarBg.setOrigin(0, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle( 80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
+        healthBar = this.add.rectangle(80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
 
         /*COLLIDERS */
@@ -254,11 +270,17 @@ class Scene_play extends Phaser.Scene {
             }
         })
 
-        lasers.children.iterate((laser) => { 
-            if (laser){ laser.move(delta) } else { lasers.remove(laser); }
+        enemies.children.iterate((enem) => {
+            let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
+            enem.rotation = enemAngle;
+            enem.move(player)
+        })
+
+        lasers.children.iterate((laser) => {
+            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         })
         enemyLasers.children.iterate((laser) => {
-            if (laser){ laser.move(delta) } else { lasers.remove(laser); }
+            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         })
     }
 }
