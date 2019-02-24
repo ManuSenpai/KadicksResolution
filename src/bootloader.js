@@ -23,7 +23,8 @@ const PLAYER_STATS = {
     LASER_SPEED: 2,                     // Laser speed
     ARMOR_RECOVERY_TIMER: 3000,         // Time untile armor recovery begins when player is unharmed
     TIME_RECOVER_ARMOR: 250,            // Time until armor recovers the armor recovery value
-    ARMOR_RECOVERY: 5                   // Armor recovery value per time unit
+    ARMOR_RECOVERY: 5,                  // Armor recovery value per time unit
+    DIFFICULTY: "NORMAL"                // Difficulty level
 }
 
 class Bootloader extends Phaser.Scene {

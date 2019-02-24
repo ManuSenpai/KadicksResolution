@@ -1,47 +1,62 @@
-const NORMAL = {
-    PLAYER_STATS = {
-        HEALTH: 100,                        // Current health value
-        MAX_HEALTH: 100,                    // Maximum health value 
-        ARMOR: 100,                         // Current armor value
-        MAX_ARMOR: 100,                     // Maximum armor value
-        DAMAGE: 15,                         // Damage caused by the player
-        KEYCODES : [false, false, false],   // Collected Key Codes: true = collected; false = not collected yet
-        FIRE_RATE: 250,                     // Fire rate
-        LASER_SPEED: 2,                     // Laser speed
-        ARMOR_RECOVERY_TIMER: 3000,         // Time untile armor recovery begins when player is unharmed
-        TIME_RECOVER_ARMOR: 250,            // Time until armor recovers the armor recovery value
-        ARMOR_RECOVERY: 5                   // Armor recovery value per time unit
-    }
-};
-
-const EASY = {
-    PLAYER_STATS = {
-        HEALTH: 150,                        // Current health value
-        MAX_HEALTH: 150,                    // Maximum health value 
-        ARMOR: 150,                         // Current armor value
-        MAX_ARMOR: 150,                     // Maximum armor value
-        DAMAGE: 25,                         // Damage caused by the player
-        KEYCODES : [false, false, false],   // Collected Key Codes: true = collected; false = not collected yet
-        FIRE_RATE: 250,                     // Fire rate
-        LASER_SPEED: 2,                     // Laser speed
-        ARMOR_RECOVERY_TIMER: 2000,         // Time untile armor recovery begins when player is unharmed
-        TIME_RECOVER_ARMOR: 200,            // Time until armor recovers the armor recovery value
-        ARMOR_RECOVERY: 5                   // Armor recovery value per time unit
-    }
-};
-
-const HARD = {
-    PLAYER_STATS = {
-        HEALTH: 80,                        // Current health value
-        MAX_HEALTH: 80,                    // Maximum health value 
-        ARMOR: 80,                         // Current armor value
-        MAX_ARMOR: 80,                     // Maximum armor value
-        DAMAGE: 10,                         // Damage caused by the player
-        KEYCODES : [false, false, false],   // Collected Key Codes: true = collected; false = not collected yet
-        FIRE_RATE: 250,                     // Fire rate
-        LASER_SPEED: 2,                     // Laser speed
-        ARMOR_RECOVERY_TIMER: 4000,         // Time untile armor recovery begins when player is unharmed
-        TIME_RECOVER_ARMOR: 250,            // Time until armor recovers the armor recovery value
-        ARMOR_RECOVERY: 5                   // Armor recovery value per time unit
+export default {
+    EASY : {
+        "PLAYER_STATS" : {
+            HEALTH : 150,
+            MAX_HEALTH : 150,
+            ARMOR : 150,
+            MAX_ARMOR : 150,
+            DAMAGE : 25,
+            KEYCODES : [
+                false,
+                false,
+                false
+            ],
+            FIRE_RATE : 250,
+            LASER_SPEED : 2,
+            ARMOR_RECOVERY_TIMER : 2000,
+            TIME_RECOVER_ARMOR : 200,
+            ARMOR_RECOVERY : 5,
+            DIFFICULTY : "EASY"
+        }
+    },
+    NORMAL : {
+        PLAYER_STATS : {
+            HEALTH : 100,
+            MAX_HEALTH : 100,
+            ARMOR : 100,
+            MAX_ARMOR : 100,
+            DAMAGE : 15,
+            KEYCODES : [
+                false,
+                false,
+                false
+            ],
+            FIRE_RATE : 250,
+            LASER_SPEED : 2,
+            ARMOR_RECOVERY_TIMER : 3000,
+            TIME_RECOVER_ARMOR : 250,
+            ARMOR_RECOVERY : 5,
+            DIFFICULTY : "NORMAL"
+        }
+    },
+    HARD : {
+        PLAYER_STATS : {
+            HEALTH : 80,
+            MAX_HEALTH : 80,
+            ARMOR : 80,
+            MAX_ARMOR : 80,
+            DAMAGE : 10,
+            KEYCODES : [
+                false,
+                false,
+                false
+            ],
+            FIRE_RATE : 250,
+            LASER_SPEED : 2,
+            ARMOR_RECOVERY_TIMER : 4000,
+            TIME_RECOVER_ARMOR : 250,
+            ARMOR_RECOVERY : 5,
+            DIFFICULTY : "HARD"
+        }
     }
 };

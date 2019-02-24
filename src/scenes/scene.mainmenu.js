@@ -47,7 +47,7 @@ class Main_menu extends Phaser.Scene {
         this.playbutton.setOrigin(0.5);
 
         this.settingsbutton = this.make.text(NewGameButton).setInteractive()
-            .on('pointerdown', () => this.settingsPointerDown(++clickCount))
+            .on('pointerdown', () => this.settingsPointerDown())
             .on('pointerover', () => this.onButtonOver(this.settingsbutton))
             .on('pointerout', () => this.onButtonOut(this.settingsbutton));
         this.settingsbutton.setText('SETTINGS').setY((window.innerHeight * 2 / 3) + 80);
@@ -61,6 +61,9 @@ class Main_menu extends Phaser.Scene {
     }
     newGamePointerDown(){
         this.scene.start("Scene_play", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
+    }
+    settingsPointerDown(){
+        this.scene.start("Settings", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
     }
 }
 
