@@ -4,8 +4,8 @@ import LaserTrap from '../GameObjects/lasertrap.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
 import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 
-const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 1.5 },
-{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 1.5 }];
+const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 },
+{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 }];
 
 const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 5 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 5 }];
 const LASER_VALUES = [
@@ -75,6 +75,27 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
+function meleeHit(player, enemy) {
+    recoverArmor.paused = true;
+    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
+    if (playerStats.ARMOR > 0) {
+        playerStats.ARMOR = (playerStats.ARMOR - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;
+        armorBar.width -= enemy.damage * 2;
+        if (armorBar.width < 0 ) { armorBar.width = 0; }
+    } else {
+        playerStats.HEALTH = (playerStats.HEALTH - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;;
+        healthBar.width -= enemy.damage * 2;
+        if (healthBar.width < 0 ) { healthBar.width = 0; }
+        if (playerStats.HEALTH < 0) {
+            // TODO: GAME OVER
+        }
+    }
+
+    player.setX( player.x += enemy.body.velocity.x * 2 );
+    player.setY( player.y += enemy.body.velocity.y * 2 );
+}
+
 function hitTurret(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -89,6 +110,22 @@ function hitTurret(enemy, laser) {
         enemy.destroy();
         turrets.splice(index, 1);
         score += 200;
+    }
+    scoreText.setText('SCORE: ' + score);
+}
+
+function hitEnemy( enemy, laser ){
+    enemy.health -= laser.damage;
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
+    laser.destroy();
+    score += 20;
+    if (enemy.health <= 0) {
+        enemy.setActive(false);
+        enemy.setVisible(false);
+        enemy.destroy();
+        score += enemy.score;
     }
     scoreText.setText('SCORE: ' + score);
 }
@@ -158,10 +195,10 @@ class Scene_play extends Phaser.Scene {
             turrets.push(newTurret);
         })
 
-        LASER_VALUES.forEach((trap) => {
-            let newTrap = new LaserTrap(this, trap.x1, trap.y1, trap.x2, trap.y2, trap.color, trap.damage, trap.thickness, trap.timeOfBlink, trap.timeOfLaser);
-            laserTraps.push(newTrap);
-        });
+        // LASER_VALUES.forEach((trap) => {
+        //     let newTrap = new LaserTrap(this, trap.x1, trap.y1, trap.x2, trap.y2, trap.color, trap.damage, trap.thickness, trap.timeOfBlink, trap.timeOfLaser);
+        //     laserTraps.push(newTrap);
+        // });
 
         /* ### PLAYER ### */
         player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
@@ -184,7 +221,7 @@ class Scene_play extends Phaser.Scene {
         });
 
         ENEMY_VALUES.forEach( (enem) => {
-            enemies.add( new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed) );
+            enemies.add( new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score) );
         });
 
         /* UI */
@@ -212,6 +249,10 @@ class Scene_play extends Phaser.Scene {
         this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(turrets, lasers);
         this.physics.add.overlap(turrets, lasers, hitTurret, null, this);
+        this.physics.add.collider(player, enemies, meleeHit, null, this);
+        this.physics.add.collider(enemies, lasers);
+        this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+
     }
 
     update(time, delta) {
