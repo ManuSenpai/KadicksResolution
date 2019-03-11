@@ -3,6 +3,7 @@ import Laser from '../GameObjects/laser.js';
 import LaserTrap from '../GameObjects/lasertrap.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
 import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
+import Boss1 from '../GameObjects/Enemies/boss1.js';
 
 const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 },
 { x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 }];
@@ -13,8 +14,11 @@ const LASER_VALUES = [
     { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
 ];
 
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1000, damage: 35, speed: 0, score: 5000 }
+
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
+var boss;                       // Boss
 var lasers;                     // Pool of bullets shot by the player
 var enemyLasers;                // Pool of bullets shot by enemiess
 var laserTraps = [];            // Laser traps at stage
@@ -42,6 +46,10 @@ var healthBarBg;
 var armorIcon;
 var armorBar;
 var armorBarBg;
+var bossLifeBarBg;
+var bossLifeBar;
+var bossLifeBarGr;
+var bossShieldGr;
 var playerStats;
 var playerIsHit = false;
 var recoverArmor;               // Event that will recover armor if armor < max armor.
@@ -75,6 +83,13 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
+function hitShield() {
+    laser.setVisible(false);
+    laser.setActive(false);
+    laser.destroy();
+    lasers.remove(laser);
+}
+
 function meleeHit(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -82,18 +97,18 @@ function meleeHit(player, enemy) {
     if (playerStats.ARMOR > 0) {
         playerStats.ARMOR = (playerStats.ARMOR - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;
         armorBar.width -= enemy.damage * 2;
-        if (armorBar.width < 0 ) { armorBar.width = 0; }
+        if (armorBar.width < 0) { armorBar.width = 0; }
     } else {
         playerStats.HEALTH = (playerStats.HEALTH - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;;
         healthBar.width -= enemy.damage * 2;
-        if (healthBar.width < 0 ) { healthBar.width = 0; }
+        if (healthBar.width < 0) { healthBar.width = 0; }
         if (playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
 
-    player.setX( player.x += enemy.body.velocity.x * 2 );
-    player.setY( player.y += enemy.body.velocity.y * 2 );
+    player.setX(player.x += enemy.body.velocity.x * 2);
+    player.setY(player.y += enemy.body.velocity.y * 2);
 }
 
 function hitTurret(enemy, laser) {
@@ -114,13 +129,20 @@ function hitTurret(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
-function hitEnemy( enemy, laser ){
+function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
     score += 20;
+    if (enemy.name === 'BOSS') {
+        // bossLifeBar.width -= laser.damage * (496 / 1000);
+        // if ( bossLifeBar.width <= 0 ) { bossLifeBar.width = 0; }
+        bossLifeBarGr.clear();
+        bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 28), boss.health * (492 / BOSS_VALUES.health), 16);
+    }
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
@@ -220,8 +242,13 @@ class Scene_play extends Phaser.Scene {
             classType: Enemy
         });
 
-        ENEMY_VALUES.forEach( (enem) => {
-            enemies.add( new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score) );
+        /* BOSS */
+        boss = new Boss1(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score)
+        boss.name = "BOSS";
+
+
+        ENEMY_VALUES.forEach((enem) => {
+            enemies.add(new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
         });
 
         /* UI */
@@ -244,6 +271,20 @@ class Scene_play extends Phaser.Scene {
         healthBar = this.add.rectangle(80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
 
+        bossLifeBarBg = this.add.rectangle((window.innerWidth / 2 - 250), (window.innerHeight - 20), 500, 24, '0x000000');
+        bossLifeBarGr = this.add.graphics();
+        bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 28), 492, 16);
+        bossLifeBar = this.add.rectangle((window.innerWidth / 2 + 246), (window.innerHeight - 18), 0, 16, '0x000000');
+        bossLifeBarBg.setOrigin(0, 0.5);
+        bossLifeBar.setOrigin(1, 0.5);
+        bossLifeBarBg.alpha = 0.4;
+        bossLifeBar.alpha = 0.4;
+
+        /* ESCUDO DE BOSS */
+        bossShieldGr = this.add.graphics();
+        this.drawShield(90, 270);
+
         /*COLLIDERS */
         this.physics.add.collider(player, enemyLasers);
         this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
@@ -252,7 +293,26 @@ class Scene_play extends Phaser.Scene {
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+        this.physics.add.collider(boss, lasers);
+        this.physics.add.overlap(boss, lasers, hitEnemy, null, this);
+        this.physics.add.collider(bossShieldGr, lasers);
+        this.physics.add.overlap(bossShieldGr, lasers, hitShield, null, this);
 
+
+    }
+
+    drawShield( shieldStart1, shieldStart2 ) {
+        bossShieldGr.clear();
+        bossShieldGr.lineStyle(10, 0xff00ff, 1);
+        bossShieldGr.beginPath();
+
+        // arc (x, y, radius, startAngle, endAngle, anticlockwise)
+        bossShieldGr.arc(window.innerWidth/2, 200, 200, Phaser.Math.DegToRad(shieldStart1), Phaser.Math.DegToRad(shieldStart1 - 90), true);
+        bossShieldGr.strokePath();
+        bossShieldGr.closePath();
+        bossShieldGr.beginPath();
+        bossShieldGr.arc(window.innerWidth/2, 200, 200, Phaser.Math.DegToRad(shieldStart2), Phaser.Math.DegToRad(shieldStart2 - 90), true);
+        bossShieldGr.strokePath();
     }
 
     update(time, delta) {
