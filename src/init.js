@@ -4,6 +4,7 @@ import Bootloader from './bootloader.js';
 import Scene_play from './scenes/scene.play.js';
 import Main_menu from './scenes/scene.mainmenu.js';
 import Settings from './scenes/scene.settings.js';
+import map_test from './scenes/scenario/maptest.js';
 
 const config = {
     width: window.innerWidth,
@@ -20,7 +21,8 @@ const config = {
         Bootloader,
         Scene_play,
         Main_menu,
-        Settings
+        Settings,
+        map_test
     ]
 }
 
