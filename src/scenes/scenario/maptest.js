@@ -48,14 +48,43 @@ class map_test extends Phaser.Scene {
 
                 // Check how many bifurcations for the node
                 if (bifurcate) {
-                    let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 3 : NUMBER_OF_ROOMS - contador;
-                    let numberOfBifurcations = Math.floor(Math.random() * maxNumberOfBifurcations) + 1;
+                    let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 2 : NUMBER_OF_ROOMS - contador;
+
+                    // let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 3 : NUMBER_OF_ROOMS - contador;
+                    let numberOfBifurcations = currentNode.isStart ? this.getRandomNumber(2, 4) : Math.floor(Math.random() * maxNumberOfBifurcations) + 1;
+                    // let numberOfBifurcations = Math.floor(Math.random() * maxNumberOfBifurcations);
 
                     let availableDoors = [];
-                    if (!currentNode.left && currentNode.x != 0) availableDoors.push(scenario[currentNode.x - 1][currentNode.y]);
-                    if (!currentNode.right && currentNode.x != (SIZE_OF_SCENARIO - 1)) availableDoors.push(scenario[currentNode.x + 1][currentNode.y]);
-                    if (!currentNode.top && currentNode.y != 0) availableDoors.push(scenario[currentNode.x][currentNode.y - 1]);
-                    if (!currentNode.bottom && currentNode.y != (SIZE_OF_SCENARIO - 1)) availableDoors.push(scenario[currentNode.x][currentNode.y + 1]);
+                    if (!currentNode.left && currentNode.x != 0) {
+                        // As we want to generate corridors, we check the proximities and randomize whether we want
+                        // an adjacent room or not
+                        if (this.availableByTopLeft(currentNode) && this.availableByBotLeft(currentNode)) {
+                            availableDoors.push(scenario[currentNode.x - 1][currentNode.y]);
+                        } else {
+                            if (Math.random() >= 0.5) { availableDoors.push(scenario[currentNode.x - 1][currentNode.y]); }
+                        }
+                    };
+                    if (!currentNode.right && currentNode.x != (SIZE_OF_SCENARIO - 1)) {
+                        if (this.availableByTopRight(currentNode) && this.availableByBotRight(currentNode)) {
+                            availableDoors.push(scenario[currentNode.x + 1][currentNode.y]);
+                        } else {
+                            if (Math.random() >= 0.5) { availableDoors.push(scenario[currentNode.x + 1][currentNode.y]); }
+                        }
+                    };
+                    if (!currentNode.top && currentNode.y != 0) {
+                        if (this.availableByTopRight(currentNode) && this.availableByTopLeft(currentNode)) {
+                            availableDoors.push(scenario[currentNode.x][currentNode.y + 1]);
+                        } else {
+                            if (Math.random() >= 0.5) { availableDoors.push(scenario[currentNode.x][currentNode.y + 1]); }
+                        }
+                    };
+                    if (!currentNode.bottom && currentNode.y != (SIZE_OF_SCENARIO - 1)) {
+                        if (this.availableByBotRight(currentNode) && this.availableByBotLeft(currentNode)) {
+                            availableDoors.push(scenario[currentNode.x][currentNode.y - 1]);
+                        } else {
+                            if (Math.random() >= 0.5) { availableDoors.push(scenario[currentNode.x][currentNode.y - 1]); }
+                        }
+                    };
 
                     if (numberOfBifurcations >= availableDoors.length) {
                         availableDoors.forEach((door) => {
@@ -64,14 +93,16 @@ class map_test extends Phaser.Scene {
                             contador++;
                         });
                     } else {
-                        for (let i = 0; i < numberOfBifurcations; i++) {
+                        while (numberOfBifurcations > 0) {
                             let doorIndex = Math.floor(Math.random() * numberOfBifurcations);
                             let door = availableDoors[doorIndex];
-                            this.pickDoor(door, currentNode);
-                            dungeon.push(door);
-                            numberOfBifurcations--;
-                            contador++;
-                            availableDoors.splice(doorIndex, 1);
+                            if (door && currentNode) {
+                                this.pickDoor(door, currentNode);
+                                dungeon.push(door);
+                                numberOfBifurcations--;
+                                contador++;
+                                availableDoors.splice(doorIndex, 1);
+                            }
                         }
                     }
                 }
@@ -83,16 +114,67 @@ class map_test extends Phaser.Scene {
 
         var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
+        var iprueba = 3;
+        var jprueba = 3;
+        var botdoor = new Phaser.Geom.Line( 80, 110, 90, 110);
+        var leftdoor = new Phaser.Geom.Line( 60, 80, 60, 90);
+        var rightdoor = new Phaser.Geom.Line( 110, 80, 110, 90); 
+
         for (var i = 0; i < SIZE_OF_SCENARIO; i++) {
             for (var j = 0; j < SIZE_OF_SCENARIO; j++) {
                 if (scenario[i][j].visited) { graphics.lineStyle(5, 0xCCFCFF, 1.0); } else {
                     graphics.lineStyle(5, 0x0000aa, 1.0);
                 }
+                if (scenario[i][j].isStart) {
+                    graphics.lineStyle(5, 0xff0000, 1.0);
+                }
                 rect.setTo((i + 1) * 60, (j + 1) * 60, 50, 50);
                 graphics.strokeRectShape(rect);
+                this.drawDoors( scenario[i][j] );
             }
         }
         console.log(scenario);
+    }
+
+    drawDoors(node) {
+        var doorGraphics = this.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
+        if (node.top) {
+            const topDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 80, ( node.y * 60 ) + 60, ( node.x * 60 ) + 90, ( node.y * 60 ) + 60);
+            doorGraphics.strokeLineShape(topDoor);
+        }
+        if (node.bottom) {
+            const botDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 80, ( node.y * 60 ) + 110, ( node.x * 60 ) + 90, ( node.y * 60 ) + 110);
+            doorGraphics.strokeLineShape(botDoor);
+        }
+        if (node.left) {
+            const leftDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 60, ( node.y * 60 ) + 80, ( node.x * 60 ) + 60, ( node.y * 60 ) + 90);
+            doorGraphics.strokeLineShape(leftDoor);
+        }
+        if (node.right) {
+            const rightDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 110, ( node.y * 60 ) + 80, ( node.x * 60 ) + 110, ( node.y * 60 ) + 90);
+            doorGraphics.strokeLineShape(rightDoor);
+        }
+
+    }
+    availableByBotLeft(currentNode) {
+        if (currentNode.y === SIZE_OF_SCENARIO - 1) { return true; } else {
+            return (currentNode.x === 0 || currentNode.y === 0) ? true : !scenario[currentNode.x - 1][currentNode.y - 1].visited;
+        }
+    }
+    availableByTopLeft(currentNode) {
+        if (currentNode.y === 0) { return true; } else {
+            return (currentNode.x === 0 || currentNode.y === (SIZE_OF_SCENARIO - 1)) ? true : !scenario[currentNode.x - 1][currentNode.y + 1].visited;
+        }
+    }
+    availableByTopRight(currentNode) {
+        if (currentNode.y === 0) { return true; } else {
+            return (currentNode.x === (SIZE_OF_SCENARIO - 1) || currentNode.y === (SIZE_OF_SCENARIO - 1)) ? true : !scenario[currentNode.x + 1][currentNode.y + 1].visited;
+        }
+    }
+    availableByBotRight(currentNode) {
+        if (currentNode.y === SIZE_OF_SCENARIO - 1) { return true; } else {
+            return (currentNode.x === (SIZE_OF_SCENARIO - 1) || currentNode.y === 0) ? true : !scenario[currentNode.x + 1][currentNode.y - 1].visited;
+        }
     }
 
     getRandomNumber(min, max) {
