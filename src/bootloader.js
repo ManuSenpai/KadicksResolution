@@ -35,7 +35,8 @@ class Bootloader extends Phaser.Scene {
         score = 0;
         this.load.on("complete", () => {
             // this.scene.start("Scene_play", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
+            // this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
+            this.scene.start("map_test");
         })
         /* Image loading */
         this.load.image('player', "./assets/player.png");
