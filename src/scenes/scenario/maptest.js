@@ -3,6 +3,7 @@ const SIZE_OF_SCENARIO = 10;    // Tamaño de escenario en bloques
 
 var scenario;
 var dungeon;
+var level;
 var contador;
 var bifurcate;
 class map_test extends Phaser.Scene {
@@ -14,7 +15,8 @@ class map_test extends Phaser.Scene {
 
     create() {
         scenario = [];  // Full nxn map
-        dungeon = [];   // The actual dungeon
+        dungeon = [];   // The queue we will be using to create the level.
+        level = [];     // The level
         contador = 0;
         for (let i = 0; i < SIZE_OF_SCENARIO; i++) {
             let row = [];
@@ -36,6 +38,7 @@ class map_test extends Phaser.Scene {
         while (dungeon.length > 0) {
             // We take the node outside of the queue
             let currentNode = dungeon.shift();
+            level.push(currentNode)
             currentNode.visited = true;
 
             if (contador < NUMBER_OF_ROOMS) {
@@ -114,12 +117,8 @@ class map_test extends Phaser.Scene {
 
         var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
-        var iprueba = 3;
-        var jprueba = 3;
-        var botdoor = new Phaser.Geom.Line( 80, 110, 90, 110);
-        var leftdoor = new Phaser.Geom.Line( 60, 80, 60, 90);
-        var rightdoor = new Phaser.Geom.Line( 110, 80, 110, 90); 
-
+        this.setKeyRooms();
+        this.createBossChamber();
         for (var i = 0; i < SIZE_OF_SCENARIO; i++) {
             for (var j = 0; j < SIZE_OF_SCENARIO; j++) {
                 if (scenario[i][j].visited) { graphics.lineStyle(5, 0xCCFCFF, 1.0); } else {
@@ -128,30 +127,88 @@ class map_test extends Phaser.Scene {
                 if (scenario[i][j].isStart) {
                     graphics.lineStyle(5, 0xff0000, 1.0);
                 }
+                if (scenario[i][j].isKey) {
+                    graphics.lineStyle(5, 0x00ff00, 1.0);
+                }
+                if (scenario[i][j].isBoss) {
+                    graphics.lineStyle(5, 0xffff00, 1.0);
+                }
                 rect.setTo((i + 1) * 60, (j + 1) * 60, 50, 50);
                 graphics.strokeRectShape(rect);
-                this.drawDoors( scenario[i][j] );
+                this.drawDoors(scenario[i][j]);
             }
         }
-        console.log(scenario);
+        console.log(dungeon);
+    }
+
+    setKeyRooms() {
+        for (let i = 0; i < 3; i++) {
+            let roomIndex = this.getRandomNumber(i * level.length / 3, ((i + 1) * level.length / 3) - 1);
+            level[roomIndex].isKey = true;
+        }
+    }
+
+
+    createBossChamber() {
+        // The last chamber created will have the boss chamber attached;
+        let bossChamberCreated = false;
+        let index = level.length - 1;
+        while (!bossChamberCreated && index > 1) {
+            let room = level[index];
+            if (!room.top && room.y > 0) {
+                if (!scenario[room.x][room.y - 1].visited) {
+                    scenario[room.x][room.y - 1].bottom = true;
+                    room.top = true;
+                    this.setBossRoom(scenario[room.x][room.y - 1]);
+                    bossChamberCreated = true;
+                } else { index--; }
+            } else if (!room.bottom && room.y < SIZE_OF_SCENARIO - 1) {
+                if (!scenario[room.x][room.y + 1].visited) {
+                    scenario[room.x][room.y + 1].top = true;
+                    room.bottom = true;
+                    this.setBossRoom(scenario[room.x][room.y + 1]);
+                    bossChamberCreated = true;
+                } else { index--; }
+            } else if (!room.left && room.x > 0) {
+                if (!scenario[room.x - 1][room.y].visited) {
+                    scenario[room.x - 1][room.y].right = true;
+                    room.left = true;
+                    this.setBossRoom(scenario[room.x - 1][room.y]);
+                    bossChamberCreated = true;
+                } else { index--; }
+            } else if (!room.right && room.x < SIZE_OF_SCENARIO - 1) {
+                if (!scenario[room.x + 1][room.y].visited) {
+                    scenario[room.x + 1][room.y].left = true;
+                    room.right = true;
+                    this.setBossRoom(scenario[room.x + 1][room.y]);
+                    bossChamberCreated = true;
+                } else { index--; }
+            } else { index--; }
+        }
+    }
+
+    setBossRoom(room) {
+        level.push(room);
+        room.visited = true;
+        room.isBoss = true;
     }
 
     drawDoors(node) {
         var doorGraphics = this.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
         if (node.top) {
-            const topDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 80, ( node.y * 60 ) + 60, ( node.x * 60 ) + 90, ( node.y * 60 ) + 60);
+            const topDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 60, (node.x * 60) + 90, (node.y * 60) + 60);
             doorGraphics.strokeLineShape(topDoor);
         }
         if (node.bottom) {
-            const botDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 80, ( node.y * 60 ) + 110, ( node.x * 60 ) + 90, ( node.y * 60 ) + 110);
+            const botDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 110, (node.x * 60) + 90, (node.y * 60) + 110);
             doorGraphics.strokeLineShape(botDoor);
         }
         if (node.left) {
-            const leftDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 60, ( node.y * 60 ) + 80, ( node.x * 60 ) + 60, ( node.y * 60 ) + 90);
+            const leftDoor = new Phaser.Geom.Line((node.x * 60) + 60, (node.y * 60) + 80, (node.x * 60) + 60, (node.y * 60) + 90);
             doorGraphics.strokeLineShape(leftDoor);
         }
         if (node.right) {
-            const rightDoor = new Phaser.Geom.Line( ( node.x * 60 ) + 110, ( node.y * 60 ) + 80, ( node.x * 60 ) + 110, ( node.y * 60 ) + 90);
+            const rightDoor = new Phaser.Geom.Line((node.x * 60) + 110, (node.y * 60) + 80, (node.x * 60) + 110, (node.y * 60) + 90);
             doorGraphics.strokeLineShape(rightDoor);
         }
 
