@@ -5,6 +5,8 @@ import Scene_play from './scenes/scene.play.js';
 import Main_menu from './scenes/scene.mainmenu.js';
 import Settings from './scenes/scene.settings.js';
 import map_test from './scenes/scenario/maptest.js';
+import Level1_1 from './scenes/scene.level1_1.js';
+import Level1 from './scenes/scene.level1.js';
 
 const config = {
     width: window.innerWidth,
@@ -22,7 +24,9 @@ const config = {
         Scene_play,
         Main_menu,
         Settings,
-        map_test
+        map_test,
+        Level1_1,
+        Level1
     ]
 }
 

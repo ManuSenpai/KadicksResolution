@@ -1,6 +1,9 @@
 const NUMBER_OF_ROOMS = 20;     // Número de habitaciones
 const SIZE_OF_SCENARIO = 10;    // Tamaño de escenario en bloques 
 
+var score;
+var configScoreText;
+var playerStats;
 var scenario;
 var dungeon;
 var level;
@@ -11,6 +14,12 @@ class map_test extends Phaser.Scene {
     constructor() {
         super({ key: "map_test" });
 
+    }
+
+    init(data) {
+        score = data.score;
+        configScoreText = data.configScoreText;
+        playerStats = data.playerStats;
     }
 
     create() {
@@ -117,6 +126,7 @@ class map_test extends Phaser.Scene {
 
         var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
+        level[0].isClear = true;
         this.setKeyRooms();
         this.createBossChamber();
         for (var i = 0; i < SIZE_OF_SCENARIO; i++) {
@@ -138,7 +148,8 @@ class map_test extends Phaser.Scene {
                 this.drawDoors(scenario[i][j]);
             }
         }
-        console.log(dungeon);
+        this.scene.start("Level1", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+        currentPosition: level[0]});
     }
 
     setKeyRooms() {
@@ -268,6 +279,7 @@ class Scenario_Node {
     isStart = false;
     isKey = false;
     isBoss = false;
+    isClear = false;
     x = 0;
     y = 0;
     constructor(top, right, bottom, left, visited, isStart, isKey, isBoss, x, y) {

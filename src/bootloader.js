@@ -35,8 +35,8 @@ class Bootloader extends Phaser.Scene {
         score = 0;
         this.load.on("complete", () => {
             // this.scene.start("Scene_play", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            // this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            this.scene.start("map_test");
+            this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
+            // this.scene.start("map_test");
         })
         /* Image loading */
         this.load.image('player', "./assets/player.png");
@@ -48,6 +48,14 @@ class Bootloader extends Phaser.Scene {
 
         /* Bosses */
         this.load.image('boss1', "./assets/bossdemo1.png");
+
+        /* Doors */
+        this.load.image('leftdoorframe', "./assets/leftdoorframe.png");
+        this.load.image('leftdoor', "./assets/leftdoor.png");
+        this.load.image('leftdooropen', "./assets/leftdooropen.png");
+        this.load.image('rightdoorframe', "./assets/rightdoorframe.png");
+        this.load.image('rightdoor', "./assets/rightdoor.png");
+        this.load.image('rightdooropen', "./assets/rightdooropen.png");
 
         /* Scenario 1 */
         this.load.image('topleft1', "./assets/topleft1.png");
