@@ -61,10 +61,7 @@ class map_test extends Phaser.Scene {
                 // Check how many bifurcations for the node
                 if (bifurcate) {
                     let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 2 : NUMBER_OF_ROOMS - contador;
-
-                    // let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 3 : NUMBER_OF_ROOMS - contador;
                     let numberOfBifurcations = currentNode.isStart ? this.getRandomNumber(2, 4) : Math.floor(Math.random() * maxNumberOfBifurcations) + 1;
-                    // let numberOfBifurcations = Math.floor(Math.random() * maxNumberOfBifurcations);
 
                     let availableDoors = [];
                     if (!currentNode.left && currentNode.x != 0) {

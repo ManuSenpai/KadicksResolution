@@ -19,20 +19,28 @@ var floor;
 // DOORS
 var topleftdoorframe;
 var topleftdooropen;
+var topleftdoor;
 var toprightdoorframe;
 var toprightdooropen;
+var toprightdoor;
 var leftleftdoorframe;
 var leftleftdooropen;
+var leftleftdoor;
 var leftrightdoorframe;
 var leftrightdooropen;
+var leftrightdoor;
 var rightleftdoorframe;
 var rightleftdooropen;
+var rightleftdoor;
 var rightrightdoorframe;
 var rightrightdooropen;
+var rightrightdoor;
 var botleftdoorframe;
 var botleftdooropen;
+var botleftdoor;
 var botrightdoorframe;
 var botrightdooropen;
+var botrightdoor;
 
 // UI
 var healthIcon;
@@ -140,38 +148,64 @@ class Level1 extends Phaser.Scene {
 
         // DOORS
         if (currentPosition.top) {
-            topleftdooropen = this.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
+            if (currentPosition.isClear) {
+                topleftdooropen = this.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
+                toprightdooropen = this.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+            } else {
+                topleftdoor = this.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdoor');
+                toprightdoor = this.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdoor');
+            }
             topleftdoorframe = this.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdoorframe');
-            toprightdooropen = this.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
             toprightdoorframe = this.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdoorframe');
         }
         if (currentPosition.left) {
-            leftleftdooropen = this.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
-            leftleftdooropen.angle = 270;
+            if (currentPosition.isClear) {
+                leftrightdooropen = this.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
+                leftrightdooropen.angle = 270;
+                leftleftdooropen = this.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
+                leftleftdooropen.angle = 270;
+            } else {
+                leftrightdoor = this.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdoor');
+                leftrightdoor.angle = 270;
+                leftleftdoor = this.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdoor');
+                leftleftdoor.angle = 270;
+            }
             leftleftdoorframe = this.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdoorframe');
             leftleftdoorframe.angle = 270;
-            leftrightdooropen = this.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
-            leftrightdooropen.angle = 270;
             leftrightdoorframe = this.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdoorframe');
             leftrightdoorframe.angle = 270;
         }
         if (currentPosition.right) {
-            rightleftdooropen = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
-            rightleftdooropen.angle = 90;
+            if (currentPosition.isClear) {
+                rightleftdooropen = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
+                rightleftdooropen.angle = 90;
+                rightrightdooropen = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
+                rightrightdooropen.angle = 90;
+            } else {
+                rightleftdoor = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdoor');
+                rightleftdoor.angle = 90;
+                rightrightdoor = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdoor');
+                rightrightdoor.angle = 90;
+            }
             rightleftdoorframe = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdoorframe');
             rightleftdoorframe.angle = 90;
-            rightrightdooropen = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
-            rightrightdooropen.angle = 90;
             rightrightdoorframe = this.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdoorframe');
             rightrightdoorframe.angle = 90;
         }
         if (currentPosition.bottom) {
-            botleftdooropen = this.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
-            botleftdooropen.angle = 180;
+            if (currentPosition.isClear) {
+                botleftdooropen = this.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
+                botleftdooropen.angle = 180;
+                botrightdooropen = this.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
+                botrightdooropen.angle = 180;
+            } else {
+                botleftdoor = this.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdoor');
+                botleftdoor.angle = 180;
+                botrightdoor = this.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdoor');
+                botrightdoor.angle = 180;
+            }
             botleftdoorframe = this.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdoorframe');
             botleftdoorframe.angle = 180;
-            botrightdooropen = this.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
-            botrightdooropen.angle = 180;
             botrightdoorframe = this.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdoorframe');
             botrightdoorframe.angle = 180;
         }
