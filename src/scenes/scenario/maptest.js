@@ -9,11 +9,11 @@ var dungeon;
 var level;
 var contador;
 var bifurcate;
+var entrance;
 class map_test extends Phaser.Scene {
     nodeList;
     constructor() {
         super({ key: "map_test" });
-
     }
 
     init(data) {
@@ -119,8 +119,6 @@ class map_test extends Phaser.Scene {
 
         }
 
-        console.log(scenario[startingX][startingY]);
-
         var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
         level[0].isClear = true;
@@ -146,7 +144,7 @@ class map_test extends Phaser.Scene {
             }
         }
         this.scene.start("Level1", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: level[0]});
+        currentPosition: level[0], entrance: 'center'});
     }
 
     setKeyRooms() {
