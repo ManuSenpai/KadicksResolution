@@ -81,25 +81,29 @@ function startRecovery() {
 }
 
 function goDown() {
-    this.scene.start("Level1", {
+    const levelToGo = scenario[currentPosition.x][currentPosition.y + 1].isClear ? 'Level1' : 'Level1_1';
+    this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x][currentPosition.y + 1], entrance: 'down'
     });
 }
 function goUp() {
-    this.scene.start("Level1", {
+    const levelToGo = scenario[currentPosition.x][currentPosition.y - 1].isClear ? 'Level1' : 'Level1_1';
+    this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x][currentPosition.y - 1], entrance: 'up'
     });
 }
 function goLeft() {
-    this.scene.start("Level1", {
+    const levelToGo = scenario[currentPosition.x - 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x - 1][currentPosition.y], entrance: 'left'
     });
 }
 function goRight() {
-    this.scene.start("Level1", {
+    const levelToGo = scenario[currentPosition.x + 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x + 1][currentPosition.y], entrance: 'right'
     });
