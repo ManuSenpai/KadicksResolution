@@ -25,6 +25,13 @@ class Hostile extends Phaser.Scene {
         this.score = score;
     }
 
+    drawKeys( nKeys ) {
+        for( let i = 0; i < nKeys; i++ ) {
+            let currentKey = this.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+            currentKey.setScale(0.1);
+        }
+    } 
+
     createDoors( context, currentPosition ) {
         if (currentPosition.top) {
             if (currentPosition.isClear) {

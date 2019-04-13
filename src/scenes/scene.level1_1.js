@@ -52,6 +52,9 @@ var scenario;
 var currentPosition;
 var entrance;
 
+// ITEMS
+var keycard;
+
 function hitPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -104,7 +107,7 @@ function hitEnemy(enemy, laser) {
         enemy.setActive(false);
         enemy.setVisible(false);
         enemy.destroy();
-        if ( enemies.children.entries.length === 0 ) {
+        if (enemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
         score += enemy.score;
@@ -113,10 +116,13 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
-function clearArea( ) {
+function clearArea() {
     currentPosition.isClear = true;
-    this.createDoors( this, currentPosition );
-    
+    if ( currentPosition.isKey ) {
+        spawnKey(this);
+    }
+    this.createDoors(this, currentPosition);
+
 }
 
 function initializeText() {
@@ -137,6 +143,21 @@ function startRecovery() {
     recoverArmor.paused = false;
 }
 
+function spawnKey(context) {
+    keycard = context.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'keycard');
+    keycard.setOrigin(0.5, 0.5);
+    keycard.setScale(0.125);
+    context.physics.add.overlap(player, keycard, pickKey, null, context);
+}
+
+function pickKey() { 
+    currentPosition.keyIsTaken = true;
+    keycard.destroy();
+    playerStats.KEYCODES ++;
+    this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
+    this.drawKeys( playerStats.KEYCODES );
+}
+
 class Level1_1 extends Hostile {
     constructor() {
         super('Level1_1');
@@ -150,7 +171,9 @@ class Level1_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
-
+        if ( currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken ) {
+            spawnKey(this);
+        }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(
@@ -182,7 +205,7 @@ class Level1_1 extends Hostile {
         botright.setScale(2);
 
         /* DOORS */
-        this.createDoors( this, currentPosition );
+        this.createDoors(this, currentPosition);
 
         /* ### PLAYER ### */
         if (entrance === 'center') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player'); }
@@ -196,6 +219,7 @@ class Level1_1 extends Hostile {
         player.setCollideWorldBounds(true);
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
+        this.drawKeys( playerStats.KEYCODES );
         /* LASERS */
         lasers = this.physics.add.group({
             classType: Laser
@@ -216,21 +240,21 @@ class Level1_1 extends Hostile {
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 30), 'armorIcon');
+        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
         armorIcon.displayWidth = 12;
         armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');
+        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 30), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
         armorBar.setOrigin(0, 0.5);
-        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 14), 'healthIcon');
+        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
         healthIcon.displayWidth = 12;
         healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle(80, (window.innerHeight - 14), playerStats.MAX_HEALTH * 2, 12, '0x000000');
+        healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), playerStats.MAX_HEALTH * 2, 12, '0x000000');
         healthBarBg.setOrigin(0, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
+        healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
 
         /*COLLIDERS */

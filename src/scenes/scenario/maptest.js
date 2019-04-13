@@ -272,12 +272,13 @@ class Scenario_Node {
     left = false;
     visited = false;
     isStart = false;
-    isKey = false;
+    isKey = false; // TODO: Devolver a false
     isBoss = false;
     isClear = false;
+    keyIsTaken = false;
     x = 0;
     y = 0;
-    constructor(top, right, bottom, left, visited, isStart, isKey, isBoss, x, y) {
+    constructor(top, right, bottom, left, visited, isStart, isKey, isBoss, x, y, keyIsTaken) {
         this.top = top;
         this.right = right;
         this.bottom = bottom;
@@ -288,6 +289,7 @@ class Scenario_Node {
         this.isBoss = isBoss;
         this.x = x;
         this.y = y;
+        this.keyIsTaken = keyIsTaken;
     };
 }
 

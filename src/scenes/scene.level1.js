@@ -62,6 +62,9 @@ var scenario;
 var currentPosition;
 var entrance;                   // From where the player enters.
 
+// ITEMS
+var keycard;
+
 function initializeText() {
     scoreText.setText('SCORE: ' + score);
 }
@@ -174,6 +177,27 @@ function createDoors(context) {
     }
 }
 
+function spawnKey(context) {
+    keycard = context.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'keycard');
+    keycard.setOrigin(0.5, 0.5);
+    keycard.setScale(0.125);
+    context.physics.add.overlap(player, keycard, pickKey, null, context);
+}
+
+function pickKey() { 
+    currentPosition.keyIsTaken = true;
+    keycard.destroy();
+    playerStats.KEYCODES ++;
+    drawKeys( this, playerStats.KEYCODES );
+}
+
+function drawKeys( context, nKeys ) {
+    for( let i = 0; i < nKeys; i++ ) {
+        let currentKey = context.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+        currentKey.setScale(0.1);
+    }
+} 
+
 class Level1 extends Phaser.Scene {
     constructor() {
         super({ key: "Level1" });
@@ -239,22 +263,26 @@ class Level1 extends Phaser.Scene {
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 30), 'armorIcon');
+        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
         armorIcon.displayWidth = 12;
         armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');
+        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 30), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
         armorBar.setOrigin(0, 0.5);
-        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 14), 'healthIcon');
+        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
         healthIcon.displayWidth = 12;
         healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle(80, (window.innerHeight - 14), playerStats.MAX_HEALTH * 2, 12, '0x000000');
+        healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), playerStats.MAX_HEALTH * 2, 12, '0x000000');
         healthBarBg.setOrigin(0, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(80, (window.innerHeight - 14), playerStats.HEALTH * 2, 12, '0xffffff');
+        healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
+
+        if ( currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken ) {
+            spawnKey(this);
+        }
 
         // this.physics.add.collider(player, topleftdooropen);
         this.physics.add.overlap(player, topleftdooropen, goUp, null, this);
@@ -272,6 +300,8 @@ class Level1 extends Phaser.Scene {
         this.physics.add.overlap(player, botleftdooropen, goDown, null, this);
         // this.physics.add.collider(player, botrightdooropen);
         this.physics.add.overlap(player, botrightdooropen, goDown, null, this);
+
+        drawKeys(this, playerStats.KEYCODES);
     }
 
     update(time, delta) {
