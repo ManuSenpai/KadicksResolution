@@ -181,7 +181,8 @@ class Level1_1 extends Hostile {
                 up: Phaser.Input.Keyboard.KeyCodes.W,
                 down: Phaser.Input.Keyboard.KeyCodes.S,
                 left: Phaser.Input.Keyboard.KeyCodes.A,
-                right: Phaser.Input.Keyboard.KeyCodes.D
+                right: Phaser.Input.Keyboard.KeyCodes.D,
+                map: Phaser.Input.Keyboard.KeyCodes.TAB
             });
 
         /* ### SCENARIO: BASIC ### */
@@ -263,6 +264,7 @@ class Level1_1 extends Hostile {
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+        this.drawMap(this);
 
     }
 
@@ -309,6 +311,12 @@ class Level1_1 extends Hostile {
         }
         if (cursors.down.isUp) {
             if (player.body.velocity.y > 0) { player.setVelocityY(0); }
+        }
+        if (cursors.map.isUp) {
+            this.hideMap();
+        }
+        if (cursors.map.isDown) {
+            this.showMap();
         }
 
         if (player.x < 64) { player.x = 64; }

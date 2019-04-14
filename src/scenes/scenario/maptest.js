@@ -124,25 +124,25 @@ class map_test extends Phaser.Scene {
         level[0].isClear = true;
         this.setKeyRooms();
         this.createBossChamber();
-        for (var i = 0; i < SIZE_OF_SCENARIO; i++) {
-            for (var j = 0; j < SIZE_OF_SCENARIO; j++) {
-                if (scenario[i][j].visited) { graphics.lineStyle(5, 0xCCFCFF, 1.0); } else {
-                    graphics.lineStyle(5, 0x0000aa, 1.0);
-                }
-                if (scenario[i][j].isStart) {
-                    graphics.lineStyle(5, 0xff0000, 1.0);
-                }
-                if (scenario[i][j].isKey) {
-                    graphics.lineStyle(5, 0x00ff00, 1.0);
-                }
-                if (scenario[i][j].isBoss) {
-                    graphics.lineStyle(5, 0xffff00, 1.0);
-                }
-                rect.setTo((i + 1) * 60, (j + 1) * 60, 50, 50);
-                graphics.strokeRectShape(rect);
-                this.drawDoors(scenario[i][j]);
-            }
-        }
+        // for (var i = 0; i < SIZE_OF_SCENARIO; i++) {
+        //     for (var j = 0; j < SIZE_OF_SCENARIO; j++) {
+        //         if (scenario[i][j].visited) { graphics.lineStyle(5, 0xCCFCFF, 1.0); } else {
+        //             graphics.lineStyle(5, 0x0000aa, 1.0);
+        //         }
+        //         if (scenario[i][j].isStart) {
+        //             graphics.lineStyle(5, 0xff0000, 1.0);
+        //         }
+        //         if (scenario[i][j].isKey) {
+        //             graphics.lineStyle(5, 0x00ff00, 1.0);
+        //         }
+        //         if (scenario[i][j].isBoss) {
+        //             graphics.lineStyle(5, 0xffff00, 1.0);
+        //         }
+        //         rect.setTo((i + 1) * 60, (j + 1) * 60, 50, 50);
+        //         graphics.strokeRectShape(rect);
+        //         this.drawDoors(scenario[i][j]);
+        //     }
+        // }
         this.scene.start("Level1", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: level[0], entrance: 'center'});
     }

@@ -49,6 +49,8 @@ var healthBarBg;
 var armorIcon;
 var armorBar;
 var armorBarBg;
+var mapGraphics;
+var doorGraphics;
 
 var playerStats;
 
@@ -110,6 +112,53 @@ function goRight() {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x + 1][currentPosition.y], entrance: 'right'
     });
+}
+
+function drawMap(context) {
+    mapGraphics = context.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
+    doorGraphics = context.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
+    var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
+    for (var i = 0; i < scenario.length; i++) {
+        for (var j = 0; j < scenario[0].length; j++) {
+            if (scenario[i][j].isClear) { mapGraphics.lineStyle(5, 0xCCFCFF, 1.0); } else {
+                mapGraphics.lineStyle(5, 0x0000aa, 1.0);
+            }
+            if (scenario[i][j].isKey && !scenario[i][j].keyIsTaken) {
+                mapGraphics.lineStyle(5, 0x00ff00, 1.0);
+            }
+            if (scenario[i][j].isBoss) {
+                mapGraphics.lineStyle(5, 0xffff00, 1.0);
+            }
+            if (i === currentPosition.x && j === currentPosition.y ){
+                mapGraphics.lineStyle(5, 0xff0000, 1.0);
+            }
+            if (scenario[i][j].visited) {
+                rect.setTo((i + 1) * 60, (j + 1) * 60, 50, 50);
+                mapGraphics.strokeRectShape(rect);
+                drawDoors(context, scenario[i][j]);
+            }
+        }
+    }
+}
+
+function drawDoors(context, node) {
+    if (node.top) {
+        const topDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 60, (node.x * 60) + 90, (node.y * 60) + 60);
+        doorGraphics.strokeLineShape(topDoor);
+    }
+    if (node.bottom) {
+        const botDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 110, (node.x * 60) + 90, (node.y * 60) + 110);
+        doorGraphics.strokeLineShape(botDoor);
+    }
+    if (node.left) {
+        const leftDoor = new Phaser.Geom.Line((node.x * 60) + 60, (node.y * 60) + 80, (node.x * 60) + 60, (node.y * 60) + 90);
+        doorGraphics.strokeLineShape(leftDoor);
+    }
+    if (node.right) {
+        const rightDoor = new Phaser.Geom.Line((node.x * 60) + 110, (node.y * 60) + 80, (node.x * 60) + 110, (node.y * 60) + 90);
+        doorGraphics.strokeLineShape(rightDoor);
+    }
+
 }
 
 function createDoors(context) {
@@ -178,25 +227,25 @@ function createDoors(context) {
 }
 
 function spawnKey(context) {
-    keycard = context.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'keycard');
+    keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
     keycard.setScale(0.125);
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
-function pickKey() { 
+function pickKey() {
     currentPosition.keyIsTaken = true;
     keycard.destroy();
-    playerStats.KEYCODES ++;
-    drawKeys( this, playerStats.KEYCODES );
+    playerStats.KEYCODES++;
+    drawKeys(this, playerStats.KEYCODES);
 }
 
-function drawKeys( context, nKeys ) {
-    for( let i = 0; i < nKeys; i++ ) {
+function drawKeys(context, nKeys) {
+    for (let i = 0; i < nKeys; i++) {
         let currentKey = context.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
         currentKey.setScale(0.1);
     }
-} 
+}
 
 class Level1 extends Phaser.Scene {
     constructor() {
@@ -218,7 +267,8 @@ class Level1 extends Phaser.Scene {
                 up: Phaser.Input.Keyboard.KeyCodes.W,
                 down: Phaser.Input.Keyboard.KeyCodes.S,
                 left: Phaser.Input.Keyboard.KeyCodes.A,
-                right: Phaser.Input.Keyboard.KeyCodes.D
+                right: Phaser.Input.Keyboard.KeyCodes.D,
+                map: Phaser.Input.Keyboard.KeyCodes.TAB
             });
 
         /* ### SCENARIO: BASIC ### */
@@ -280,7 +330,7 @@ class Level1 extends Phaser.Scene {
         healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
 
-        if ( currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken ) {
+        if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }
 
@@ -302,6 +352,10 @@ class Level1 extends Phaser.Scene {
         this.physics.add.overlap(player, botrightdooropen, goDown, null, this);
 
         drawKeys(this, playerStats.KEYCODES);
+
+        drawMap(this);
+        doorGraphics.setVisible(false);
+        mapGraphics.setVisible(false);
     }
 
     update(time, delta) {
@@ -343,6 +397,16 @@ class Level1 extends Phaser.Scene {
         }
         if (cursors.down.isUp) {
             if (player.body.velocity.y > 0) { player.setVelocityY(0); }
+        }
+        if (cursors.map.isDown) {
+            doorGraphics.setVisible(true);
+            mapGraphics.setVisible(true);
+        }
+        if (cursors.map.isUp) {
+            if (doorGraphics.visible && mapGraphics.visible) {
+                doorGraphics.setVisible(false);
+                mapGraphics.setVisible(false);
+            }
         }
 
         if (player.x < 64) { player.x = 64; }
