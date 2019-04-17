@@ -264,7 +264,7 @@ function startRecovery() {
 
 class Level1_1 extends Hostile {
     constructor() {
-        super({ key: "Level1_1" });
+        super({ key: "plantilla" });
     }
     init(data) {
         score = data.score;

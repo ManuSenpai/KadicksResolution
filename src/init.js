@@ -7,6 +7,7 @@ import Settings from './scenes/scene.settings.js';
 import map_test from './scenes/scenario/maptest.js';
 import Level1_1 from './scenes/scene.level1_1.js';
 import Level1 from './scenes/scene.level1.js';
+import Level1_B from './scenes/scene.level1_B.js';
 
 const config = {
     width: window.innerWidth,
@@ -26,6 +27,7 @@ const config = {
         Settings,
         map_test,
         Level1_1,
+        Level1_B,
         Level1
     ]
 }

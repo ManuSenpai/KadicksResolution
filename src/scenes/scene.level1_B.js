@@ -1,26 +1,14 @@
 import Laser from '../GameObjects/laser.js';
-import LaserTrap from '../GameObjects/lasertrap.js';
-import Enemy from '../GameObjects/Enemies/enemy.js';
-import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 import Hostile from './scene.hostile.js';
+import Boss1 from '../GameObjects/Enemies/boss1.js';
 
-const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 },
-{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 }];
-
-const LASER_VALUES = [
-    { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
-    { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
-];
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1000, damage: 35, speed: 0, score: 5000 }
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
+var boss;
 var lasers;                     // Pool of bullets shot by the player
-var enemyLasers;                // Pool of bullets shot by enemiess
-var laserTraps = [];            // Laser traps at stage
-var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
-
-var enemies;                    // Enemies on scene
 
 // SCENARIO
 var topleft;
@@ -45,12 +33,19 @@ var playerIsHit = false;
 var recoverArmor;               // Event that will recover armor if armor < max armor.
 var timerUntilRecovery;
 
+var bossLifeBarBg;
+var bossLifeBar;
+var bossLifeBarGr;
+var bossShieldGr;
+
 var score;
 var scoreText;
 var configScoreText;
 var scenario;
 var currentPosition;
 var entrance;
+
+var startGame = false;
 
 // ITEMS
 var keycard;
@@ -75,27 +70,6 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
-function meleeHit(player, enemy) {
-    recoverArmor.paused = true;
-    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;
-        armorBar.width -= enemy.damage * 2;
-        if (armorBar.width < 0) { armorBar.width = 0; }
-    } else {
-        playerStats.HEALTH = (playerStats.HEALTH - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;;
-        healthBar.width -= enemy.damage * 2;
-        if (healthBar.width < 0) { healthBar.width = 0; }
-        if (playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
-        }
-    }
-
-    player.setX(player.x += enemy.body.velocity.x * 2);
-    player.setY(player.y += enemy.body.velocity.y * 2);
-}
-
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -103,13 +77,14 @@ function hitEnemy(enemy, laser) {
     lasers.remove(laser);
     laser.destroy();
     score += 20;
+    bossLifeBarGr.clear();
+    bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+    bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
         enemy.destroy();
-        if (enemies.children.entries.length === 0) {
-            clearArea.apply(this);
-        }
+        clearArea.apply(this);
         score += enemy.score;
         this.setScore(score);
     }
@@ -118,12 +93,6 @@ function hitEnemy(enemy, laser) {
 
 function clearArea() {
     currentPosition.isClear = true;
-    if ( currentPosition.isKey ) {
-        spawnKey(this);
-    }
-    this.createDoors(this, currentPosition);
-    this.addDoorColliders(this);
-
 }
 
 function initializeText() {
@@ -144,23 +113,7 @@ function startRecovery() {
     recoverArmor.paused = false;
 }
 
-function spawnKey(context) {
-    keycard = context.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'keycard');
-    keycard.setOrigin(0.5, 0.5);
-    keycard.setScale(0.125);
-    context.physics.add.overlap(player, keycard, pickKey, null, context);
-}
-
-function pickKey() { 
-    currentPosition.keyIsTaken = true;
-    keycard.destroy();
-    playerStats.KEYCODES ++;
-    this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-    this.drawKeys( playerStats.KEYCODES );
-    if ( playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "" ) { this.createDoors(this, currentPosition); }
-}
-
-class Level1_1 extends Hostile {
+class Level1_B extends Hostile {
     topleftdooropen;
     toprightdddooropen;
     leftleftdooropen;
@@ -171,7 +124,7 @@ class Level1_1 extends Hostile {
     botrightdooropen;
 
     constructor() {
-        super('Level1_1');
+        super('level1_B');
     }
     init(data) {
         score = data.score;
@@ -182,9 +135,6 @@ class Level1_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
-        if ( currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken ) {
-            spawnKey(this);
-        }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(
@@ -232,23 +182,14 @@ class Level1_1 extends Hostile {
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
         this.addDoorColliders(this);
-        this.drawKeys( playerStats.KEYCODES );
+
         /* LASERS */
         lasers = this.physics.add.group({
             classType: Laser
         });
-        enemyLasers = this.physics.add.group({
-            classType: Laser
-        });
 
-        /* ENEMIES */
-        enemies = this.physics.add.group({
-            classType: Enemy
-        });
-
-        ENEMY_VALUES.forEach((enem) => {
-            enemies.add(new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
-        });
+        /* NOSS */
+        boss = new Boss1(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
 
         /* UI */
         scoreText = this.make.text(configScoreText);
@@ -270,85 +211,87 @@ class Level1_1 extends Hostile {
         healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
         healthBar.setOrigin(0, 0.5);
 
+        bossLifeBarBg = this.add.rectangle((window.innerWidth / 2 - 250), (window.innerHeight - 40), 500, 24, '0x000000');
+        bossLifeBarGr = this.add.graphics();
+        bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), 492, 16);
+        bossLifeBar = this.add.rectangle((window.innerWidth / 2 + 246), (window.innerHeight - 38), 0, 16, '0x000000');
+        bossLifeBarBg.setOrigin(0, 0.5);
+        bossLifeBar.setOrigin(1, 0.5);
+        bossLifeBarBg.alpha = 0.4;
+        bossLifeBar.alpha = 0.4;
+
         /*COLLIDERS */
-        this.physics.add.collider(player, enemyLasers);
-        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
-        this.physics.add.collider(player, enemies, meleeHit, null, this);
-        this.physics.add.collider(enemies, lasers);
-        this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+        this.physics.add.collider(boss, lasers);
+        this.physics.add.overlap(boss, lasers, hitEnemy, null, this);
         this.drawMap(this);
+
+        startGame = true;
 
     }
 
     update(time, delta) {
-        if (playerIsHit) {
-            timeLastHit = time;
-            playerIsHit = false;
-        }
-        let cursor = this.input.mousePointer;
-        let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
+        if (startGame) {
+            if (playerIsHit) {
+                timeLastHit = time;
+                playerIsHit = false;
+            }
+            let cursor = this.input.mousePointer;
+            let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
 
-        this.lastFired += delta;
-        player.rotation = angle;
-        if (cursors.left.isDown) {
-            player.setVelocityX(-300);
-            // player.anims.play('left', true);
-        }
-        if (cursors.right.isDown) {
-            player.setVelocityX(300);
-            // player.anims.play('right', true);
-        }
-        if (cursors.up.isDown) {
-            player.setVelocityY(-300);
-            // player.anims.play('turn');
-        }
-        if (cursors.down.isDown) {
-            player.setVelocityY(300);
-            // player.anims.play('turn');
-        }
-        if (this.input.activePointer.isDown && time > lastFired) {
-            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
-            lasers.add(currentLaser);
-            lastFired = time + playerStats.FIRE_RATE;
-        }
-        if (cursors.left.isUp) {
-            if (player.body.velocity.x < 0) { player.setVelocityX(0); }
-        }
-        if (cursors.right.isUp) {
-            if (player.body.velocity.x > 0) { player.setVelocityX(0); }
-        }
-        if (cursors.up.isUp) {
-            if (player.body.velocity.y < 0) { player.setVelocityY(0); }
-        }
-        if (cursors.down.isUp) {
-            if (player.body.velocity.y > 0) { player.setVelocityY(0); }
-        }
-        if (cursors.map.isUp) {
-            this.hideMap();
-        }
-        if (cursors.map.isDown) {
-            this.showMap();
-        }
+            this.lastFired += delta;
+            player.rotation = angle;
+            if (cursors.left.isDown) {
+                player.setVelocityX(-300);
+                // player.anims.play('left', true);
+            }
+            if (cursors.right.isDown) {
+                player.setVelocityX(300);
+                // player.anims.play('right', true);
+            }
+            if (cursors.up.isDown) {
+                player.setVelocityY(-300);
+                // player.anims.play('turn');
+            }
+            if (cursors.down.isDown) {
+                player.setVelocityY(300);
+                // player.anims.play('turn');
+            }
+            if (this.input.activePointer.isDown && time > lastFired) {
+                var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
+                var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
+                lasers.add(currentLaser);
+                lastFired = time + playerStats.FIRE_RATE;
+            }
+            if (cursors.left.isUp) {
+                if (player.body.velocity.x < 0) { player.setVelocityX(0); }
+            }
+            if (cursors.right.isUp) {
+                if (player.body.velocity.x > 0) { player.setVelocityX(0); }
+            }
+            if (cursors.up.isUp) {
+                if (player.body.velocity.y < 0) { player.setVelocityY(0); }
+            }
+            if (cursors.down.isUp) {
+                if (player.body.velocity.y > 0) { player.setVelocityY(0); }
+            }
+            if (cursors.map.isUp) {
+                this.hideMap();
+            }
+            if (cursors.map.isDown) {
+                this.showMap();
+            }
 
-        if (player.x < 64) { player.x = 64; }
-        if (player.y < 64) { player.y = 64; }
-        if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
-        if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
+            if (player.x < 64) { player.x = 64; }
+            if (player.y < 64) { player.y = 64; }
+            if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
+            if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
-        enemies.children.iterate((enem) => {
-            let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
-            enem.rotation = enemAngle;
-            enem.move(player)
-        })
-
-        lasers.children.iterate((laser) => {
-            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-        })
-        enemyLasers.children.iterate((laser) => {
-            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-        })
+            lasers.children.iterate((laser) => {
+                if (laser) { laser.move(delta) } else { lasers.remove(laser); }
+            });
+        }
     }
 }
 
-export default Level1_1;
+export default Level1_B;

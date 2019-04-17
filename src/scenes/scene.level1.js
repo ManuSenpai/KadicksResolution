@@ -86,28 +86,48 @@ function startRecovery() {
 }
 
 function goDown() {
-    const levelToGo = scenario[currentPosition.x][currentPosition.y + 1].isClear ? 'Level1' : 'Level1_1';
+    var levelToGo;
+    if (currentPosition.whereIsBoss === 'bot') {
+        levelToGo = 'level1_B';
+    } else {
+        levelToGo = scenario[currentPosition.x][currentPosition.y + 1].isClear ? 'Level1' : 'Level1_1';
+    }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x][currentPosition.y + 1], entrance: 'down'
     });
 }
 function goUp() {
-    const levelToGo = scenario[currentPosition.x][currentPosition.y - 1].isClear ? 'Level1' : 'Level1_1';
+    var levelToGo;
+    if (currentPosition.whereIsBoss === 'top') {
+        levelToGo = 'level1_B';
+    } else {
+        levelToGo = scenario[currentPosition.x][currentPosition.y - 1].isClear ? 'Level1' : 'Level1_1';
+    }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x][currentPosition.y - 1], entrance: 'up'
     });
 }
 function goLeft() {
-    const levelToGo = scenario[currentPosition.x - 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    var levelToGo;
+    if (currentPosition.whereIsBoss === 'left') {
+        levelToGo = 'level1_B';
+    } else {
+        levelToGo = scenario[currentPosition.x - 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x - 1][currentPosition.y], entrance: 'left'
-    });
+    });0
 }
 function goRight() {
-    const levelToGo = scenario[currentPosition.x + 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    var levelToGo;
+    if (currentPosition.whereIsBoss === 'left') {
+        levelToGo = 'level1_B';
+    } else {
+        levelToGo = scenario[currentPosition.x + 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+    }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x + 1][currentPosition.y], entrance: 'right'
@@ -129,7 +149,7 @@ function drawMap(context) {
             if (scenario[i][j].isBoss) {
                 mapGraphics.lineStyle(5, 0xffff00, 1.0);
             }
-            if (i === currentPosition.x && j === currentPosition.y ){
+            if (i === currentPosition.x && j === currentPosition.y) {
                 mapGraphics.lineStyle(5, 0xff0000, 1.0);
             }
             if (scenario[i][j].visited) {
@@ -162,10 +182,18 @@ function drawDoors(context, node) {
 }
 
 function createDoors(context) {
+    console.log("whereIsBoss: " + currentPosition.whereIsBoss);
     if (currentPosition.top) {
         if (currentPosition.isClear) {
-            topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
-            toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+            if (currentPosition.whereIsBoss === "top") {
+                if (playerStats.KEYCODES === 3) {
+                    topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
+                    toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+                }
+            } else {
+                topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
+                toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+            }
         } else {
             topleftdoor = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdoor');
             toprightdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdoor');
@@ -175,10 +203,19 @@ function createDoors(context) {
     }
     if (currentPosition.left) {
         if (currentPosition.isClear) {
-            leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
-            leftrightdooropen.angle = 270;
-            leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
-            leftleftdooropen.angle = 270;
+            if (currentPosition.whereIsBoss === "left") {
+                if (playerStats.KEYCODES === 3) {
+                    leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
+                    leftrightdooropen.angle = 270;
+                    leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
+                    leftleftdooropen.angle = 270;
+                }
+            } else {
+                leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
+                leftrightdooropen.angle = 270;
+                leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
+                leftleftdooropen.angle = 270;
+            }
         } else {
             leftrightdoor = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdoor');
             leftrightdoor.angle = 270;
@@ -192,10 +229,19 @@ function createDoors(context) {
     }
     if (currentPosition.right) {
         if (currentPosition.isClear) {
-            rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
-            rightleftdooropen.angle = 90;
-            rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
-            rightrightdooropen.angle = 90;
+            if (currentPosition.whereIsBoss === "right") {
+                if (playerStats.KEYCODES === 3) {
+                    rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
+                    rightleftdooropen.angle = 90;
+                    rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
+                    rightrightdooropen.angle = 90;
+                }
+            } else {
+                rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
+                rightleftdooropen.angle = 90;
+                rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
+                rightrightdooropen.angle = 90;
+            }
         } else {
             rightleftdoor = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdoor');
             rightleftdoor.angle = 90;
@@ -209,10 +255,19 @@ function createDoors(context) {
     }
     if (currentPosition.bottom) {
         if (currentPosition.isClear) {
-            botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
-            botleftdooropen.angle = 180;
-            botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
-            botrightdooropen.angle = 180;
+            if (currentPosition.whereIsBoss === "bot") {
+                if (playerStats.KEYCODES === 3) {
+                    botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
+                    botleftdooropen.angle = 180;
+                    botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
+                    botrightdooropen.angle = 180;
+                }
+            } else {
+                botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
+                botleftdooropen.angle = 180;
+                botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
+                botrightdooropen.angle = 180;
+            }
         } else {
             botleftdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdoor');
             botleftdoor.angle = 180;
@@ -238,6 +293,7 @@ function pickKey() {
     keycard.destroy();
     playerStats.KEYCODES++;
     drawKeys(this, playerStats.KEYCODES);
+    if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { createDoors(this); }
 }
 
 function drawKeys(context, nKeys) {
