@@ -421,19 +421,19 @@ class Level1 extends Phaser.Scene {
         this.lastFired += delta;
         player.rotation = angle;
         if (cursors.left.isDown) {
-            player.setVelocityX(-300);
+            player.setVelocityX(-400);
             // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
-            player.setVelocityX(300);
+            player.setVelocityX(400);
             // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
-            player.setVelocityY(-300);
+            player.setVelocityY(-400);
             // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
-            player.setVelocityY(300);
+            player.setVelocityY(400);
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
