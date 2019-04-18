@@ -4,8 +4,7 @@ import Enemy from '../GameObjects/Enemies/enemy.js';
 import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 import Hostile from './scene.hostile.js';
 
-const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 },
-{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 }];
+var ENEMY_VALUES = [];
 
 const LASER_VALUES = [
     { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
@@ -118,7 +117,7 @@ function hitEnemy(enemy, laser) {
 
 function clearArea() {
     currentPosition.isClear = true;
-    if ( currentPosition.isKey ) {
+    if (currentPosition.isKey) {
         spawnKey(this);
     }
     this.createDoors(this, currentPosition);
@@ -145,19 +144,47 @@ function startRecovery() {
 }
 
 function spawnKey(context) {
-    keycard = context.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'keycard');
+    keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
     keycard.setScale(0.125);
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
-function pickKey() { 
+function pickKey() {
     currentPosition.keyIsTaken = true;
     keycard.destroy();
-    playerStats.KEYCODES ++;
+    playerStats.KEYCODES++;
     this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-    this.drawKeys( playerStats.KEYCODES );
-    if ( playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "" ) { this.createDoors(this, currentPosition); }
+    this.drawKeys(playerStats.KEYCODES);
+    if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
+}
+
+function generateEnemies(context) {
+    // The amount of enemies depends on the difficulty setting.
+    var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 4;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 4 : playerStats.DIFFICULTY === "NORMAL" ? 5 : 8;
+
+    var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
+
+    ENEMY_VALUES = [];
+
+    for (let i = 0; i < nEnemies; i++) {
+        ENEMY_VALUES.push({
+            x: entrance === "right" ? Phaser.Math.Between(player.x + 64, window.innerWidth - 256)
+                : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
+            y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
+                : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
+            type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+        })
+    }
+
+    enemies = context.physics.add.group({
+        classType: Enemy
+    });
+
+    ENEMY_VALUES.forEach((enem) => {
+        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+    });
 }
 
 class Level1_1 extends Hostile {
@@ -182,7 +209,7 @@ class Level1_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
-        if ( currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken ) {
+        if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
@@ -232,7 +259,7 @@ class Level1_1 extends Hostile {
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
         this.addDoorColliders(this);
-        this.drawKeys( playerStats.KEYCODES );
+        this.drawKeys(playerStats.KEYCODES);
         /* LASERS */
         lasers = this.physics.add.group({
             classType: Laser
@@ -242,13 +269,7 @@ class Level1_1 extends Hostile {
         });
 
         /* ENEMIES */
-        enemies = this.physics.add.group({
-            classType: Enemy
-        });
-
-        ENEMY_VALUES.forEach((enem) => {
-            enemies.add(new Scancatcher(this, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
-        });
+        generateEnemies(this);
 
         /* UI */
         scoreText = this.make.text(configScoreText);
@@ -272,6 +293,7 @@ class Level1_1 extends Hostile {
 
         /*COLLIDERS */
         this.physics.add.collider(player, enemyLasers);
+        this.physics.add.collider(enemies, enemies);
         this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);

@@ -2,9 +2,11 @@ class Laser extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, type, scale, rotation, velocity, color = null, damage) {
         super(scene, x, y, type);
         scene.physics.world.enable(this);
-        this.setScale(scale);
         this.setOrigin(0.5, 0.5);
         this.rotation = rotation;
+        this.body.updateCenter();
+        this.setScale(scale);
+        this.body.updateBounds()
         this.velocity = velocity;
         this.damage = damage;
         if ( color ) { this.setTint(color); }
