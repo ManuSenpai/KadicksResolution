@@ -1,7 +1,5 @@
 import Laser from '../GameObjects/laser.js';
-import LaserTrap from '../GameObjects/lasertrap.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
-import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 import Hostile from './scene.hostile.js';
 import Jolt from '../GameObjects/Enemies/jolt.js';
 
@@ -15,23 +13,10 @@ const LASER_VALUES = [
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
-var enemyLasers;                // Pool of bullets shot by enemiess
-var laserTraps = [];            // Laser traps at stage
-var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
 
 var enemies;                    // Enemies on scene
 
-// SCENARIO
-var topleft;
-var topright;
-var botleft;
-var botright;
-var topwall;
-var botwall;
-var leftwall;
-var rightwall;
-var floor;
 
 // UI
 var healthIcon;
@@ -55,7 +40,27 @@ var entrance;
 // ITEMS
 var keycard;
 
-function scanMeleeHitPlayer(player, enemy) {
+function hitPlayer(player, laser) {
+    recoverArmor.paused = true;
+    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
+    if (playerStats.ARMOR > 0) {
+        playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
+        armorBar.width -= laser.damage * 2;
+    } else {
+        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;;
+        healthBar.width -= laser.damage * 2;
+        if (playerStats.HEALTH < 0) {
+            // TODO: GAME OVER
+        }
+    }
+    laser.setVisible(false);
+    laser.setActive(false);
+    laser.destroy();
+    lasers.remove(laser);
+}
+
+function meleeHit(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -73,9 +78,9 @@ function scanMeleeHitPlayer(player, enemy) {
     }
 
     let hitAngle = Phaser.Math.Angle.Between(player.x, player.y, enemy.x, enemy.y);
-    var velocity = this.physics.velocityFromRotation(hitAngle, -100);
-    player.x += velocity.x;
-    player.y += velocity.y;
+    var velocity = this.physics.velocityFromRotation(hitAngle, -300);
+    player.setVelocityX(velocity.x);
+    player.setVelocityY(velocity.y);
 }
 
 function hitEnemy(enemy, laser) {
@@ -144,8 +149,8 @@ function pickKey() {
 
 function generateEnemies(context) {
     // The amount of enemies depends on the difficulty setting.
-    var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 4;
-    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 4 : playerStats.DIFFICULTY === "NORMAL" ? 5 : 8;
+    var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 5;
 
     var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
 
@@ -157,7 +162,7 @@ function generateEnemies(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+            type: 'jolt', scale: 1, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
         })
     }
 
@@ -166,11 +171,11 @@ function generateEnemies(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        enemies.add(new Jolt(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
     });
 }
 
-class Level1_1 extends Hostile {
+class Level1_2 extends Hostile {
     topleftdooropen;
     toprightdddooropen;
     leftleftdooropen;
@@ -181,7 +186,7 @@ class Level1_1 extends Hostile {
     botrightdooropen;
 
     constructor() {
-        super('Level1_1');
+        super('Level1_2');
     }
     init(data) {
         score = data.score;
@@ -225,9 +230,6 @@ class Level1_1 extends Hostile {
         lasers = this.physics.add.group({
             classType: Laser
         });
-        enemyLasers = this.physics.add.group({
-            classType: Laser
-        });
 
         /* ENEMIES */
         generateEnemies(this);
@@ -254,7 +256,7 @@ class Level1_1 extends Hostile {
 
         /*COLLIDERS */
         this.physics.add.collider(enemies, enemies);
-        this.physics.add.collider(player, enemies, scanMeleeHitPlayer, null, this);
+        this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
         this.drawMap(this);
@@ -318,18 +320,13 @@ class Level1_1 extends Hostile {
         if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
         enemies.children.iterate((enem) => {
-            let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
-            enem.rotation = enemAngle;
             enem.move(player)
         })
 
         lasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         })
-        enemyLasers.children.iterate((laser) => {
-            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-        })
     }
 }
 
-export default Level1_1;
+export default Level1_2;

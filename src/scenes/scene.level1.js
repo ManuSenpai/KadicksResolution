@@ -86,11 +86,17 @@ function startRecovery() {
 }
 
 function goDown() {
+    botleftdooropen.destroy();
+    botrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'bot') {
         levelToGo = 'level1_B';
     } else {
-        levelToGo = scenario[currentPosition.x][currentPosition.y + 1].isClear ? 'Level1' : 'Level1_1';
+        if (scenario[currentPosition.x][currentPosition.y + 1].isClear) {
+            levelToGo = 'Level1';
+        } else {
+            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+        }
     }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
@@ -98,11 +104,17 @@ function goDown() {
     });
 }
 function goUp() {
+    topleftdooropen.destroy();
+    toprightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'top') {
         levelToGo = 'level1_B';
     } else {
-        levelToGo = scenario[currentPosition.x][currentPosition.y - 1].isClear ? 'Level1' : 'Level1_1';
+        if (scenario[currentPosition.x][currentPosition.y - 1].isClear) {
+            levelToGo = 'Level1';
+        } else {
+            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+        }
     }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
@@ -110,23 +122,35 @@ function goUp() {
     });
 }
 function goLeft() {
+    leftleftdooropen.destroy();
+    leftrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'left') {
         levelToGo = 'level1_B';
     } else {
-        levelToGo = scenario[currentPosition.x - 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+        if (scenario[currentPosition.x - 1][currentPosition.y].isClear) {
+            levelToGo = 'Level1';
+        } else {
+            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+        }
     }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         currentPosition: scenario[currentPosition.x - 1][currentPosition.y], entrance: 'left'
-    });0
+    });
 }
 function goRight() {
+    rightleftdooropen.destroy();
+    rightrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'left') {
         levelToGo = 'level1_B';
     } else {
-        levelToGo = scenario[currentPosition.x + 1][currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+        if (scenario[currentPosition.x + 1][currentPosition.y].isClear) {
+            levelToGo = 'Level1';
+        } else {
+            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+        }
     }
     this.scene.start(levelToGo, {
         score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,

@@ -1,5 +1,6 @@
 class Hostile extends Phaser.Scene {
 
+    /* MAIN STATS */
     scenario;
     score;
     configScoreText;
@@ -9,6 +10,18 @@ class Hostile extends Phaser.Scene {
     player;
     mapGraphics;
     doorGraphics;
+
+    /* SCENARIO */
+    floor;
+    topwall;
+    botwall;
+    leftwall;
+    rightwall;
+    topleft;
+    topright;
+    botleft;
+    botright;
+
     constructor(key) {
         super({ key: key });
     }
@@ -27,11 +40,44 @@ class Hostile extends Phaser.Scene {
         this.score = score;
     }
 
+    createCursors(context) {
+        var cursorItem = context.input.keyboard.addKeys(
+            {
+                up: Phaser.Input.Keyboard.KeyCodes.W,
+                down: Phaser.Input.Keyboard.KeyCodes.S,
+                left: Phaser.Input.Keyboard.KeyCodes.A,
+                right: Phaser.Input.Keyboard.KeyCodes.D,
+                map: Phaser.Input.Keyboard.KeyCodes.TAB
+            });
+        return cursorItem;
+    }
+
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
             let currentKey = this.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
             currentKey.setScale(0.1);
         }
+    }
+
+    drawScenario(context) {
+        // FLOOR
+        this.floor = context.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+
+        // WALLS
+        this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot1');
+        this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot1');
+        this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright1');
+        this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright1');
+
+        // CORNERS
+        this.topleft = context.physics.add.sprite(0, 0, 'topleft1');
+        this.topleft.setScale(2);
+        this.topright = context.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        this.topright.setScale(2);
+        this.botleft = context.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        this.botleft.setScale(2);
+        this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        this.botright.setScale(2);
     }
 
     createDoors(context, currentPosition) {
@@ -172,48 +218,72 @@ class Hostile extends Phaser.Scene {
         context.physics.add.overlap(this.player, context.botrightdooropen, this.goDown, null, context);
     }
 
-    goDown(context) {
+    goDown() {
+        this.botleftdooropen.destroy();
+        this.botrightdooropen.destroy();
         var levelToGo;
-        if ( this.currentPosition.whereIsBoss === 'bot' ) {
+        if (this.currentPosition.whereIsBoss === 'bot') {
             levelToGo = 'level1_B';
         } else {
-            levelToGo = this.scenario[this.currentPosition.x][this.currentPosition.y + 1].isClear ? 'Level1' : 'Level1_1';
+            if (this.scenario[this.currentPosition.x][this.currentPosition.y + 1].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            }
         }
         this.scene.start(levelToGo, {
             score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
             currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y + 1], entrance: 'down'
         });
     }
-    goUp(context) {
+    goUp() {
+        this.topleftdooropen.destroy();
+        this.toprightdooropen.destroy();
         var levelToGo;
-        if ( this.currentPosition.whereIsBoss === 'top' ) {
+        if (this.currentPosition.whereIsBoss === 'top') {
             levelToGo = 'level1_B';
         } else {
-            levelToGo = this.scenario[this.currentPosition.x][this.currentPosition.y - 1].isClear ? 'Level1' : 'Level1_1';
+            if (this.scenario[this.currentPosition.x][this.currentPosition.y - 1].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            }
         }
         this.scene.start(levelToGo, {
             score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
             currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y - 1], entrance: 'up'
         });
     }
-    goLeft(context) {
+    goLeft() {
+        this.leftleftdooropen.destroy();
+        this.leftrightdooropen.destroy();
         var levelToGo;
-        if ( this.currentPosition.whereIsBoss === 'left' ) {
+        if (this.currentPosition.whereIsBoss === 'left') {
             levelToGo = 'level1_B';
         } else {
-            levelToGo = this.scenario[this.currentPosition.x - 1][this.currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+            if (this.scenario[this.currentPosition.x - 1][this.currentPosition.y].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            }
         }
         this.scene.start(levelToGo, {
             score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
             currentPosition: this.scenario[this.currentPosition.x - 1][this.currentPosition.y], entrance: 'left'
         });
     }
-    goRight(context) {
+    goRight() {
+        this.rightleftdooropen.destroy();
+        this.rightrightdooropen.destroy();
         var levelToGo;
-        if ( this.currentPosition.whereIsBoss === 'right' ) {
+        if (this.currentPosition.whereIsBoss === 'right') {
             levelToGo = 'level1_B';
         } else {
-            levelToGo = this.scenario[this.currentPosition.x + 1][this.currentPosition.y].isClear ? 'Level1' : 'Level1_1';
+            if (this.scenario[this.currentPosition.x + 1][this.currentPosition.y].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            }
         }
         this.scene.start(levelToGo, {
             score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
