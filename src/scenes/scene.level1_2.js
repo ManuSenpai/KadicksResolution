@@ -89,11 +89,13 @@ function hitEnemy(enemy, laser) {
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
+    enemy.hit();
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
         enemy.destroy();
+        enemy.onDestroy();
         if (enemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
@@ -101,6 +103,11 @@ function hitEnemy(enemy, laser) {
         this.setScore(score);
     }
     scoreText.setText('SCORE: ' + score);
+}
+
+function hitShield(shield, laser) {
+    lasers.remove(laser);
+    laser.destroy();
 }
 
 function clearArea() {
@@ -162,7 +169,7 @@ function generateEnemies(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'jolt', scale: 1, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+            type: 'jolt', scale: 1, rotation: 0, health: 80, damage: 30, speed: 50, score: 600
         })
     }
 
@@ -259,6 +266,10 @@ class Level1_2 extends Hostile {
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+        enemies.children.iterate((enem) => {
+            // this.physics.add.collider(enem.forcefield, lasers);
+            this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
+        })
         this.drawMap(this);
 
     }
@@ -320,7 +331,8 @@ class Level1_2 extends Hostile {
         if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
         enemies.children.iterate((enem) => {
-            enem.move(player)
+            enem.move(player);
+            enem.aim(player);
         })
 
         lasers.children.iterate((laser) => {

@@ -320,7 +320,7 @@ class Level1_1 extends Hostile {
         enemies.children.iterate((enem) => {
             let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
             enem.rotation = enemAngle;
-            enem.move(player)
+            enem.move(player);
         })
 
         lasers.children.iterate((laser) => {

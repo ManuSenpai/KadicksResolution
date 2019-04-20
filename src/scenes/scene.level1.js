@@ -132,6 +132,7 @@ function goLeft() {
             levelToGo = 'Level1';
         } else {
             levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            // levelToGo = 'Level1_2';
         }
     }
     this.scene.start(levelToGo, {
