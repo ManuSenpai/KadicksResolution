@@ -5,10 +5,8 @@ import Jolt from '../GameObjects/Enemies/jolt.js';
 
 var ENEMY_VALUES = [];
 
-const LASER_VALUES = [
-    { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
-    { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
-];
+const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
+const TURRET_FIRE_RATE = 1000;  // Turret fire rate
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -16,6 +14,7 @@ var lasers;                     // Pool of bullets shot by the player
 var lastFired = 0;              // Time instant when last shot was fired
 
 var enemies;                    // Enemies on scene
+var enemyLasers;                // lasers shot by foes
 
 
 // UI
@@ -54,8 +53,6 @@ function hitPlayer(player, laser) {
             // TODO: GAME OVER
         }
     }
-    laser.setVisible(false);
-    laser.setActive(false);
     laser.destroy();
     lasers.remove(laser);
 }
@@ -237,6 +234,9 @@ class Level1_2 extends Hostile {
         lasers = this.physics.add.group({
             classType: Laser
         });
+        enemyLasers = this.physics.add.group({
+            classType: Laser
+        });
 
         /* ENEMIES */
         generateEnemies(this);
@@ -262,6 +262,7 @@ class Level1_2 extends Hostile {
         healthBar.setOrigin(0, 0.5);
 
         /*COLLIDERS */
+        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(enemies, enemies);
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
@@ -333,11 +334,22 @@ class Level1_2 extends Hostile {
         enemies.children.iterate((enem) => {
             enem.move(player);
             enem.aim(player);
+            let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
+            if (time > enem.lastFired) {
+                var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
+                var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
+                enemyLasers.add(currentLaser);
+                enem.lastFired = time + TURRET_FIRE_RATE;
+            }
         })
 
         lasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-        })
+        });
+
+        enemyLasers.children.iterate((laser) => {
+            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
+        });
     }
 }
 

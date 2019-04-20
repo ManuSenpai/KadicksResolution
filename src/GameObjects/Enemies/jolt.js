@@ -9,6 +9,7 @@ class Jolt extends Enemy {
     activatedTimeOut;
     shieldTime = 3000;
     scene;
+    lastFired;
     constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
@@ -22,9 +23,10 @@ class Jolt extends Enemy {
         this.forcefield.setOrigin(0.5, 0.5);
         this.forcefield.setScale(1.5);
         this.scene.physics.world.enable(this.forcefield);
-        this.forcefield.body.setBounce(0,0);
+        this.forcefield.body.setBounce(0, 0);
         this.disableForcefield();
         this.scene = scene;
+        this.lastFired = 0;
     }
 
     activeForcefield() {
@@ -37,10 +39,12 @@ class Jolt extends Enemy {
 
     disableForcefield() {
         this.isForceFieldOn = false;
-        this.forcefield.setVisible(false);
-        this.forcefield.setActive(false);
-        this.forcefield.setScale(0);
-        this.forcefield.body.setCircle(0);
+        if (this.forcefield) {
+            this.forcefield.setVisible(false);
+            this.forcefield.setActive(false);
+            this.forcefield.setScale(0);
+            this.forcefield.body.setCircle(0);
+        }
     }
 
     /**
