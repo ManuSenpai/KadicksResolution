@@ -77,6 +77,12 @@ class Bootloader extends Phaser.Scene {
         this.load.image('armorIcon', "./assets/shieldIcon.png");
         this.load.image('flares', "./assets/flares.png");
 
+        /* POWER UPS */
+        this.load.image('lifeup', "./assets/lifeup.png");
+        this.load.image('medikit', "./assets/medikit.png");
+        this.load.image('powup-attk', "./assets/powup-attk.png");
+        this.load.image('powup-rthm', "./assets/powup-rthm.png");
+
         /* ITEMS */
         this.load.image('keycard', './assets/keycard.png');
     }

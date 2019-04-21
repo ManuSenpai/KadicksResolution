@@ -31,10 +31,12 @@ class Jolt extends Enemy {
 
     activeForcefield() {
         this.isForceFieldOn = true;
-        this.forcefield.setVisible(true);
-        this.forcefield.setActive(true);
-        this.forcefield.setScale(1.5);
-        this.forcefield.body.setCircle(85, -21, -21);
+        if (this.forcefield) {
+            this.forcefield.setVisible(true);
+            this.forcefield.setActive(true);
+            this.forcefield.setScale(1.5);
+            if ( this.forcefield.body ) { this.forcefield.body.setCircle(85, -21, -21); }
+        }
     }
 
     disableForcefield() {
@@ -43,7 +45,7 @@ class Jolt extends Enemy {
             this.forcefield.setVisible(false);
             this.forcefield.setActive(false);
             this.forcefield.setScale(0);
-            this.forcefield.body.setCircle(0);
+            if ( this.forcefield.body ) { this.forcefield.body.setCircle(0); }
         }
     }
 

@@ -1,3 +1,14 @@
+const POWER_UP_RATE = 0.4; //0.1;
+
+const MEDIKIT_RATE = 0.85;
+const PU_ATTK_RATE = 0.9;
+const PU_RTHM_RATE = 0.95;
+const LIFEUP_RATE = 0.99;
+
+const MEDIKIT_VALUE = 50;
+const PUATTK_VALUE = 5;
+const PURTHM_VALUE = -15; // -15;
+
 class Hostile extends Phaser.Scene {
 
     /* MAIN STATS */
@@ -11,6 +22,14 @@ class Hostile extends Phaser.Scene {
     mapGraphics;
     doorGraphics;
 
+    /* PLAYER UI */
+    armorIcon;
+    armorBarBg;
+    armorBar;
+    healthIcon;
+    healthBarBg;
+    healthBar;
+
     /* SCENARIO */
     floor;
     topwall;
@@ -21,6 +40,8 @@ class Hostile extends Phaser.Scene {
     topright;
     botleft;
     botright;
+
+    powerups;
 
     constructor(key) {
         super({ key: key });
@@ -352,6 +373,103 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    dropItems(player, x, y) {
+        if (!this.powerups || ( this.powerups && !this.powerups.children ) ) {
+            this.powerups = this.physics.add.group();
+        } else {
+
+        }
+        if (Math.random() < POWER_UP_RATE) {
+            // The enemy drops a powerUp
+            let rand = Math.random();
+            if (rand < MEDIKIT_RATE) {
+                this.dropMediKit(player, x, y);
+            } else if (rand > MEDIKIT_RATE && rand <= PU_ATTK_RATE ) {
+                this.dropPUAttk(player, x, y);
+            } else if (rand > PU_ATTK_RATE && rand <= PU_RTHM_RATE ) {
+                this.dropPURthm(player, x, y);
+            }
+        }
+    }
+
+    dropMediKit(player, x, y) {
+        let currentMK = this.physics.add.sprite(x, y, 'medikit');
+        this.physics.add.overlap(player, currentMK, this.getMedikit, null, this);
+        if ( this.powerups && currentMK ) { this.powerups.add(currentMK); }
+    }
+
+    dropPUAttk(player, x, y) {
+        let currentAttk = this.physics.add.sprite(x, y, 'powup-attk');
+        this.physics.add.overlap(player, currentAttk, this.getPUAttk, null, this);
+        if ( this.powerups && currentAttk ) { this.powerups.add(currentAttk); }
+    }
+    
+    dropPURthm(player, x, y) {
+        let currentRthm = this.physics.add.sprite(x, y, 'powup-rthm');
+        this.physics.add.overlap(player, currentRthm, this.getPURthm, null, this);
+        if ( this.powerups && currentRthm ) { this.powerups.add(currentRthm); }
+    }
+
+    getMedikit(player, medikit) {
+        this.playerStats.HEALTH += MEDIKIT_VALUE;
+        if (this.playerStats.HEALTH > this.playerStats.MAX_HEALTH) { this.playerStats.HEALTH = this.playerStats.MAX_HEALTH; }
+        this.powerups.remove(medikit);
+        medikit.destroy();
+        this.healthBar.width = this.playerStats.HEALTH * 2;
+    }
+
+    getPUAttk(player, Attk) {
+        this.playerStats.DAMAGE += PUATTK_VALUE;
+        this.powerups.remove(Attk);
+        Attk.destroy();
+    }
+
+    getPURthm(player, Rthm) {
+        this.playerStats.FIRE_RATE += PURTHM_VALUE;
+        this.powerups.remove(Rthm);
+        Rthm.destroy();
+    }
+
+    drawPlayerUI() {
+        this.armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
+        this.armorIcon.displayWidth = 12;
+        this.armorIcon.displayHeight = 12;
+        this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0x000000');
+        this.armorBarBg.setOrigin(0, 0.5);
+        this.armorBarBg.alpha = 0.4;
+        this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        this.armorBar.setOrigin(0, 0.5);
+        this.healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
+        this.healthIcon.displayWidth = 12;
+        this.healthIcon.displayHeight = 12;
+        this.healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.MAX_HEALTH * 2, 12, '0x000000');
+        this.healthBarBg.setOrigin(0, 0.5);
+        this.healthBarBg.alpha = 0.4;
+        this.healthBar = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.HEALTH * 2, 12, '0xffffff');
+        this.healthBar.setOrigin(0, 0.5);
+    }
+
+    hitArmor(damage) {
+        this.playerStats.ARMOR = (this.playerStats.ARMOR - damage < 0) ? 0 : this.playerStats.ARMOR - damage;
+        this.armorBar.width -= damage * 2;
+        if (this.armorBar.width < 0) { this.armorBar.width = 0; }
+    }
+
+    hitHealth(damage) {
+        this.playerStats.HEALTH = (this.playerStats.HEALTH - damage < 0) ? 0 : this.playerStats.HEALTH - damage;
+        this.healthBar.width -= damage * 2;
+        if (this.healthBar.width < 0) { this.healthBar.width = 0; }
+    }
+
+    recoverArmor() {
+        if (this.playerStats.ARMOR < this.playerStats.MAX_ARMOR) {
+            this.playerStats.ARMOR += this.playerStats.ARMOR_RECOVERY;
+            if (this.playerStats.ARMOR > this.playerStats.MAX_ARMOR) {
+                this.playerStats.ARMOR = this.playerStats.MAX_ARMOR;
+            }
+            if ( this.armorBar ) { this.armorBar.width = this.playerStats.ARMOR * 2; }
+        }
+    }
 }
 
 export default Hostile;

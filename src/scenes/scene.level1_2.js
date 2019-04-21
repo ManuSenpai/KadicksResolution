@@ -8,6 +8,8 @@ var ENEMY_VALUES = [];
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
 
+const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player; 
+
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
@@ -15,6 +17,7 @@ var lastFired = 0;              // Time instant when last shot was fired
 
 var enemies;                    // Enemies on scene
 var enemyLasers;                // lasers shot by foes
+var readyToShoot = false;       // Enemies are ready to shoot;
 
 
 // UI
@@ -43,13 +46,11 @@ function hitPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
-        armorBar.width -= laser.damage * 2;
+    if (this.playerStats.ARMOR > 0) {
+        this.hitArmor(laser.damage);
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;;
-        healthBar.width -= laser.damage * 2;
-        if (playerStats.HEALTH < 0) {
+        this.hitHealth(laser.damage);
+        if (this.playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
@@ -61,15 +62,11 @@ function meleeHit(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;
-        armorBar.width -= enemy.damage * 2;
-        if (armorBar.width < 0) { armorBar.width = 0; }
+    if (this.playerStats.ARMOR > 0) {
+        this.hitArmor(enemy.damage);
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - enemy.damage < 0) ? 0 : playerStats.ARMOR - enemy.damage;;
-        healthBar.width -= enemy.damage * 2;
-        if (healthBar.width < 0) { healthBar.width = 0; }
-        if (playerStats.HEALTH < 0) {
+        this.hitHealth(enemy.damage);
+        if (this.playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
@@ -93,6 +90,8 @@ function hitEnemy(enemy, laser) {
         enemy.setVisible(false);
         enemy.destroy();
         enemy.onDestroy();
+        this.dropItems(player, enemy.x, enemy.y);
+        // Life value has changed as the medikit has been taken
         if (enemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
@@ -122,13 +121,7 @@ function initializeText() {
 }
 
 function onRecover() {
-    if (playerStats.ARMOR < playerStats.MAX_ARMOR) {
-        playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
-        if (playerStats.ARMOR > playerStats.MAX_ARMOR) {
-            playerStats.ARMOR = playerStats.MAX_ARMOR;
-        }
-        armorBar.width = playerStats.ARMOR * 2;
-    }
+    this.recoverArmor();
 }
 
 function startRecovery() {
@@ -244,22 +237,7 @@ class Level1_2 extends Hostile {
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
-        armorIcon.displayWidth = 12;
-        armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0x000000');
-        armorBarBg.setOrigin(0, 0.5);
-        armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
-        armorBar.setOrigin(0, 0.5);
-        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
-        healthIcon.displayWidth = 12;
-        healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), playerStats.MAX_HEALTH * 2, 12, '0x000000');
-        healthBarBg.setOrigin(0, 0.5);
-        healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
-        healthBar.setOrigin(0, 0.5);
+        this.drawPlayerUI();
 
         /*COLLIDERS */
         this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
@@ -272,6 +250,7 @@ class Level1_2 extends Hostile {
             this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
         })
         this.drawMap(this);
+        setTimeout(() => { readyToShoot = true; }, TIME_SHOOT_PLAYER);
 
     }
 
@@ -303,9 +282,9 @@ class Level1_2 extends Hostile {
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
+            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
-            lastFired = time + playerStats.FIRE_RATE;
+            lastFired = time + this.playerStats.FIRE_RATE;
         }
         if (cursors.left.isUp) {
             if (player.body.velocity.x < 0) { player.setVelocityX(0); }
@@ -331,17 +310,20 @@ class Level1_2 extends Hostile {
         if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
         if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
+
         enemies.children.iterate((enem) => {
             enem.move(player);
             enem.aim(player);
-            let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
-            if (time > enem.lastFired) {
-                var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
-                var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
-                enemyLasers.add(currentLaser);
-                enem.lastFired = time + TURRET_FIRE_RATE;
+            if (readyToShoot) {
+                let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
+                if (time > enem.lastFired) {
+                    var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
+                    var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
+                    enemyLasers.add(currentLaser);
+                    enem.lastFired = time + TURRET_FIRE_RATE;
+                }
             }
-        })
+        });
 
         lasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }

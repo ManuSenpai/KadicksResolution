@@ -95,7 +95,7 @@ function goDown() {
         if (scenario[currentPosition.x][currentPosition.y + 1].isClear) {
             levelToGo = 'Level1';
         } else {
-            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -113,7 +113,7 @@ function goUp() {
         if (scenario[currentPosition.x][currentPosition.y - 1].isClear) {
             levelToGo = 'Level1';
         } else {
-            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -131,8 +131,8 @@ function goLeft() {
         if (scenario[currentPosition.x - 1][currentPosition.y].isClear) {
             levelToGo = 'Level1';
         } else {
-            // levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
-            levelToGo = 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            // levelToGo = 'Level1_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -150,7 +150,7 @@ function goRight() {
         if (scenario[currentPosition.x + 1][currentPosition.y].isClear) {
             levelToGo = 'Level1';
         } else {
-            levelToGo = Math.random() > 0.3 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
         }
     }
     this.scene.start(levelToGo, {
