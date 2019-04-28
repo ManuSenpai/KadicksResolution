@@ -49,10 +49,10 @@ class Boss1 extends Enemy {
 
         this.lastFired = 0;
 
-        // setInterval( this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE );
+        setInterval( this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE );
 
         this.aimGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xaafff3 } });
-        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 30, color: 0xd1fcff } });
+        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
 
         this.startAimAnimation();
     }
@@ -143,10 +143,10 @@ class Boss1 extends Enemy {
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
         this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
-        Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 1000);
+        Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 2000);
         Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle)); 
         this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
-        Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 1000);
+        Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 2000);
         Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle)); 
         
         this.beamGraphics.strokeLineShape(this.leftBeamLine);
@@ -158,7 +158,7 @@ class Boss1 extends Enemy {
             clearInterval (vanishInterval);
             this.beamGraphics.clear();
             this.beamGraphics.alpha = 1;
-        }, 500);
+        }, 400);
         this.startAimAnimation();
     }
 

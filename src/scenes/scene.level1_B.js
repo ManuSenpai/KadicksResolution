@@ -2,7 +2,7 @@ import Laser from '../GameObjects/laser.js';
 import Hostile from './scene.hostile.js';
 import Boss1 from '../GameObjects/Enemies/boss1.js';
 
-const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1500, damage: 35, speed: 20, score: 5000 }
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1500, damage: 20, speed: 20, score: 5000 }
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -54,6 +54,7 @@ var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = le
 
 // ITEMS
 var keycard;
+var hittable = true;
 
 function hitPlayer(player, laser) {
     recoverArmor.paused = true;
@@ -61,10 +62,10 @@ function hitPlayer(player, laser) {
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
         playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
-        armorBar.width -= laser.damage * 2;
+        armorBar.width = playerStats.ARMOR * 2;
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;;
-        healthBar.width -= laser.damage * 2;
+        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.HEALTH - laser.damage;;
+        healthBar.width = playerStats.HEALTH * 2;
         if (playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
@@ -75,9 +76,31 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
+function beamPlayer(damage, context) {
+    if (hittable) {
+        hittable = false;
+        recoverArmor.paused = true;
+        if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+        timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
+        if (playerStats.ARMOR > 0) {
+            playerStats.ARMOR = (playerStats.ARMOR - damage < 0) ? 0 : playerStats.ARMOR - damage;
+            armorBar.width = playerStats.ARMOR * 2;
+        } else {
+            playerStats.HEALTH = (playerStats.HEALTH - damage < 0) ? 0 : playerStats.HEALTH - damage;;
+            healthBar.width = playerStats.HEALTH * 2;
+            if (playerStats.HEALTH < 0) {
+                // TODO: GAME OVER
+            }
+        }
+        setTimeout( () => {
+            hittable = true;
+        }, 500);
+    }
+}
+
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
-    if ( enemy.health < 0 ) { enemy.health = 0; }
+    if (enemy.health < 0) { enemy.health = 0; }
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
@@ -186,6 +209,8 @@ class Level1_B extends Hostile {
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
+        player.body.setSize(player.width / 2, player.height / 2);
+        player.body.setOffset( player.width / 4, player.height / 4);
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
         this.addDoorColliders(this);
@@ -305,27 +330,34 @@ class Level1_B extends Hostile {
             if (boss && boss.body) {
                 boss.move(player);
                 boss.drawAimLines(player);
-                if ( boss.attackMode === 0 ) { boss.aim(player); }
+                if (boss.attackMode === 0) { boss.aim(player); }
                 else {
                     boss.aimSpread(player);
                     boss.spread();
-                } 
+                }
 
                 if (time > boss.lastFired) {
                     if (turret_to_shoot === 0) {
                         // var laserAngle = Phaser.Math.Angle.Between(boss.leftTurret.x, boss.leftTurret.y, player.x, player.y);
                         var laserAngle = boss.leftTurret.rotation;
                         var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
-                        var currentLaser = new Laser(this, boss.leftTurret.x, boss.leftTurret.y, 'laser', 0.8, laserAngle, velocity, '0x77abff', boss.damage);
+                        var currentLaser = new Laser(this, boss.leftTurret.x, boss.leftTurret.y, 'laser', 0.6, laserAngle, velocity, '0x77abff', boss.damage);
                         turret_to_shoot = 1;
                     } else {
                         var laserAngle = boss.rightTurret.rotation;
                         var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
-                        var currentLaser = new Laser(this, boss.rightTurret.x, boss.rightTurret.y, 'laser', 0.8, laserAngle, velocity, '0x77abff', boss.damage);
+                        var currentLaser = new Laser(this, boss.rightTurret.x, boss.rightTurret.y, 'laser', 0.6, laserAngle, velocity, '0x77abff', boss.damage);
                         turret_to_shoot = 0;
                     }
                     enemyLasers.add(currentLaser);
                     boss.lastFired = time + boss.fireRate;
+                }
+            }
+
+            if (boss.leftBeamLine && boss.rightBeamLine) {
+                if (Phaser.Geom.Intersects.LineToRectangle(boss.leftBeamLine, player.body) ||
+                    Phaser.Geom.Intersects.LineToRectangle(boss.rightBeamLine, player.body)) {
+                    beamPlayer(boss.damage * 1.5, this);
                 }
             }
 

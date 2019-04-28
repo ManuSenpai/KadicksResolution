@@ -218,6 +218,8 @@ class Level1_2 extends Hostile {
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
+        player.body.setSize(player.width / 2, player.height / 2);
+        player.body.setOffset( player.width / 4, player.height / 4);
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
