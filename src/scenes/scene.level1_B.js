@@ -2,13 +2,14 @@ import Laser from '../GameObjects/laser.js';
 import Hostile from './scene.hostile.js';
 import Boss1 from '../GameObjects/Enemies/boss1.js';
 
-const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1000, damage: 35, speed: 0, score: 5000 }
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss1', scale: 1, rotation: 0, health: 1500, damage: 35, speed: 20, score: 5000 }
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var boss;
 var lasers;                     // Pool of bullets shot by the player
 var lastFired = 0;              // Time instant when last shot was fired
+var enemyLasers;                // lasers shot by foes
 
 // SCENARIO
 var topleft;
@@ -47,6 +48,10 @@ var entrance;
 
 var startGame = false;
 
+var TURRETS_LASER_SPEED = 1;
+var TURRET_FIRE_RATE = 300;
+var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = left turret; 1 = right turret;
+
 // ITEMS
 var keycard;
 
@@ -72,6 +77,7 @@ function hitPlayer(player, laser) {
 
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
+    if ( enemy.health < 0 ) { enemy.health = 0; }
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
@@ -84,6 +90,7 @@ function hitEnemy(enemy, laser) {
         enemy.setActive(false);
         enemy.setVisible(false);
         enemy.destroy();
+        enemy.onDestroy();
         clearArea.apply(this);
         score += enemy.score;
         this.setScore(score);
@@ -187,6 +194,9 @@ class Level1_B extends Hostile {
         lasers = this.physics.add.group({
             classType: Laser
         });
+        enemyLasers = this.physics.add.group({
+            classType: Laser
+        });
 
         /* NOSS */
         boss = new Boss1(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
@@ -222,6 +232,7 @@ class Level1_B extends Hostile {
         bossLifeBar.alpha = 0.4;
 
         /*COLLIDERS */
+        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(boss, lasers);
         this.physics.add.overlap(boss, lasers, hitEnemy, null, this);
         this.drawMap(this);
@@ -288,6 +299,36 @@ class Level1_B extends Hostile {
             if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
             lasers.children.iterate((laser) => {
+                if (laser) { laser.move(delta) } else { lasers.remove(laser); }
+            });
+
+            if (boss && boss.body) {
+                boss.move(player);
+                if ( boss.attackMode === 0 ) { boss.aim(player); }
+                else {
+                    boss.aimSpread(player);
+                    boss.spread();
+                } 
+
+                if (time > boss.lastFired) {
+                    if (turret_to_shoot === 0) {
+                        // var laserAngle = Phaser.Math.Angle.Between(boss.leftTurret.x, boss.leftTurret.y, player.x, player.y);
+                        var laserAngle = boss.leftTurret.rotation;
+                        var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
+                        var currentLaser = new Laser(this, boss.leftTurret.x, boss.leftTurret.y, 'laser', 0.8, laserAngle, velocity, '0x77abff', boss.damage);
+                        turret_to_shoot = 1;
+                    } else {
+                        var laserAngle = boss.rightTurret.rotation;
+                        var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
+                        var currentLaser = new Laser(this, boss.rightTurret.x, boss.rightTurret.y, 'laser', 0.8, laserAngle, velocity, '0x77abff', boss.damage);
+                        turret_to_shoot = 0;
+                    }
+                    enemyLasers.add(currentLaser);
+                    boss.lastFired = time + boss.fireRate;
+                }
+            }
+
+            enemyLasers.children.iterate((laser) => {
                 if (laser) { laser.move(delta) } else { lasers.remove(laser); }
             });
         }
