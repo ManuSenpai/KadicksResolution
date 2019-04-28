@@ -304,6 +304,7 @@ class Level1_B extends Hostile {
 
             if (boss && boss.body) {
                 boss.move(player);
+                boss.drawAimLines(player);
                 if ( boss.attackMode === 0 ) { boss.aim(player); }
                 else {
                     boss.aimSpread(player);

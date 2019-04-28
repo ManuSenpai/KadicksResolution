@@ -17,6 +17,17 @@ class Boss1 extends Enemy {
     spreadAxisRight;        // Represents the line that forms the center of the cone of spread shooting
     spreadDirection = -1;   // Represents the direction that the spread is taking. -1 = Clockwise ; 1 = Counterclockwise
 
+    aimGraphics;            // Graphics for drawing the aiming lasers to shoot the laser beams
+    aimLineWidth;
+    aimAnimationInterval;
+    beamGraphics;           // Graphics for the laser beams themselves
+    leftAimLine;
+    rightAimLine;
+    leftBeamLine;
+    rightBeamLine;
+    
+    target;
+
     constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
@@ -38,7 +49,12 @@ class Boss1 extends Enemy {
 
         this.lastFired = 0;
 
-        setInterval( this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE );
+        // setInterval( this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE );
+
+        this.aimGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xaafff3 } });
+        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 30, color: 0xd1fcff } });
+
+        this.startAimAnimation();
     }
 
     /**
@@ -104,6 +120,60 @@ class Boss1 extends Enemy {
         this.leftTurret.rotation = this.spreadAxisLeft + this.deltaRot;
         this.rightTurret.rotation = this.spreadAxisRight - this.deltaRot;
     }
+
+    startAimAnimation() {
+        this.aimLineWidth = 1;
+        this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
+        this.aimAnimationInterval = setInterval( () => {
+            this.aimGraphics.clear();
+            this.aimLineWidth++;
+            if( this.aimLineWidth >= 5 ) { 
+                this.aimLineWidth = 0;
+                let targetPoint = { x: this.target.x, y: this.target.y };
+                clearInterval(this.aimAnimationInterval);
+                setTimeout(() => {
+                    this.shootBeam(targetPoint);
+                }, 150 );
+            }
+            this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
+        }, 200);
+    }
+
+    shootBeam(targetPoint) {
+        let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
+        let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
+        this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
+        Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 1000);
+        Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle)); 
+        this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
+        Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 1000);
+        Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle)); 
+        
+        this.beamGraphics.strokeLineShape(this.leftBeamLine);
+        this.beamGraphics.strokeLineShape(this.rightBeamLine);
+        let vanishInterval = setInterval( () => {
+            this.beamGraphics.alpha -= 0.1;
+        }, 50);
+        setTimeout( () => {
+            clearInterval (vanishInterval);
+            this.beamGraphics.clear();
+            this.beamGraphics.alpha = 1;
+        }, 500);
+        this.startAimAnimation();
+    }
+
+    drawAimLines(target) {
+        if ( !this.target ) { this.target = target; }
+        let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, target.x, target.y);
+        let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, target.x, target.y);
+        this.aimGraphics.clear();
+        this.leftAimLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, this.target.x, this.target.y);
+        this.rightAimLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, this.target.x, this.target.y);
+        Phaser.Geom.Line.Offset(this.leftAimLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle)); 
+        Phaser.Geom.Line.Offset(this.rightAimLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle)); 
+        this.aimGraphics.strokeLineShape(this.leftAimLine);
+        this.aimGraphics.strokeLineShape(this.rightAimLine);
+    } 
 }
 
 export default Boss1;
