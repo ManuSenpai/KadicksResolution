@@ -83,12 +83,16 @@ class Boss1 extends Enemy {
     }
 
     onDestroy() {
+        clearInterval(this.aimAnimationInterval);
+        clearInterval(this.vanishInterval);
         this.rightTurret.destroy();
         this.leftTurret.destroy();
         this.aimGraphics.clear();
+        this.aimGraphics.destroy();
         this.beamGraphics.clear();
-        clearInterval(this.aimAnimationInterval);
-        clearInterval(this.vanishInterval);
+        this.beamGraphics.destroy();
+        if ( this.leftBeamLine ) this.leftBeamLine.active = false;
+        if ( this.rightBeamLine ) this.rightBeamLine.active = false;
     }
 
     changeAttackMode() {
@@ -165,9 +169,11 @@ class Boss1 extends Enemy {
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
         this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
+        this.leftBeamLine.active = true;
         Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 2000);
         Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle));
         this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
+        this.rightBeamLine.active = true;
         Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 2000);
         Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle));
 
@@ -180,6 +186,8 @@ class Boss1 extends Enemy {
             clearInterval(this.vanishInterval);
             this.beamGraphics.clear();
             this.beamGraphics.alpha = 1;
+            this.rightBeamLine.active = false;
+            this.leftBeamLine.active = false;
         }, 300);
         this.startAimAnimation();
     }

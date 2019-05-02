@@ -393,18 +393,21 @@ class Hostile extends Phaser.Scene {
     }
 
     dropMediKit(player, x, y) {
+        if ( !this.powerups ) this.powerups = this.physics.add.group();
         let currentMK = this.physics.add.sprite(x, y, 'medikit');
         this.physics.add.overlap(player, currentMK, this.getMedikit, null, this);
         if ( this.powerups && currentMK ) { this.powerups.add(currentMK); }
     }
 
     dropPUAttk(player, x, y) {
+        if ( !this.powerups ) this.powerups = this.physics.add.group();
         let currentAttk = this.physics.add.sprite(x, y, 'powup-attk');
         this.physics.add.overlap(player, currentAttk, this.getPUAttk, null, this);
         if ( this.powerups && currentAttk ) { this.powerups.add(currentAttk); }
     }
     
     dropPURthm(player, x, y) {
+        if ( !this.powerups ) this.powerups = this.physics.add.group();
         let currentRthm = this.physics.add.sprite(x, y, 'powup-rthm');
         this.physics.add.overlap(player, currentRthm, this.getPURthm, null, this);
         if ( this.powerups && currentRthm ) { this.powerups.add(currentRthm); }

@@ -77,7 +77,7 @@ function hitPlayer(player, laser) {
 }
 
 function beamPlayer(damage, context) {
-    if (hittable) {
+    if (boss.active && hittable) {
         hittable = false;
         recoverArmor.paused = true;
         if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -115,6 +115,8 @@ function hitEnemy(enemy, laser) {
         enemy.destroy();
         enemy.onDestroy();
         clearArea.apply(this);
+        this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
+        this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
         score += enemy.score;
         this.setScore(score);
     }
