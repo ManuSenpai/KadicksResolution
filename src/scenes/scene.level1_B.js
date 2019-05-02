@@ -264,6 +264,8 @@ class Level1_B extends Hostile {
 
         startGame = true;
 
+        boss.target = player;
+
     }
 
     update(time, delta) {
@@ -329,14 +331,16 @@ class Level1_B extends Hostile {
 
             if (boss && boss.body) {
                 boss.move(player);
-                boss.drawAimLines(player);
                 if (boss.attackMode === 0) { boss.aim(player); }
-                else {
+                else if (boss.attackMode === 1) {
                     boss.aimSpread(player);
                     boss.spread();
+                } else {
+                    boss.aim(player);
+                    boss.drawAimLines(player);
                 }
 
-                if (time > boss.lastFired) {
+                if (time > boss.lastFired && boss.attackMode !== 2) {
                     if (turret_to_shoot === 0) {
                         // var laserAngle = Phaser.Math.Angle.Between(boss.leftTurret.x, boss.leftTurret.y, player.x, player.y);
                         var laserAngle = boss.leftTurret.rotation;

@@ -25,7 +25,8 @@ class Boss1 extends Enemy {
     rightAimLine;
     leftBeamLine;
     rightBeamLine;
-    
+    vanishInterval;
+
     target;
 
     constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
@@ -49,12 +50,12 @@ class Boss1 extends Enemy {
 
         this.lastFired = 0;
 
-        setInterval( this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE );
+        setInterval(this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE);
 
         this.aimGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xaafff3 } });
         this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
 
-        this.startAimAnimation();
+        if (this.attackMode === 2) this.startAimAnimation();
     }
 
     /**
@@ -62,16 +63,16 @@ class Boss1 extends Enemy {
      * @param {GameObject} player Player's Game Object 
      */
     move(player) {
-        if ( this.x <= player.x ) {
-            this.body.setVelocityX( this.speed );
+        if (this.x <= player.x) {
+            this.body.setVelocityX(this.speed);
         } else {
-            this.body.setVelocityX( -this.speed );
+            this.body.setVelocityX(-this.speed);
         }
         this.leftTurret.x = this.x - 92;
         this.leftTurret.y = this.y - 82;
         this.rightTurret.x = this.x + 92;
         this.rightTurret.y = this.y - 82;
-    } 
+    }
 
     // Aiming at player
     aim(target) {
@@ -84,20 +85,41 @@ class Boss1 extends Enemy {
     onDestroy() {
         this.rightTurret.destroy();
         this.leftTurret.destroy();
+        this.aimGraphics.clear();
+        this.beamGraphics.clear();
+        clearInterval(this.aimAnimationInterval);
+        clearInterval(this.vanishInterval);
     }
 
     changeAttackMode() {
         var rand = Math.random();
-        if ( rand < 0.50 ) {
+        if (rand < 0.33) {
+            this.aimGraphics.clear();
+            this.beamGraphics.clear();
+            clearInterval(this.aimAnimationInterval);
+            clearInterval(this.vanishInterval);
             this.fireRate = 300;
-            this.attackMode = 0; }
-        else { 
+            this.attackMode = 0;
+        }
+        else if (rand >= 0.33 && rand < 0.66) {
+            this.aimGraphics.clear();
+            this.beamGraphics.clear();
+            clearInterval(this.aimAnimationInterval);
+            clearInterval(this.vanishInterval);
             MAX_ANGLE_SPREAD = Math.PI / 8;
             this.spreadAxisLeft = this.leftTurret ? this.leftTurret.rotation : 0;
             this.spreadAxisRight = this.rightTurret ? this.rightTurret.rotation : 0;
 
             this.fireRate = 300;
-            this.attackMode = 1; }
+            this.attackMode = 1;
+        } else {
+            this.aimGraphics.clear();
+            this.beamGraphics.clear();
+            clearInterval(this.aimAnimationInterval);
+            clearInterval(this.vanishInterval);
+            this.attackMode = 2;
+            this.startAimAnimation();
+        }
     }
 
     aimSpread(target) {
@@ -108,15 +130,15 @@ class Boss1 extends Enemy {
     }
 
     spread() {
-        if ( this.spreadDirection === -1 ) {
+        if (this.spreadDirection === -1) {
             this.deltaRot += Math.PI / 180;
             // this.deltaRot += 1;
         } else {
             this.deltaRot -= Math.PI / 180;
         }
 
-        if ( this.deltaRot >=  MAX_ANGLE_SPREAD || this.deltaRot <=  -MAX_ANGLE_SPREAD ) { this.spreadDirection *= -1; }
-        
+        if (this.deltaRot >= MAX_ANGLE_SPREAD || this.deltaRot <= -MAX_ANGLE_SPREAD) { this.spreadDirection *= -1; }
+
         this.leftTurret.rotation = this.spreadAxisLeft + this.deltaRot;
         this.rightTurret.rotation = this.spreadAxisRight - this.deltaRot;
     }
@@ -124,16 +146,16 @@ class Boss1 extends Enemy {
     startAimAnimation() {
         this.aimLineWidth = 1;
         this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
-        this.aimAnimationInterval = setInterval( () => {
+        this.aimAnimationInterval = setInterval(() => {
             this.aimGraphics.clear();
             this.aimLineWidth++;
-            if( this.aimLineWidth >= 5 ) { 
+            if (this.aimLineWidth >= 5) {
                 this.aimLineWidth = 0;
                 let targetPoint = { x: this.target.x, y: this.target.y };
                 clearInterval(this.aimAnimationInterval);
                 setTimeout(() => {
                     this.shootBeam(targetPoint);
-                }, 150 );
+                }, 150);
             }
             this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
         }, 200);
@@ -144,36 +166,36 @@ class Boss1 extends Enemy {
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
         this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
         Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 2000);
-        Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle)); 
+        Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle));
         this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
         Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 2000);
-        Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle)); 
-        
+        Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle));
+
         this.beamGraphics.strokeLineShape(this.leftBeamLine);
         this.beamGraphics.strokeLineShape(this.rightBeamLine);
-        let vanishInterval = setInterval( () => {
+        this.vanishInterval = setInterval(() => {
             this.beamGraphics.alpha -= 0.1;
         }, 50);
-        setTimeout( () => {
-            clearInterval (vanishInterval);
+        setTimeout(() => {
+            clearInterval(this.vanishInterval);
             this.beamGraphics.clear();
             this.beamGraphics.alpha = 1;
-        }, 400);
+        }, 300);
         this.startAimAnimation();
     }
 
     drawAimLines(target) {
-        if ( !this.target ) { this.target = target; }
+        if (!this.target) { this.target = target; }
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, target.x, target.y);
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, target.x, target.y);
         this.aimGraphics.clear();
         this.leftAimLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, this.target.x, this.target.y);
         this.rightAimLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, this.target.x, this.target.y);
-        Phaser.Geom.Line.Offset(this.leftAimLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle)); 
-        Phaser.Geom.Line.Offset(this.rightAimLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle)); 
+        Phaser.Geom.Line.Offset(this.leftAimLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle));
+        Phaser.Geom.Line.Offset(this.rightAimLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle));
         this.aimGraphics.strokeLineShape(this.leftAimLine);
         this.aimGraphics.strokeLineShape(this.rightAimLine);
-    } 
+    }
 }
 
 export default Boss1;
