@@ -194,6 +194,7 @@ class Level1_2 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        this.setPlayerStats(playerStats);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }

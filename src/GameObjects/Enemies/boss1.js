@@ -149,7 +149,7 @@ class Boss1 extends Enemy {
 
     startAimAnimation() {
         this.aimLineWidth = 1;
-        this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
+        if ( this.scene ) this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
         this.aimAnimationInterval = setInterval(() => {
             this.aimGraphics.clear();
             this.aimLineWidth++;

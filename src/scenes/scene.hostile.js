@@ -1,13 +1,14 @@
-const POWER_UP_RATE = 0.4; //0.1;
+const POWER_UP_RATE = 0.3; //0.1;
 
-const MEDIKIT_RATE = 0.85;
-const PU_ATTK_RATE = 0.9;
-const PU_RTHM_RATE = 0.95;
+const MEDIKIT_RATE = 0.7;
+const PU_ATTK_RATE = 0.8;
+const PU_RTHM_RATE = 0.9;
 const LIFEUP_RATE = 0.99;
 
 const MEDIKIT_VALUE = 50;
 const PUATTK_VALUE = 5;
 const PURTHM_VALUE = -15; // -15;
+const LIFE_UP_VALUE = 10;
 
 class Hostile extends Phaser.Scene {
 
@@ -57,6 +58,10 @@ class Hostile extends Phaser.Scene {
         this.player = player;
     }
 
+    setPlayerStats( _playerStats) {
+        this.playerStats = _playerStats;
+    }
+
     setScore(score) {
         this.score = score;
     }
@@ -82,22 +87,22 @@ class Hostile extends Phaser.Scene {
 
     drawScenario(context) {
         // FLOOR
-        this.floor = context.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+        this.floor = context.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor' + this.playerStats.LEVEL);
 
         // WALLS
-        this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot1');
-        this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot1');
-        this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright1');
-        this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright1');
+        this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
+        this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
 
         // CORNERS
-        this.topleft = context.physics.add.sprite(0, 0, 'topleft1');
+        this.topleft = context.physics.add.sprite(0, 0, 'topleft' + this.playerStats.LEVEL);
         this.topleft.setScale(2);
-        this.topright = context.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        this.topright = context.physics.add.sprite(window.innerWidth, 0, 'topright' + this.playerStats.LEVEL);
         this.topright.setScale(2);
-        this.botleft = context.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        this.botleft = context.physics.add.sprite(0, window.innerHeight - 5, 'botleft' + this.playerStats.LEVEL);
         this.botleft.setScale(2);
-        this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + this.playerStats.LEVEL);
         this.botright.setScale(2);
     }
 
@@ -257,6 +262,13 @@ class Hostile extends Phaser.Scene {
             currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y + 1], entrance: 'down'
         });
     }
+
+    goToNextLevel() {
+        this.scene.start('map_test', {
+            score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
+            currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y], entrance: 'none'
+        });
+    }
     goUp() {
         this.topleftdooropen.destroy();
         this.toprightdooropen.destroy();
@@ -374,7 +386,7 @@ class Hostile extends Phaser.Scene {
     }
 
     dropItems(player, x, y) {
-        if (!this.powerups || ( this.powerups && !this.powerups.children ) ) {
+        if (!this.powerups || (this.powerups && !this.powerups.children)) {
             this.powerups = this.physics.add.group();
         } else {
 
@@ -384,33 +396,54 @@ class Hostile extends Phaser.Scene {
             let rand = Math.random();
             if (rand < MEDIKIT_RATE) {
                 this.dropMediKit(player, x, y);
-            } else if (rand > MEDIKIT_RATE && rand <= PU_ATTK_RATE ) {
+            } else if (rand > MEDIKIT_RATE && rand <= PU_ATTK_RATE) {
                 this.dropPUAttk(player, x, y);
-            } else if (rand > PU_ATTK_RATE && rand <= PU_RTHM_RATE ) {
+            } else if (rand > PU_ATTK_RATE && rand <= PU_RTHM_RATE) {
                 this.dropPURthm(player, x, y);
+            } else {
+                this.dropLifeUp(player, x, y);
             }
         }
     }
 
     dropMediKit(player, x, y) {
-        if ( !this.powerups ) this.powerups = this.physics.add.group();
+        if (!this.powerups) this.powerups = this.physics.add.group();
         let currentMK = this.physics.add.sprite(x, y, 'medikit');
         this.physics.add.overlap(player, currentMK, this.getMedikit, null, this);
-        if ( this.powerups && currentMK ) { this.powerups.add(currentMK); }
+        if (this.powerups && currentMK) { this.powerups.add(currentMK); }
     }
 
     dropPUAttk(player, x, y) {
-        if ( !this.powerups ) this.powerups = this.physics.add.group();
+        if (!this.powerups) this.powerups = this.physics.add.group();
         let currentAttk = this.physics.add.sprite(x, y, 'powup-attk');
         this.physics.add.overlap(player, currentAttk, this.getPUAttk, null, this);
-        if ( this.powerups && currentAttk ) { this.powerups.add(currentAttk); }
+        if (this.powerups && currentAttk) { this.powerups.add(currentAttk); }
     }
-    
+
     dropPURthm(player, x, y) {
-        if ( !this.powerups ) this.powerups = this.physics.add.group();
+        if (!this.powerups) this.powerups = this.physics.add.group();
         let currentRthm = this.physics.add.sprite(x, y, 'powup-rthm');
         this.physics.add.overlap(player, currentRthm, this.getPURthm, null, this);
-        if ( this.powerups && currentRthm ) { this.powerups.add(currentRthm); }
+        if (this.powerups && currentRthm) { this.powerups.add(currentRthm); }
+    }
+
+    dropLifeUp(player, x, y) {
+        if (!this.powerups) this.powerups = this.physics.add.group();
+        let currentLifeUp = this.physics.add.sprite(x, y, 'lifeup');
+        this.physics.add.overlap(player, currentLifeUp, this.getLifeUp, null, this);
+        if (this.powerups && currentLifeUp) { this.powerups.add(currentLifeUp); }
+    }
+
+    getLifeUp(player, lifeup) {
+        this.playerStats.MAX_HEALTH += LIFE_UP_VALUE;
+        this.playerStats.MAX_ARMOR += LIFE_UP_VALUE;
+        this.playerStats.HEALTH = this.playerStats.MAX_HEALTH;
+        this.playerStats.ARMOR = this.playerStats.MAX_ARMOR;
+        // this.armorBar.width = this.playerStats.MAX_ARMOR * 2;
+        // this.healthBar.width = this.playerStats.MAX_HEALTH * 2;
+        this.drawPlayerUI();
+        this.powerups.remove(lifeup);
+        lifeup.destroy();
     }
 
     getMedikit(player, medikit) {
@@ -434,20 +467,26 @@ class Hostile extends Phaser.Scene {
     }
 
     drawPlayerUI() {
+        if ( this.armorIcon ) this.armorIcon.destroy();
         this.armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
         this.armorIcon.displayWidth = 12;
         this.armorIcon.displayHeight = 12;
+        if ( this.armorBarBg ) this.armorBarBg.destroy();
         this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0x000000');
         this.armorBarBg.setOrigin(0, 0.5);
         this.armorBarBg.alpha = 0.4;
+        if ( this.armorBar ) this.armorBar.destroy();
         this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
+        if ( this.healthIcon ) this.healthIcon.destroy();
         this.healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
         this.healthIcon.displayWidth = 12;
         this.healthIcon.displayHeight = 12;
+        if ( this.healthBarBg ) this.healthBarBg.destroy();
         this.healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.MAX_HEALTH * 2, 12, '0x000000');
         this.healthBarBg.setOrigin(0, 0.5);
         this.healthBarBg.alpha = 0.4;
+        if ( this.healthBar ) this.healthBar.destroy(); 
         this.healthBar = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.HEALTH * 2, 12, '0xffffff');
         this.healthBar.setOrigin(0, 0.5);
     }
@@ -470,7 +509,7 @@ class Hostile extends Phaser.Scene {
             if (this.playerStats.ARMOR > this.playerStats.MAX_ARMOR) {
                 this.playerStats.ARMOR = this.playerStats.MAX_ARMOR;
             }
-            if ( this.armorBar ) { this.armorBar.width = this.playerStats.ARMOR * 2; }
+            if (this.armorBar) { this.armorBar.width = this.playerStats.ARMOR * 2; }
         }
     }
 }

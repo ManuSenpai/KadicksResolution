@@ -45,6 +45,7 @@ var configScoreText;
 var scenario;
 var currentPosition;
 var entrance;
+var stairNextLevel;
 
 var startGame = false;
 
@@ -114,13 +115,21 @@ function hitEnemy(enemy, laser) {
         enemy.setVisible(false);
         enemy.destroy();
         enemy.onDestroy();
+        stairNextLevel = this.physics.add.sprite(window.innerWidth/2, 200, 'stairnextlevel');
+        stairNextLevel.setScale(0.5, 0.5);
+        this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this );
         clearArea.apply(this);
         this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
         this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
+        this.dropLifeUp(player, window.innerWidth/2, window.innerHeight / 2);
         score += enemy.score;
         this.setScore(score);
     }
     scoreText.setText('SCORE: ' + score);
+}
+
+function nextLevel() {
+    this.goToNextLevel();
 }
 
 function clearArea() {
@@ -167,6 +176,7 @@ class Level1_B extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        this.setPlayerStats(playerStats);
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(

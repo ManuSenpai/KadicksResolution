@@ -13,12 +13,13 @@ var configScoreText = {
 
 
 const PLAYER_STATS = {
+    LEVEL: 0,
     HEALTH: 100,                        // Current health value
     MAX_HEALTH: 100,                    // Maximum health value 
     ARMOR: 100,                         // Current armor value
     MAX_ARMOR: 100,                     // Maximum armor value
-    DAMAGE: 15,                         // Damage caused by the player
-    // DAMAGE: 9999,                         // Damage caused by the player
+    // DAMAGE: 15,                         // Damage caused by the player
+    DAMAGE: 150,                         // Damage caused by the player
     // KEYCODES : 0,                       // Collected Key Codes
     KEYCODES : 3,                       // Collected Key Codes
     FIRE_RATE: 250,                     // Fire rate
@@ -64,6 +65,7 @@ class Bootloader extends Phaser.Scene {
         this.load.image('rightdooropen', "./assets/rightdooropen.png");
         this.load.image('bossrightdoor', "./assets/bossrightdoor.png");
         this.load.image('bossleftdoor', "./assets/bossleftdoor.png");
+        this.load.image('stairnextlevel', "./assets/stairnextlevel.png");
 
         /* Scenario 1 */
         this.load.image('topleft1', "./assets/topleft1.png");
@@ -73,6 +75,15 @@ class Bootloader extends Phaser.Scene {
         this.load.image('topbot1', "./assets/topbot1.png");
         this.load.image('leftright1', "./assets/leftright1.png");
         this.load.image('floor1', "./assets/floor1.png");
+
+        /* Scenario 2 */
+        this.load.image('topleft2', "./assets/topleft2.png");
+        this.load.image('topright2', "./assets/topright2.png");
+        this.load.image('botleft2', "./assets/botleft2.png");
+        this.load.image('botright2', "./assets/botright2.png");
+        this.load.image('topbot2', "./assets/topbot2.png");
+        this.load.image('leftright2', "./assets/leftright2.png");
+        this.load.image('floor2', "./assets/floor2.png");
 
         /* UI */
         this.load.image('healthIcon', "./assets/healthIcon.png");

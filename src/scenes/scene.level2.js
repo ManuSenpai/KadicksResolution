@@ -328,9 +328,9 @@ function drawKeys(context, nKeys) {
     }
 }
 
-class Level1 extends Phaser.Scene {
+class Level2 extends Phaser.Scene {
     constructor() {
-        super({ key: "Level1" });
+        super({ key: "Level2" });
     }
     init(data) {
         score = data.score;
@@ -501,4 +501,4 @@ class Level1 extends Phaser.Scene {
     }
 }
 
-export default Level1;
+export default Level2;

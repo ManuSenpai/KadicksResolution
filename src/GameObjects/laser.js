@@ -6,7 +6,7 @@ class Laser extends Phaser.GameObjects.Sprite {
         this.rotation = rotation;
         this.body.updateCenter();
         this.setScale(scale);
-        this.body.setSize(this.body.height, this.body.height);
+        this.body.setSize(this.body.width/2, this.body.height);
         this.body.setOffset( this.body.width/2, this.body.height/2);
         this.body.updateBounds()
         this.velocity = velocity;
