@@ -59,7 +59,12 @@ var entrance;
 // ITEMS
 var keycard;
 
-function scanMeleeHitPlayer(player, enemy) {
+function tacklePlayer(player, enemy) {
+    enemy.tackle(player);
+    meleeHitPlayer.call(this, player, enemy);
+}
+
+function meleeHitPlayer(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -228,7 +233,7 @@ function generateTougher(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'coulomb', scale: 1, rotation: 0, health: 200, damage: 35, speed: 1250, score: 1000
+            type: 'coulomb', scale: 1, rotation: 0, health: 200, damage: 35, speed: 1750, score: 1000
         })
     }
 
@@ -245,6 +250,8 @@ function generateTougher(context) {
     // context.physics.add.overlap( bumps, tougherEnemies, onWorldBounds, null, context );
     context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
     context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
+    context.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, context);
+    context.physics.add.collider(player, tougherEnemies, tacklePlayer, null, context);
     context.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, context);
 
 }
@@ -323,7 +330,7 @@ class Level2_1 extends Hostile {
 
         /*COLLIDERS */
         this.physics.add.collider(enemies, enemies);
-        this.physics.add.collider(player, enemies, scanMeleeHitPlayer, null, this);
+        this.physics.add.collider(player, enemies, meleeHitPlayer, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
         this.drawMap(this);

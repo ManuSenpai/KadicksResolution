@@ -87,6 +87,23 @@ class Coulomb extends Enemy {
         if ((this.y - this.height / 2) < 128) { this.y = 129; }
         if ((this.y + this.height / 2) > window.innerHeight - 135) { this.y = window.innerHeight - 135; }
     }
+
+    tackle(target) {
+        if ( target.body ) { 
+            const tackleLocationX = target.x + this.body.velocity.x;
+            const tackleLocationY = target.y + this.body.velocity.y;
+            var tween = this.scene.tweens.add({
+                targets: target,
+                x: tackleLocationX,
+                y: tackleLocationY,
+                duration: 1000,
+                ease: function (t) {
+                    return Math.pow(t, 1/2);
+                }
+            });
+            this.crashIntoWall();
+        }
+    }
 }
 
 export default Coulomb;
