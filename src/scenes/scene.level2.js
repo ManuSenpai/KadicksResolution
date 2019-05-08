@@ -90,12 +90,12 @@ function goDown() {
     botrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'bot') {
-        levelToGo = 'level1_B';
+        levelToGo = 'level2_B';
     } else {
         if (scenario[currentPosition.x][currentPosition.y + 1].isClear) {
-            levelToGo = 'Level1';
+            levelToGo = 'Level2';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level2_1' : 'Level2_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -108,12 +108,12 @@ function goUp() {
     toprightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'top') {
-        levelToGo = 'level1_B';
+        levelToGo = 'level2_B';
     } else {
         if (scenario[currentPosition.x][currentPosition.y - 1].isClear) {
-            levelToGo = 'Level1';
+            levelToGo = 'Level2';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level2_1' : 'Level2_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -126,13 +126,13 @@ function goLeft() {
     leftrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'left') {
-        levelToGo = 'level1_B';
+        levelToGo = 'level2_B';
     } else {
         if (scenario[currentPosition.x - 1][currentPosition.y].isClear) {
-            levelToGo = 'Level1';
+            levelToGo = 'Level2';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
-            // levelToGo = 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level2_1' : 'Level2_2';
+            // levelToGo = 'Level2_2';
         }
     }
     this.scene.start(levelToGo, {
@@ -145,12 +145,12 @@ function goRight() {
     rightrightdooropen.destroy();
     var levelToGo;
     if (currentPosition.whereIsBoss === 'left') {
-        levelToGo = 'level1_B';
+        levelToGo = 'level2_B';
     } else {
         if (scenario[currentPosition.x + 1][currentPosition.y].isClear) {
-            levelToGo = 'Level1';
+            levelToGo = 'Level2';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            levelToGo = Math.random() > 0.5 ? 'Level2_1' : 'Level2_2';
         }
     }
     this.scene.start(levelToGo, {

@@ -93,7 +93,7 @@ function beamPlayer(damage, context) {
                 // TODO: GAME OVER
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             hittable = true;
         }, 500);
     }
@@ -115,13 +115,13 @@ function hitEnemy(enemy, laser) {
         enemy.setVisible(false);
         enemy.destroy();
         enemy.onDestroy();
-        stairNextLevel = this.physics.add.sprite(window.innerWidth/2, 200, 'stairnextlevel');
+        stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
         stairNextLevel.setScale(0.5, 0.5);
-        this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this );
+        this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
         clearArea.apply(this);
         this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
         this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
-        this.dropLifeUp(player, window.innerWidth/2, window.innerHeight / 2);
+        this.dropLifeUp(player, window.innerWidth / 2, window.innerHeight / 2);
         score += enemy.score;
         this.setScore(score);
     }
@@ -129,6 +129,8 @@ function hitEnemy(enemy, laser) {
 }
 
 function nextLevel() {
+    stairNextLevel.destroy();
+    stairNextLevel.setActive(false);
     this.goToNextLevel();
 }
 
@@ -222,7 +224,7 @@ class Level1_B extends Hostile {
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
-        player.body.setOffset( player.width / 4, player.height / 4);
+        player.body.setOffset(player.width / 4, player.height / 4);
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
         this.addDoorColliders(this);

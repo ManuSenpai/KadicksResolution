@@ -173,7 +173,7 @@ function generateEnemies(context) {
     });
 }
 
-class Level1_2 extends Hostile {
+class Level2_2 extends Hostile {
     topleftdooropen;
     toprightdddooropen;
     leftleftdooropen;
@@ -184,7 +184,7 @@ class Level1_2 extends Hostile {
     botrightdooropen;
 
     constructor() {
-        super('Level1_2');
+        super('Level2_2');
     }
     init(data) {
         score = data.score;
@@ -221,7 +221,7 @@ class Level1_2 extends Hostile {
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
-        player.body.setOffset( player.width / 4, player.height / 4);
+        player.body.setOffset(player.width / 4, player.height / 4);
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
@@ -339,4 +339,4 @@ class Level1_2 extends Hostile {
     }
 }
 
-export default Level1_2;
+export default Level2_2;

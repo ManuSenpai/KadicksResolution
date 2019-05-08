@@ -41,6 +41,7 @@ class Hostile extends Phaser.Scene {
     topright;
     botleft;
     botright;
+    bumps;      // Group of neutral objects that serve as obstacles: Walls, columns, etc.
 
     powerups;
 
@@ -91,9 +92,21 @@ class Hostile extends Phaser.Scene {
 
         // WALLS
         this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.physics.world.enable(this.topwall);
+        // this.topwall.body.immovable = true;
+        this.topwall.body.moves=false;
         this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.physics.world.enable(this.botwall);
+        // this.botwall.body.immovable = true;
+        this.botwall.body.moves=false;
         this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
+        this.physics.world.enable(this.leftwall);
+        // this.leftwall.body.immovable = true;
+        this.leftwall.body.moves=false;
         this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
+        this.physics.world.enable(this.rightwall);
+        // this.rightwall.body.immovable = true;
+        this.rightwall.body.moves=false;
 
         // CORNERS
         this.topleft = context.physics.add.sprite(0, 0, 'topleft' + this.playerStats.LEVEL);
@@ -104,6 +117,14 @@ class Hostile extends Phaser.Scene {
         this.botleft.setScale(2);
         this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + this.playerStats.LEVEL);
         this.botright.setScale(2);
+
+        if ( this.bumps && this.bumps.children && this.bumps.children.length > 0 ) { this.bumps.clear(); }
+        this.bumps = context.physics.add.group();
+
+        this.bumps.add( this.topwall );
+        this.bumps.add( this.botwall );
+        this.bumps.add( this.leftwall );
+        this.bumps.add( this.rightwall );
     }
 
     createDoors(context, currentPosition) {
@@ -249,12 +270,12 @@ class Hostile extends Phaser.Scene {
         this.botrightdooropen.destroy();
         var levelToGo;
         if (this.currentPosition.whereIsBoss === 'bot') {
-            levelToGo = 'level1_B';
+            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
         } else {
             if (this.scenario[this.currentPosition.x][this.currentPosition.y + 1].isClear) {
-                levelToGo = 'Level1';
+                levelToGo = 'Level' + this.playerStats.LEVEL;
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
             }
         }
         this.scene.start(levelToGo, {
@@ -274,12 +295,12 @@ class Hostile extends Phaser.Scene {
         this.toprightdooropen.destroy();
         var levelToGo;
         if (this.currentPosition.whereIsBoss === 'top') {
-            levelToGo = 'level1_B';
+            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
         } else {
             if (this.scenario[this.currentPosition.x][this.currentPosition.y - 1].isClear) {
-                levelToGo = 'Level1';
+                levelToGo = 'Level' + this.playerStats.LEVEL;
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
             }
         }
         this.scene.start(levelToGo, {
@@ -292,12 +313,12 @@ class Hostile extends Phaser.Scene {
         this.leftrightdooropen.destroy();
         var levelToGo;
         if (this.currentPosition.whereIsBoss === 'left') {
-            levelToGo = 'level1_B';
+            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
         } else {
             if (this.scenario[this.currentPosition.x - 1][this.currentPosition.y].isClear) {
-                levelToGo = 'Level1';
+                levelToGo = 'Level' + this.playerStats.LEVEL;
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
             }
         }
         this.scene.start(levelToGo, {
@@ -310,12 +331,12 @@ class Hostile extends Phaser.Scene {
         this.rightrightdooropen.destroy();
         var levelToGo;
         if (this.currentPosition.whereIsBoss === 'right') {
-            levelToGo = 'level1_B';
+            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
         } else {
             if (this.scenario[this.currentPosition.x + 1][this.currentPosition.y].isClear) {
-                levelToGo = 'Level1';
+                levelToGo = 'Level' + this.playerStats.LEVEL;
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
             }
         }
         this.scene.start(levelToGo, {
@@ -511,6 +532,10 @@ class Hostile extends Phaser.Scene {
             }
             if (this.armorBar) { this.armorBar.width = this.playerStats.ARMOR * 2; }
         }
+    }
+
+    getBumps() {
+        return this.bumps;
     }
 }
 

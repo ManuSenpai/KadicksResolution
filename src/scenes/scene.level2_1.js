@@ -1,24 +1,41 @@
 import Laser from '../GameObjects/laser.js';
+import LaserTrap from '../GameObjects/lasertrap.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
+import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 import Hostile from './scene.hostile.js';
 import Jolt from '../GameObjects/Enemies/jolt.js';
+import Coulomb from '../GameObjects/Enemies/coulomb.js';
 
 var ENEMY_VALUES = [];
+var TOUGHER_ENEMY_VALUES = [];
 
-const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
-const TURRET_FIRE_RATE = 1000;  // Turret fire rate
-
-const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player; 
+const LASER_VALUES = [
+    { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
+    { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
+];
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
+var enemyLasers;                // Pool of bullets shot by enemiess
+var laserTraps = [];            // Laser traps at stage
+var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
 
 var enemies;                    // Enemies on scene
-var enemyLasers;                // lasers shot by foes
-var readyToShoot = false;       // Enemies are ready to shoot;
+var tougherEnemies;             // Tougher enemies on scene
+var bumps;                      // Neutral objects that serve as obstacles.
 
+// SCENARIO
+var topleft;
+var topright;
+var botleft;
+var botright;
+var topwall;
+var botwall;
+var leftwall;
+var rightwall;
+var floor;
 
 // UI
 var healthIcon;
@@ -42,23 +59,7 @@ var entrance;
 // ITEMS
 var keycard;
 
-function hitPlayer(player, laser) {
-    recoverArmor.paused = true;
-    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (this.playerStats.ARMOR > 0) {
-        this.hitArmor(laser.damage);
-    } else {
-        this.hitHealth(laser.damage);
-        if (this.playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
-        }
-    }
-    laser.destroy();
-    lasers.remove(laser);
-}
-
-function meleeHit(player, enemy) {
+function scanMeleeHitPlayer(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -84,15 +85,14 @@ function hitEnemy(enemy, laser) {
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    enemy.hit();
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
         enemy.destroy();
-        enemy.onDestroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
+
         if (enemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
@@ -100,11 +100,6 @@ function hitEnemy(enemy, laser) {
         this.setScore(score);
     }
     scoreText.setText('SCORE: ' + score);
-}
-
-function hitShield(shield, laser) {
-    lasers.remove(laser);
-    laser.destroy();
 }
 
 function clearArea() {
@@ -147,8 +142,54 @@ function pickKey() {
 
 function generateEnemies(context) {
     // The amount of enemies depends on the difficulty setting.
+    generateMinions(context);
+    generateTougher(context);
+
+}
+
+function collisionBetweenTougher(tough1, tough2) {
+    this.cameras.main.shake(50);
+    const collisionAngle = Phaser.Math.Angle.Between(tough1.x, tough1.y, tough2.x, tough2.y);
+    const velocity = this.physics.velocityFromRotation(collisionAngle, 500);
+    if (tough1.x < tough2.x) {
+        tough1.body.setVelocityX(-Math.abs(velocity.x));
+        tough2.body.setVelocityX(Math.abs(velocity.x));
+    } else {
+        tough1.body.setVelocityX(Math.abs(velocity.x));
+        tough2.body.setVelocityX(-Math.abs(velocity.x));
+    }
+    if (tough1.y < tough2.y) {
+        tough1.body.setVelocityY(-Math.abs(velocity.y));
+        tough2.body.setVelocityY(Math.abs(velocity.y));
+    } else {
+        tough1.body.setVelocityY(Math.abs(velocity.y));
+        tough2.body.setVelocityY(-Math.abs(velocity.y));
+    }
+    setTimeout(() => {
+        tough1.crashIntoWall();
+        tough2.crashIntoWall();
+    }, 100);
+}
+
+function untangleEnemies(enemy1, enemy2) {
+    const d1 = window.innerWidth / 2 - enemy1.x;
+    const d2 = window.innerWidth / 2 - enemy2.x;
+    if (Math.abs(d1) < Math.abs(d2)) {
+        enemy1.x += d1 > 0 ? enemy1.width/2 : -enemy1.width/2;
+    } else {
+        enemy2.x += d1 > 0 ? enemy2.width/2 : -enemy2.width/2;
+    }
+}
+
+function onWorldBounds(bump, enemy) {
+    this.cameras.main.shake(150);
+    bump.body.setVelocity(0, 0);
+    enemy.crashIntoWall();
+}
+
+function generateMinions(context) {
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
-    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 5;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 4 : 6;
 
     var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
 
@@ -160,7 +201,7 @@ function generateEnemies(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'jolt', scale: 1, rotation: 0, health: 80, damage: 30, speed: 50, score: 600
+            type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
         })
     }
 
@@ -169,11 +210,46 @@ function generateEnemies(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Jolt(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
     });
 }
 
-class Level1_2 extends Hostile {
+function generateTougher(context) {
+    var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 1 : 1;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 2;
+
+    var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
+
+    TOUGHER_ENEMY_VALUES = [];
+
+    for (let i = 0; i < nEnemies; i++) {
+        TOUGHER_ENEMY_VALUES.push({
+            x: entrance === "right" ? Phaser.Math.Between(player.x + 64, window.innerWidth - 256)
+                : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
+            y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
+                : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
+            type: 'coulomb', scale: 1, rotation: 0, health: 200, damage: 35, speed: 1250, score: 1000
+        })
+    }
+
+    tougherEnemies = context.physics.add.group({
+        classType: Enemy
+    });
+
+    TOUGHER_ENEMY_VALUES.forEach((enem) => {
+        let newCoulomb = new Coulomb(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        newCoulomb.setTarget(player);
+        tougherEnemies.add(newCoulomb);
+    });
+
+    // context.physics.add.overlap( bumps, tougherEnemies, onWorldBounds, null, context );
+    context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
+    context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
+    context.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, context);
+
+}
+
+class Level2_1 extends Hostile {
     topleftdooropen;
     toprightdddooropen;
     leftleftdooropen;
@@ -184,7 +260,7 @@ class Level1_2 extends Hostile {
     botrightdooropen;
 
     constructor() {
-        super('Level1_2');
+        super('Level2_1');
     }
     init(data) {
         score = data.score;
@@ -206,6 +282,8 @@ class Level1_2 extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         this.drawScenario(this);
+        bumps = this.getBumps();
+        this.physics.world.enable(bumps);
 
         /* DOORS */
         this.createDoors(this, currentPosition);
@@ -221,7 +299,7 @@ class Level1_2 extends Hostile {
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
-        player.body.setOffset( player.width / 4, player.height / 4);
+        player.body.setOffset(player.width / 4, player.height / 4);
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
@@ -244,17 +322,11 @@ class Level1_2 extends Hostile {
         this.drawPlayerUI();
 
         /*COLLIDERS */
-        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(enemies, enemies);
-        this.physics.add.collider(player, enemies, meleeHit, null, this);
+        this.physics.add.collider(player, enemies, scanMeleeHitPlayer, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
-        enemies.children.iterate((enem) => {
-            // this.physics.add.collider(enem.forcefield, lasers);
-            this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
-        })
         this.drawMap(this);
-        setTimeout(() => { readyToShoot = true; }, TIME_SHOOT_PLAYER);
 
     }
 
@@ -314,29 +386,26 @@ class Level1_2 extends Hostile {
         if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
         if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
-
         enemies.children.iterate((enem) => {
+            let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
+            enem.rotation = enemAngle;
             enem.move(player);
-            enem.aim(player);
-            if (readyToShoot) {
-                let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
-                if (time > enem.lastFired) {
-                    var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
-                    var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
-                    enemyLasers.add(currentLaser);
-                    enem.lastFired = time + TURRET_FIRE_RATE;
-                }
-            }
+        });
+
+        tougherEnemies.children.iterate((enem) => {
+            if (!enem.isCharging && !enem.isStunned) { enem.aim(); }
+            else if (enem.isCharging && !enem.isStunned) { enem.move(); }
         });
 
         lasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         });
-
         enemyLasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         });
+
+
     }
 }
 
-export default Level1_2;
+export default Level2_1;
