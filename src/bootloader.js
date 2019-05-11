@@ -48,7 +48,8 @@ class Bootloader extends Phaser.Scene {
 
         /* Enemies L1 */
         this.load.image('turret', "./assets/turret.png");
-        this.load.image('scancatcher1', "./assets/scancatcher1.png");
+        // this.load.image('scancatcher1', "./assets/scancatcher1.png");
+        this.load.spritesheet('scancatcher1', "./assets/scancatcherss.png", { frameWidth: 48, frameHeight: 48 });
         this.load.image('jolt', "./assets/jolt.png");
         this.load.image('joltshield', "./assets/jolt-shield.png");
         this.load.image('joltweapon', "./assets/jolt-weapon.png");
