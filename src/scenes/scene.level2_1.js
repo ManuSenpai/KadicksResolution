@@ -92,13 +92,14 @@ function hitEnemy(enemy, laser) {
     laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.destroy();
+        
+        enemy.die();
+        enemies.remove(enemy);
+        // enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
 
-        if (enemies.children.entries.length === 0) {
+        if (enemies.children.entries.length === 0 && tougherEnemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
         score += enemy.score;
@@ -249,6 +250,8 @@ function generateTougher(context) {
 
     // context.physics.add.overlap( bumps, tougherEnemies, onWorldBounds, null, context );
     context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
+    context.physics.add.collider(bumps, player);
+    context.physics.add.collider(bumps, enemies);
     context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
     context.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, context);
     context.physics.add.collider(player, tougherEnemies, tacklePlayer, null, context);

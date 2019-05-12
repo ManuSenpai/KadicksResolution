@@ -1,2 +1,3 @@
 coulombss.png,128,128,3
-scancatcherss.png,48,48,4
+scancatcherss.png,192,48,2
+scancatcherdie.png,48,48,4

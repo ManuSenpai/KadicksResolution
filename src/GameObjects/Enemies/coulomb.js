@@ -104,6 +104,12 @@ class Coulomb extends Enemy {
             this.crashIntoWall();
         }
     }
+
+    die() {
+        this.setActive(false);
+        this.setVisible(false);
+        this.destroy();
+    }
 }
 
 export default Coulomb;

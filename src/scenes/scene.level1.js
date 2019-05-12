@@ -397,10 +397,10 @@ class Level1 extends Phaser.Scene {
         armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
         armorIcon.displayWidth = 12;
         armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0x000000');
+        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0xffffff');
         armorBar.setOrigin(0, 0.5);
         healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
         healthIcon.displayWidth = 12;

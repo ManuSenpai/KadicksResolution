@@ -83,9 +83,8 @@ function hitEnemy(enemy, laser) {
     laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.destroy();
+        enemy.die();
+        enemies.remove(enemy);
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
         

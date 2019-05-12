@@ -41,7 +41,9 @@ class Hostile extends Phaser.Scene {
     topright;
     botleft;
     botright;
-    bumps;      // Group of neutral objects that serve as obstacles: Walls, columns, etc.
+    bumps;                  // Group of neutral objects that serve as obstacles: Walls, columns, etc.
+
+    scenarioDistribution;   // Represents Scenario Distribution for obstacles.
 
     powerups;
 
@@ -57,6 +59,7 @@ class Hostile extends Phaser.Scene {
         this.currentPosition = currentPosition;
         this.entrance = entrance;
         this.player = player;
+
     }
 
     setPlayerStats( _playerStats) {
@@ -125,6 +128,18 @@ class Hostile extends Phaser.Scene {
         this.bumps.add( this.botwall );
         this.bumps.add( this.leftwall );
         this.bumps.add( this.rightwall );
+
+        /** Scenario Obstacles */
+        this.scenarioDistribution = this.cache.json.get('distribution');
+        this.scenarioDistribution[1].forEach(element => {
+            let newProp = context.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
+            newProp.setOrigin(0.5, 1);
+            newProp.setScale(1.5);
+            newProp.body.setSize( newProp.width, newProp.height * 0.75, false);
+            newProp.body.setOffset( 0, newProp.height * 0.25);
+            newProp.body.moves = false;
+            this.bumps.add(newProp);
+        });
     }
 
     createDoors(context, currentPosition) {
@@ -493,11 +508,11 @@ class Hostile extends Phaser.Scene {
         this.armorIcon.displayWidth = 12;
         this.armorIcon.displayHeight = 12;
         if ( this.armorBarBg ) this.armorBarBg.destroy();
-        this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0x000000');
+        this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0x000000');
         this.armorBarBg.setOrigin(0, 0.5);
         this.armorBarBg.alpha = 0.4;
         if ( this.armorBar ) this.armorBar.destroy();
-        this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
         if ( this.healthIcon ) this.healthIcon.destroy();
         this.healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');

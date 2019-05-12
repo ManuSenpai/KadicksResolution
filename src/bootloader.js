@@ -72,6 +72,11 @@ class Bootloader extends Phaser.Scene {
         this.load.image('bossleftdoor', "./assets/bossleftdoor.png");
         this.load.image('stairnextlevel', "./assets/stairnextlevel.png");
 
+        /* PROPS */
+        this.load.image('box', "./assets/box.png")
+        this.load.image('bigbox', "./assets/bigbox.png")
+        this.load.image('column', "./assets/column.png")
+
         /* Scenario 1 */
         this.load.image('topleft1', "./assets/topleft1.png");
         this.load.image('topright1', "./assets/topright1.png");
@@ -103,6 +108,9 @@ class Bootloader extends Phaser.Scene {
 
         /* ITEMS */
         this.load.image('keycard', './assets/keycard.png');
+
+        /* SCENARIO DISTRIBUTION */
+        this.load.json('distribution', './src/scenes/scenario/scenarioDistribution.json');
     }
     create() {
         scoreText = this.make.text(configScoreText);
