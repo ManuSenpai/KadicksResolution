@@ -21,6 +21,7 @@ var enemyLasers;                // Pool of bullets shot by enemiess
 var laserTraps = [];            // Laser traps at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
+var levelloaded = false;        // Represents that the level has finished loading
 
 var enemies;                    // Enemies on scene
 var tougherEnemies;             // Tougher enemies on scene
@@ -92,7 +93,7 @@ function hitEnemy(enemy, laser) {
     laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
-        
+
         enemy.die();
         enemies.remove(enemy);
         // enemy.destroy();
@@ -178,19 +179,41 @@ function collisionBetweenTougher(tough1, tough2) {
 }
 
 function untangleEnemies(enemy1, enemy2) {
-    const d1 = window.innerWidth / 2 - enemy1.x;
-    const d2 = window.innerWidth / 2 - enemy2.x;
-    if (Math.abs(d1) < Math.abs(d2)) {
-        enemy1.x += d1 > 0 ? enemy1.width/2 : -enemy1.width/2;
-    } else {
-        enemy2.x += d1 > 0 ? enemy2.width/2 : -enemy2.width/2;
+    let b1 = enemy1.body;
+    let b2 = enemy2.body;
+
+    if (b1.y > b2.y) {
+        b1.y -= Math.abs(b1.top - b2.bottom);
+        b1.stop();
     }
+    else {
+        b1.y += Math.abs(b2.top - b1.bottom);
+        b1.stop();
+    }
+
+    if (b1.x < b2.x) {
+        b1.x -= Math.abs(b1.left - b2.right);
+        b1.stop();
+    } else {
+        b1.x += Math.abs(b1.right - b2.left);
+        b1.stop();
+    }
+}
+
+/**
+ * Avoids an overlap between a bump element and a gameobject.
+ * @param {GameObject} agent Agent that overlaps with a game bump 
+ * @param {*} bump Bump Element
+ */
+function untangleFromBumps(bump, agent) {
+    if( levelloaded ) this.untangleFromBumps(agent, bump);
 }
 
 function onWorldBounds(bump, enemy) {
     this.cameras.main.shake(150);
     bump.body.setVelocity(0, 0);
     enemy.crashIntoWall();
+    this.untangleFromBumps(enemy, bump);
 }
 
 function generateMinions(context) {
@@ -216,7 +239,10 @@ function generateMinions(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        let newEnemy = new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        newEnemy.name = "scancatcher";
+        newEnemy.body.immovable = true;
+        enemies.add(newEnemy);
     });
 }
 
@@ -245,17 +271,23 @@ function generateTougher(context) {
     TOUGHER_ENEMY_VALUES.forEach((enem) => {
         let newCoulomb = new Coulomb(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
         newCoulomb.setTarget(player);
+        newCoulomb.name = "coulomb";
         tougherEnemies.add(newCoulomb);
     });
 
-    // context.physics.add.overlap( bumps, tougherEnemies, onWorldBounds, null, context );
-    context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
-    context.physics.add.collider(bumps, player);
-    context.physics.add.collider(bumps, enemies);
-    context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
-    context.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, context);
-    context.physics.add.collider(player, tougherEnemies, tacklePlayer, null, context);
-    context.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, context);
+    // context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
+    // context.physics.add.collider(bumps, player);
+    // context.physics.add.overlap(bumps, player, untangleFromBumps, null, context);
+    // context.physics.add.collider(bumps, enemies);
+    // context.physics.add.overlap(bumps, tougherEnemies, untangleFromBumps, null, context);
+    // context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
+    // context.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, context);
+    // context.physics.add.collider(player, tougherEnemies, tacklePlayer, null, context);
+    // context.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, context);
+    // context.physics.add.overlap(bumps, lasers, (bump, laser) => {
+    //     lasers.remove(laser);
+    //     laser.destroy();
+    // } , null, context);
 
 }
 
@@ -281,6 +313,7 @@ class Level2_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        this.load.on('complete', () => {levelloaded = true; });
         this.setPlayerStats(playerStats);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
@@ -305,6 +338,7 @@ class Level2_1 extends Hostile {
         if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
         if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
 
+        player.name = "player";
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
@@ -337,6 +371,25 @@ class Level2_1 extends Hostile {
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
         this.drawMap(this);
+
+        this.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, this);
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate ( (bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        }); 
+        this.physics.add.overlap(bumps, player, untangleFromBumps, null, this);
+        this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
+        this.physics.add.collider(bumps, enemies);
+        this.physics.add.overlap(bumps, tougherEnemies, untangleFromBumps, null, this);
+        this.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, this);
+        this.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, this);
+        this.physics.add.collider(player, tougherEnemies, tacklePlayer, null, this);
+        this.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, this);
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
 
     }
 

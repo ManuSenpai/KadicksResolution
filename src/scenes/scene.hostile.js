@@ -62,7 +62,7 @@ class Hostile extends Phaser.Scene {
 
     }
 
-    setPlayerStats( _playerStats) {
+    setPlayerStats(_playerStats) {
         this.playerStats = _playerStats;
     }
 
@@ -97,19 +97,19 @@ class Hostile extends Phaser.Scene {
         this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.topwall);
         // this.topwall.body.immovable = true;
-        this.topwall.body.moves=false;
+        this.topwall.body.moves = false;
         this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.botwall);
         // this.botwall.body.immovable = true;
-        this.botwall.body.moves=false;
+        this.botwall.body.moves = false;
         this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.leftwall);
         // this.leftwall.body.immovable = true;
-        this.leftwall.body.moves=false;
+        this.leftwall.body.moves = false;
         this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.rightwall);
         // this.rightwall.body.immovable = true;
-        this.rightwall.body.moves=false;
+        this.rightwall.body.moves = false;
 
         // CORNERS
         this.topleft = context.physics.add.sprite(0, 0, 'topleft' + this.playerStats.LEVEL);
@@ -121,23 +121,23 @@ class Hostile extends Phaser.Scene {
         this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + this.playerStats.LEVEL);
         this.botright.setScale(2);
 
-        if ( this.bumps && this.bumps.children && this.bumps.children.length > 0 ) { this.bumps.clear(); }
+        if (this.bumps && this.bumps.children && this.bumps.children.length > 0) { this.bumps.clear(); }
         this.bumps = context.physics.add.group();
 
-        this.bumps.add( this.topwall );
-        this.bumps.add( this.botwall );
-        this.bumps.add( this.leftwall );
-        this.bumps.add( this.rightwall );
+        this.bumps.add(this.topwall);
+        this.bumps.add(this.botwall);
+        this.bumps.add(this.leftwall);
+        this.bumps.add(this.rightwall);
 
         /** Scenario Obstacles */
         this.scenarioDistribution = this.cache.json.get('distribution');
         this.scenarioDistribution[1].forEach(element => {
             let newProp = context.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
+            this.physics.world.enable(newProp);
             newProp.setOrigin(0.5, 1);
             newProp.setScale(1.5);
-            newProp.body.setSize( newProp.width, newProp.height * 0.75, false);
-            newProp.body.setOffset( 0, newProp.height * 0.25);
-            newProp.body.moves = false;
+            newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
+            newProp.body.setOffset(0, newProp.height * 0.25);
             this.bumps.add(newProp);
         });
     }
@@ -503,26 +503,26 @@ class Hostile extends Phaser.Scene {
     }
 
     drawPlayerUI() {
-        if ( this.armorIcon ) this.armorIcon.destroy();
+        if (this.armorIcon) this.armorIcon.destroy();
         this.armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
         this.armorIcon.displayWidth = 12;
         this.armorIcon.displayHeight = 12;
-        if ( this.armorBarBg ) this.armorBarBg.destroy();
+        if (this.armorBarBg) this.armorBarBg.destroy();
         this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0x000000');
         this.armorBarBg.setOrigin(0, 0.5);
         this.armorBarBg.alpha = 0.4;
-        if ( this.armorBar ) this.armorBar.destroy();
+        if (this.armorBar) this.armorBar.destroy();
         this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
-        if ( this.healthIcon ) this.healthIcon.destroy();
+        if (this.healthIcon) this.healthIcon.destroy();
         this.healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
         this.healthIcon.displayWidth = 12;
         this.healthIcon.displayHeight = 12;
-        if ( this.healthBarBg ) this.healthBarBg.destroy();
+        if (this.healthBarBg) this.healthBarBg.destroy();
         this.healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.MAX_HEALTH * 2, 12, '0x000000');
         this.healthBarBg.setOrigin(0, 0.5);
         this.healthBarBg.alpha = 0.4;
-        if ( this.healthBar ) this.healthBar.destroy(); 
+        if (this.healthBar) this.healthBar.destroy();
         this.healthBar = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.HEALTH * 2, 12, '0xffffff');
         this.healthBar.setOrigin(0, 0.5);
     }
@@ -551,6 +551,69 @@ class Hostile extends Phaser.Scene {
 
     getBumps() {
         return this.bumps;
+    }
+
+    /**
+    * Avoids an overlap between a bump element and a gameobject.
+    * @param {GameObject} agent Agent that is currently overlaping with a game bump 
+    * @param {*} bump Bump Element
+    */
+    untangleFromBumps(agent, bump) {
+        if (agent.name === 'player' || bump.name === 'player') debugger;
+        agent.body.setVelocityX(0);
+        agent.body.setVelocityY(0);
+        let b1 = agent.body;
+        let b2 = bump.body;
+
+        if ( b2.touching.left ) {
+            agent.x -= (Math.abs(b1.right - b2.left) + 20);
+            b1.stop();
+        }
+
+        if ( b2.touching.right ) {
+            agent.x += (Math.abs(b1.left - b2.right) + 20);
+            b1.stop();
+        }
+
+        if ( b2.touching.up ) {
+            agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
+            b1.stop();
+        }
+
+        if ( b2.touching.down ) {
+            agent.y += (Math.abs(b1.top - b2.bottom) + 20);
+            b1.stop();
+        }
+
+        // The level starts with one of the enemies overlapping an object so the touching property has not
+        // been updated.
+        if ( b2.touching.none ) {
+            let deltaXb1 = Math.abs(b1.x - window.innerWidth/2);
+            let deltaXb2 = Math.abs(b2.x - window.innerWidth/2);
+            let deltaYb1 = Math.abs(b1.y - window.innerHeight/2);
+            let deltaYb2 = Math.abs(b2.y - window.innerHeight/2);
+            if ( deltaXb1 < deltaXb2 ) { 
+                if ( agent.x < window.innerWidth / 2 ) agent.x += (Math.abs(b1.right - b2.left) + 20);
+                else agent.x -= (Math.abs(b1.left - b2.right) + 20);
+            } else {
+                if ( agent.x < window.innerWidth / 2 ) agent.x -= (Math.abs(b1.left - b2.right) + 20);
+                else agent.x += (Math.abs(b1.right - b2.left) + 20);
+            }
+            if ( deltaYb1 < deltaYb2 ) { 
+                if ( agent.y < window.innerHeight/ 2 ) agent.y += (Math.abs(b1.top - b2.bottom) + 20);
+                else agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
+            } else {
+                if ( agent.y < window.innerHeight/ 2 ) agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
+                else agent.y += (Math.abs(b1.top - b2.bottom) + 20);
+            }
+
+            b1.stop();
+        }
+    }
+
+    collideWithBump(bump, agent){
+        agent.body.setVelocity(0, 0);
+        bump.body.setVelocity(0,0);
     }
 }
 
