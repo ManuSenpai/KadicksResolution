@@ -274,21 +274,6 @@ function generateTougher(context) {
         newCoulomb.name = "coulomb";
         tougherEnemies.add(newCoulomb);
     });
-
-    // context.physics.add.collider(bumps, tougherEnemies, onWorldBounds, null, context);
-    // context.physics.add.collider(bumps, player);
-    // context.physics.add.overlap(bumps, player, untangleFromBumps, null, context);
-    // context.physics.add.collider(bumps, enemies);
-    // context.physics.add.overlap(bumps, tougherEnemies, untangleFromBumps, null, context);
-    // context.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, context);
-    // context.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, context);
-    // context.physics.add.collider(player, tougherEnemies, tacklePlayer, null, context);
-    // context.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, context);
-    // context.physics.add.overlap(bumps, lasers, (bump, laser) => {
-    //     lasers.remove(laser);
-    //     laser.destroy();
-    // } , null, context);
-
 }
 
 class Level2_1 extends Hostile {
@@ -315,6 +300,7 @@ class Level2_1 extends Hostile {
     create() {
         this.load.on('complete', () => {levelloaded = true; });
         this.setPlayerStats(playerStats);
+        this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }
@@ -338,7 +324,6 @@ class Level2_1 extends Hostile {
         if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
         if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
 
-        player.name = "player";
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
@@ -347,7 +332,7 @@ class Level2_1 extends Hostile {
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-        this.addDoorColliders(this);
+        
         this.drawKeys(playerStats.KEYCODES);
         /* LASERS */
         lasers = this.physics.add.group({
@@ -378,7 +363,6 @@ class Level2_1 extends Hostile {
             bump.body.immovable = true;
             bump.moves = false;
         }); 
-        this.physics.add.overlap(bumps, player, untangleFromBumps, null, this);
         this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
         this.physics.add.collider(bumps, enemies);
         this.physics.add.overlap(bumps, tougherEnemies, untangleFromBumps, null, this);

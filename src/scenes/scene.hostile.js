@@ -66,6 +66,10 @@ class Hostile extends Phaser.Scene {
         this.playerStats = _playerStats;
     }
 
+    setCurrentPosition(_currentPosition) {
+        this.currentPosition = _currentPosition;
+    }
+
     setScore(score) {
         this.score = score;
     }
@@ -131,7 +135,9 @@ class Hostile extends Phaser.Scene {
 
         /** Scenario Obstacles */
         this.scenarioDistribution = this.cache.json.get('distribution');
-        this.scenarioDistribution[1].forEach(element => {
+        let currentDistribution = Phaser.Math.Between(1,2);
+        this.currentPosition.distribution = currentDistribution;
+        this.scenarioDistribution[currentDistribution].forEach(element => {
             let newProp = context.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
             this.physics.world.enable(newProp);
             newProp.setOrigin(0.5, 1);
@@ -270,14 +276,30 @@ class Hostile extends Phaser.Scene {
     }
 
     addDoorColliders(context) {
-        context.physics.add.overlap(this.player, context.topleftdooropen, this.goUp, null, context);
-        context.physics.add.overlap(this.player, context.toprightdddooropen, this.goUp, null, context);
-        context.physics.add.overlap(this.player, context.leftleftdooropen, this.goLeft, null, context);
-        context.physics.add.overlap(this.player, context.leftrightdooropen, this.goLeft, null, context);
-        context.physics.add.overlap(this.player, context.rightleftdooropen, this.goRight, null, context);
-        context.physics.add.overlap(this.player, context.rightrightdooropen, this.goRight, null, context);
-        context.physics.add.overlap(this.player, context.botleftdooropen, this.goDown, null, context);
-        context.physics.add.overlap(this.player, context.botrightdooropen, this.goDown, null, context);
+        if ( this.currentPosition.top && context.topleftdooropen) 
+        context.topleftdooropen.body.setSize(context.topleftdooropen.width * 1.5, context.topleftdooropen.height * 1.5)
+        if ( this.currentPosition.top && context.toprightdooropen) 
+        context.toprightdooropen.body.setSize(context.toprightdooropen.width* 1.5, context.toprightdooropen.height * 1.5)
+        if ( this.currentPosition.left && context.leftleftdooropen) 
+        context.leftleftdooropen.body.setSize(context.leftleftdooropen.width* 1.5, context.leftleftdooropen.height * 1.5)
+        if ( this.currentPosition.left && context.leftrightdooropen) 
+        context.leftrightdooropen.body.setSize(context.leftrightdooropen.width* 1.5, context.leftrightdooropen.height * 1.5)
+        if ( this.currentPosition.right && context.rightleftdooropen) 
+        context.rightleftdooropen.body.setSize(context.rightleftdooropen.width* 1.5, context.rightleftdooropen.height * 1.5)
+        if ( this.currentPosition.right &&  context.rightrightdooropen) 
+        context.rightrightdooropen.body.setSize(context.rightrightdooropen.width* 1.5, context.rightrightdooropen.height * 1.5)
+        if ( this.currentPosition.bottom && context.botleftdooropen) 
+        context.botleftdooropen.body.setSize(context.botleftdooropen.width* 1.5, context.botleftdooropen.height * 1.5)
+        if ( this.currentPosition.bottom && context.botrightdooropen) 
+        context.botrightdooropen.body.setSize(context.botrightdooropen.width* 1.5, context.botrightdooropen.height * 1.5)
+        context.physics.add.collider(this.player, context.topleftdooropen, this.goUp, null, context);
+        context.physics.add.collider(this.player, context.toprightdooropen, this.goUp, null, context);
+        context.physics.add.collider(this.player, context.leftleftdooropen, this.goLeft, null, context);
+        context.physics.add.collider(this.player, context.leftrightdooropen, this.goLeft, null, context);
+        context.physics.add.collider(this.player, context.rightleftdooropen, this.goRight, null, context);
+        context.physics.add.collider(this.player, context.rightrightdooropen, this.goRight, null, context);
+        context.physics.add.collider(this.player, context.botleftdooropen, this.goDown, null, context);
+        context.physics.add.collider(this.player, context.botrightdooropen, this.goDown, null, context);
     }
 
     goDown() {
@@ -559,7 +581,6 @@ class Hostile extends Phaser.Scene {
     * @param {*} bump Bump Element
     */
     untangleFromBumps(agent, bump) {
-        if (agent.name === 'player' || bump.name === 'player') debugger;
         agent.body.setVelocityX(0);
         agent.body.setVelocityY(0);
         let b1 = agent.body;

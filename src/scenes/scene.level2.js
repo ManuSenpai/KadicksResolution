@@ -15,6 +15,7 @@ var botwall;
 var leftwall;
 var rightwall;
 var floor;
+var bumps;
 
 // DOORS
 var topleftdoorframe;
@@ -372,6 +373,20 @@ class Level2 extends Phaser.Scene {
         botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + playerStats.LEVEL);
         botright.setScale(2);
 
+        bumps = this.physics.add.group();
+        this.scenarioDistribution = this.cache.json.get('distribution');
+        if (currentPosition.distribution != 0) {
+            this.scenarioDistribution[currentPosition.distribution].forEach(element => {
+                let newProp = this.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
+                this.physics.world.enable(newProp);
+                newProp.setOrigin(0.5, 1);
+                newProp.setScale(1.5);
+                newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
+                newProp.body.setOffset(0, newProp.height * 0.25);
+                bumps.add(newProp);
+            });
+        }
+
         // DOORS
         createDoors(this);
 
@@ -431,6 +446,15 @@ class Level2 extends Phaser.Scene {
         this.physics.add.overlap(player, botleftdooropen, goDown, null, this);
         // this.physics.add.collider(player, botrightdooropen);
         this.physics.add.overlap(player, botrightdooropen, goDown, null, this);
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate ( (bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        }); 
 
         drawKeys(this, playerStats.KEYCODES);
 

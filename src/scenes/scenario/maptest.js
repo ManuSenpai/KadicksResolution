@@ -275,6 +275,7 @@ class Scenario_Node {
     isBoss = false;
     isClear = false;
     keyIsTaken = false;
+    distribution = 0;
     whereIsBoss = "";
     x = 0;
     y = 0;

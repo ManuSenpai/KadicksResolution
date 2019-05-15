@@ -19,6 +19,9 @@ var enemies;                    // Enemies on scene
 var enemyLasers;                // lasers shot by foes
 var readyToShoot = false;       // Enemies are ready to shoot;
 
+var bumps;
+var levelloaded = false;
+
 
 // UI
 var healthIcon;
@@ -76,6 +79,15 @@ function meleeHit(player, enemy) {
     var velocity = this.physics.velocityFromRotation(hitAngle, -100);
     player.x += velocity.x;
     player.y += velocity.y;
+}
+
+/**
+ * Avoids an overlap between a bump element and a gameobject.
+ * @param {GameObject} agent Agent that overlaps with a game bump 
+ * @param {*} bump Bump Element
+ */
+function untangleFromBumps(bump, agent) {
+    if( levelloaded ) this.untangleFromBumps(agent, bump);
 }
 
 function hitEnemy(enemy, laser) {
@@ -195,7 +207,10 @@ class Level2_2 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        readyToShoot = false;
+        this.load.on('complete', () => { levelloaded = true; });
         this.setPlayerStats(playerStats);
+        this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }
@@ -206,6 +221,7 @@ class Level2_2 extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         this.drawScenario(this);
+        bumps = this.getBumps();
 
         /* DOORS */
         this.createDoors(this, currentPosition);
@@ -225,8 +241,8 @@ class Level2_2 extends Hostile {
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-        this.addDoorColliders(this);
         this.drawKeys(playerStats.KEYCODES);
+
         /* LASERS */
         lasers = this.physics.add.group({
             classType: Laser
@@ -254,6 +270,22 @@ class Level2_2 extends Hostile {
             this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
         })
         this.drawMap(this);
+
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate ( (bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        }); 
+        this.physics.add.collider(bumps, enemies);
+        this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
+        this.physics.add.overlap(bumps, enemyLasers, (bump, laser) => {
+            enemyLasers.remove(laser);
+            laser.destroy();
+        }, null, this);
         setTimeout(() => { readyToShoot = true; }, TIME_SHOOT_PLAYER);
 
     }
