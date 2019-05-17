@@ -135,15 +135,15 @@ class Hostile extends Phaser.Scene {
 
         /** Scenario Obstacles */
         this.scenarioDistribution = this.cache.json.get('distribution');
-        let currentDistribution = Phaser.Math.Between(1,2);
+        let currentDistribution = Phaser.Math.Between(1, Object.keys(this.scenarioDistribution).length);
         this.currentPosition.distribution = currentDistribution;
         this.scenarioDistribution[currentDistribution].forEach(element => {
             let newProp = context.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
             this.physics.world.enable(newProp);
             newProp.setOrigin(0.5, 1);
             newProp.setScale(1.5);
-            newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
-            newProp.body.setOffset(0, newProp.height * 0.25);
+            // newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
+            // newProp.body.setOffset(0, newProp.height * 0.25);
             this.bumps.add(newProp);
         });
     }
