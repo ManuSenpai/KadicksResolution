@@ -19,7 +19,7 @@ var enemyLasers;                // Pool of bullets shot by enemiess
 var laserTraps = [];            // Laser traps at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
-
+var levelloaded = false;        // Represents that the level has finished loading
 var enemies;                    // Enemies on scene
 
 // SCENARIO
@@ -32,6 +32,7 @@ var botwall;
 var leftwall;
 var rightwall;
 var floor;
+var bumps;
 
 // UI
 var healthIcon;
@@ -135,6 +136,15 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
+/**
+ * Avoids an overlap between a bump element and a gameobject.
+ * @param {GameObject} agent Agent that overlaps with a game bump 
+ * @param {*} bump Bump Element
+ */
+function untangleFromBumps(bump, agent) {
+    if( levelloaded ) this.untangleFromBumps(agent, bump);
+}
+
 function generateEnemies(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 4;
@@ -159,7 +169,10 @@ function generateEnemies(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        let newEnemy = new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        newEnemy.name = "scancatcher";
+        newEnemy.body.immovable = true;
+        enemies.add(newEnemy);
     });
 }
 
@@ -185,7 +198,9 @@ class Level1_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        this.load.on('complete', () => {levelloaded = true; });
         this.setPlayerStats(playerStats);
+        this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
         }
@@ -196,6 +211,8 @@ class Level1_1 extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         this.drawScenario(this);
+        bumps = this.getBumps();
+        this.physics.world.enable(bumps);
 
         /* DOORS */
         this.createDoors(this, currentPosition);
@@ -215,7 +232,7 @@ class Level1_1 extends Hostile {
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-        this.addDoorColliders(this);
+
         this.drawKeys(playerStats.KEYCODES);
         /* LASERS */
         lasers = this.physics.add.group({
@@ -238,6 +255,18 @@ class Level1_1 extends Hostile {
         this.physics.add.collider(player, enemies, scanMeleeHitPlayer, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate ( (bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        }); 
+        this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
+        this.physics.add.collider(bumps, enemies);
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
         this.drawMap(this);
 
     }

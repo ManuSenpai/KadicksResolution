@@ -13,8 +13,8 @@ var configScoreText = {
 
 
 const PLAYER_STATS = {
-    LEVEL: 1,
-    // LEVEL: 0,
+    // LEVEL: 1,
+    LEVEL: 0,
     HEALTH: 100,                        // Current health value
     MAX_HEALTH: 100,                    // Maximum health value 
     ARMOR: 100,                         // Current armor value
