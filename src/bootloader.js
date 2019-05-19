@@ -13,8 +13,8 @@ var configScoreText = {
 
 
 const PLAYER_STATS = {
-    // LEVEL: 1,
-    LEVEL: 0,
+    LEVEL: 1,
+    // LEVEL: 0,
     HEALTH: 100,                        // Current health value
     MAX_HEALTH: 100,                    // Maximum health value 
     ARMOR: 100,                         // Current armor value
@@ -56,7 +56,10 @@ class Bootloader extends Phaser.Scene {
         this.load.image('joltforcefield', "./assets/jolt-forcefield.png");
 
         /* Enemies L2 */
-        this.load.image('coulomb', "./assets/coulomb.png")
+        this.load.image('coulomb', "./assets/coulomb.png");
+        this.load.image('trashbot', './assets/trashbot.png');
+        this.load.image('trashbotniceface', './assets/trash-nice.png');
+        this.load.image('trashtrail', './assets/trashtrail.png');
 
         /* Bosses */
         this.load.image('boss1', "./assets/bossdemo1.png");

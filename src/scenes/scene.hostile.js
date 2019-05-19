@@ -142,8 +142,6 @@ class Hostile extends Phaser.Scene {
             this.physics.world.enable(newProp);
             newProp.setOrigin(0.5, 1);
             newProp.setScale(1.5);
-            // newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
-            // newProp.body.setOffset(0, newProp.height * 0.25);
             this.bumps.add(newProp);
         });
     }
@@ -152,7 +150,7 @@ class Hostile extends Phaser.Scene {
         if (currentPosition.top) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "top") {
-                    if (this.playerStats.KEYCODES === 3) {
+                    if (this.playerStats.KEYCODES >= 3) {
                         context.topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
                         context.toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
                     }
@@ -175,7 +173,7 @@ class Hostile extends Phaser.Scene {
         if (currentPosition.left) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "left") {
-                    if (this.playerStats.KEYCODES === 3) {
+                    if (this.playerStats.KEYCODES >= 3) {
                         context.leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
                         context.leftrightdooropen.angle = 270;
                         context.leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
@@ -208,7 +206,7 @@ class Hostile extends Phaser.Scene {
         if (currentPosition.right) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "right") {
-                    if (this.playerStats.KEYCODES === 3) {
+                    if (this.playerStats.KEYCODES >= 3) {
                         context.rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
                         context.rightleftdooropen.angle = 90;
                         context.rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
@@ -241,7 +239,7 @@ class Hostile extends Phaser.Scene {
         if (currentPosition.bottom) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "bot") {
-                    if (this.playerStats.KEYCODES === 3) {
+                    if (this.playerStats.KEYCODES >= 3) {
                         context.botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
                         context.botleftdooropen.angle = 180;
                         context.botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');

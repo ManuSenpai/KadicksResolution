@@ -2,6 +2,7 @@ import Laser from '../GameObjects/laser.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
 import Hostile from './scene.hostile.js';
 import Jolt from '../GameObjects/Enemies/jolt.js';
+import Trashbot from '../GameObjects/Enemies/trashbot.js';
 
 var ENEMY_VALUES = [];
 
@@ -16,6 +17,7 @@ var lasers;                     // Pool of bullets shot by the player
 var lastFired = 0;              // Time instant when last shot was fired
 
 var enemies;                    // Enemies on scene
+var trashbots;                  // Trashbots on scene
 var enemyLasers;                // lasers shot by foes
 var readyToShoot = false;       // Enemies are ready to shoot;
 
@@ -96,16 +98,16 @@ function hitEnemy(enemy, laser) {
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    enemy.hit();
+    if ( enemy.hasOwnProperty('hit') ) { enemy.hit(); }
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
-        enemy.destroy();
         enemy.onDestroy();
+        enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
-        if (enemies.children.entries.length === 0) {
+        if (enemies.children.entries.length === 0 && trashbots.children.entries.length === 0) {
             clearArea.apply(this);
         }
         score += enemy.score;
@@ -157,7 +159,7 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
-function generateEnemies(context) {
+function generateJolts(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
     var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 5;
@@ -183,6 +185,41 @@ function generateEnemies(context) {
     ENEMY_VALUES.forEach((enem) => {
         enemies.add(new Jolt(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
     });
+}
+
+function generateTrashbots(context) {
+    // The amount of enemies depends on the difficulty setting.
+    var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 5;
+
+    var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
+
+    ENEMY_VALUES = [];
+
+    for (let i = 0; i < nEnemies; i++) {
+        ENEMY_VALUES.push({
+            x: entrance === "right" ? Phaser.Math.Between(player.x + 64, window.innerWidth - 256)
+                : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
+            y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
+                : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
+            type: 'trashbot', scale: 1, rotation: 0, health: 200, damage: 40, speed: 200, score: 900
+        })
+    }
+
+    trashbots = context.physics.add.group({
+        classType: Enemy
+    });
+
+    ENEMY_VALUES.forEach((enem) => {
+        let newTrashbot = new Trashbot(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        context.physics.add.collider(newTrashbot, bumps, bounceOnWalls, null, context);
+        context.physics.add.collider(newTrashbot, trashbots, bounceOnWalls, null, context);
+        trashbots.add(newTrashbot);
+    });
+}
+
+function bounceOnWalls( trashbot, bump ) {
+    trashbot.bounceOnWall();
 }
 
 class Level2_2 extends Hostile {
@@ -252,7 +289,8 @@ class Level2_2 extends Hostile {
         });
 
         /* ENEMIES */
-        generateEnemies(this);
+        generateJolts(this);
+        generateTrashbots(this);
 
         /* UI */
         scoreText = this.make.text(configScoreText);
@@ -262,9 +300,11 @@ class Level2_2 extends Hostile {
         /*COLLIDERS */
         this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
         this.physics.add.collider(enemies, enemies);
+        this.physics.add.collider(trashbots, enemies, bounceOnWalls, null, this);
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+        this.physics.add.overlap(trashbots, lasers, hitEnemy, null, this);
         enemies.children.iterate((enem) => {
             // this.physics.add.collider(enem.forcefield, lasers);
             this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
@@ -360,6 +400,10 @@ class Level2_2 extends Hostile {
                 }
             }
         });
+
+        trashbots.children.iterate( (bot) => {
+            bot.move();
+        })
 
         lasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
