@@ -12,6 +12,7 @@ class Trashbot extends Enemy {
     trailInterval;
     trailFireTimeout;
     trailFireInterval;
+    trailColliders;
     scene;
     alive = true;
     emitters = [];
@@ -28,12 +29,16 @@ class Trashbot extends Enemy {
         this.trashFace = scene.add.sprite(this.x, this.y, 'trashbotniceface');
         this.scene.physics.world.enable(this.trashFace);
         this.trailgroup = scene.physics.add.group();
-        this.trailInterval = setInterval( () => this.generateTrail(), TRAIL_TIME);
+        this.trailInterval = setInterval(() => this.generateTrail(), TRAIL_TIME);
         this.flares = this.scene.add.particles('flares');
-        this.trailFireInterval = setInterval( () => this.setFire(), FIRE_INTERVAL_TIME);
+        this.trailFireInterval = setInterval(() => this.setFire(), FIRE_INTERVAL_TIME);
         this.setDepth(1);
         this.trashFace.setDepth(2);
+        this.trailColliders = scene.physics.add.group();
+    }
 
+    getTrailColliders() {
+        return this.trailColliders;
     }
 
     generateTrail() {
@@ -48,12 +53,12 @@ class Trashbot extends Enemy {
                 scaleX: 0.2,
                 scaleY: 0.2,
                 onComplete: function () {
-                    if ( this.trailgroup ) this.trailgroup.remove(newTrail);
+                    if (this.trailgroup) this.trailgroup.remove(newTrail);
                     newTrail.destroy();
                 },
             });
         } else {
-            clearInterval( this.trailInterval );
+            clearInterval(this.trailInterval);
         }
     }
 
@@ -61,9 +66,15 @@ class Trashbot extends Enemy {
      * Sets on fire the trail of oil left by the trashbot
      */
     setFire() {
-        if ( this.trailInterval ) clearInterval( this.trailInterval );
-        if ( this.trailFireInterval ) clearInterval( this.trailFireInterval );
-        this.trailgroup.children.iterate( (stain) => {
+
+        if (this.trailInterval) clearInterval(this.trailInterval);
+        if (this.trailFireInterval) clearInterval(this.trailFireInterval);
+        
+        this.trailgroup.children.iterate((stain) => {
+            let newCollider = this.scene.add.sprite(stain.x, stain.y, 'trashtrail');
+            this.scene.physics.world.enable(newCollider);
+            newCollider.visible = false;
+            this.trailColliders.add(newCollider);
             this.emitters.push(this.flares.createEmitter({
                 x: stain.x,
                 y: stain.y,
@@ -73,21 +84,25 @@ class Trashbot extends Enemy {
                 scale: { start: 0.6, end: 0.1 },
                 lifespan: 200,
                 blendMode: 'ADD',
-                tint: [ 0xf200ff, 0xfcd8ff ]
+                tint: [0xf200ff, 0xfcd8ff]
                 // tint: [ 0xff0000, 0xffbc6b, 0xffe16b ]
             }));
         });
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
-        currentTweens.forEach( (t) => t.complete() );
-        this.trailFireTimeout = setTimeout( () => {
-            this.emitters.forEach( (emitter) => {
+        currentTweens.forEach((t) => {
+            t.complete();
+        });
+
+        this.trailFireTimeout = setTimeout(() => {
+            this.emitters.forEach((emitter) => {
                 emitter.killAll();
                 emitter.stop();
             })
             this.emitters = [];
-            this.trailInterval = setInterval( () => this.generateTrail(), TRAIL_TIME);
-            this.trailFireInterval = setInterval( () => this.setFire(), FIRE_INTERVAL_TIME);
-            
+            this.trailColliders.clear(true, true);
+            this.trailInterval = setInterval(() => this.generateTrail(), TRAIL_TIME);
+            this.trailFireInterval = setInterval(() => this.setFire(), FIRE_INTERVAL_TIME);
+
         }, FIRE_TIME);
     }
 
@@ -111,13 +126,13 @@ class Trashbot extends Enemy {
     }
 
     onDestroy() {
-        if ( this.trailInterval ) { clearInterval(this.trailInterval); }
-        if ( this.trailFireInterval ) { clearInterval(this.trailFireInterval); }
-        if ( this.trailFireTimeout ) { clearTimeout( this.trailFireTimeout ); }
+        if (this.trailInterval) { clearInterval(this.trailInterval); }
+        if (this.trailFireInterval) { clearInterval(this.trailFireInterval); }
+        if (this.trailFireTimeout) { clearTimeout(this.trailFireTimeout); }
         this.trashFace.destroy();
         // this.scene.tweens.killTweensOf(this.trailgroup.children.entries);
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
-        currentTweens.forEach( (t) => t.complete() );
+        currentTweens.forEach((t) => t.complete());
         this.trailgroup.clear();
         this.trailgroup.destroy();
         this.trailAnimation.data.forEach(element => {

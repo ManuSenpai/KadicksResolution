@@ -8,8 +8,10 @@ var ENEMY_VALUES = [];
 
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
+const BURN_RATE = 300;         // Time passed until burn affects;
 
-const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player; 
+const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player;
+const FIRE_DAMAGE = 5;          // Damage caused by fire
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -20,6 +22,10 @@ var enemies;                    // Enemies on scene
 var trashbots;                  // Trashbots on scene
 var enemyLasers;                // lasers shot by foes
 var readyToShoot = false;       // Enemies are ready to shoot;
+var trailColliders;             // Trail colliders;
+var isBurning;                  // Checks if player is burning
+var lastBurntTime = 0;          // Time instant when player got burnt
+var playerTouchedFire = false;  // The player has touched the fire
 
 var bumps;
 var levelloaded = false;
@@ -61,6 +67,20 @@ function hitPlayer(player, laser) {
     }
     laser.destroy();
     lasers.remove(laser);
+}
+
+function burnPlayer (context) {
+    recoverArmor.paused = true;
+    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+    timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
+    if (context.playerStats.ARMOR > 0) {
+        context.hitArmor(FIRE_DAMAGE);
+    } else {
+        context.hitHealth(FIRE_DAMAGE);
+        if (context.playerStats.HEALTH < 0) {
+            // TODO: GAME OVER
+        }
+    }
 }
 
 function meleeHit(player, enemy) {
@@ -215,7 +235,12 @@ function generateTrashbots(context) {
         context.physics.add.collider(newTrashbot, bumps, bounceOnWalls, null, context);
         context.physics.add.collider(newTrashbot, trashbots, bounceOnWalls, null, context);
         trashbots.add(newTrashbot);
+        context.physics.add.overlap( player, newTrashbot.trailColliders, () => {
+            playerTouchedFire = true;
+        }, null, context );
     });
+
+    
 }
 
 function bounceOnWalls( trashbot, bump ) {
@@ -306,7 +331,6 @@ class Level2_2 extends Hostile {
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
         this.physics.add.overlap(trashbots, lasers, hitEnemy, null, this);
         enemies.children.iterate((enem) => {
-            // this.physics.add.collider(enem.forcefield, lasers);
             this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
         })
         this.drawMap(this);
@@ -330,11 +354,42 @@ class Level2_2 extends Hostile {
 
     }
 
+    checkIfBurning() {
+        let result = false;
+        trashbots.children.iterate( (tbot) => {
+            this.physics.overlap(player, tbot.trailColliders, () =>  {
+                result = true;
+            }, null, this);
+        })
+        // trashbots.children.iterate( (tbot) => {
+        //     tbot.trailColliders.children.iterate( (col) => {
+        //         if ( !col.body.touching.none ) {
+        //             result = true;
+        //         }
+        //     })
+        // })
+        return result;
+    }
+
     update(time, delta) {
         if (playerIsHit) {
             timeLastHit = time;
             playerIsHit = false;
         }
+
+        if ( playerTouchedFire ) {
+            isBurning = this.checkIfBurning();
+        }
+
+        if ( isBurning ) {
+            if ( time > lastBurntTime ) {
+                burnPlayer(this);
+                lastBurntTime = time + BURN_RATE;
+            }
+        } else {
+            playerTouchedFire = false;
+        }
+
         let cursor = this.input.mousePointer;
         let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + this.cameras.main.scrollX, cursor.y + this.cameras.main.scrollY);
 
