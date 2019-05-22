@@ -8,10 +8,10 @@ var ENEMY_VALUES = [];
 
 const TURRET_LASER_SPEED = 1;   // Laser speed coming from turret
 const TURRET_FIRE_RATE = 1000;  // Turret fire rate
-const BURN_RATE = 300;         // Time passed until burn affects;
+const BURN_RATE = 300;          // Time passed until burn affects;
 
 const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player;
-const FIRE_DAMAGE = 5;          // Damage caused by fire
+const FIRE_DAMAGE = 10;         // Damage caused by fire
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -349,6 +349,9 @@ class Level2_2 extends Hostile {
         this.physics.add.overlap(bumps, enemyLasers, (bump, laser) => {
             enemyLasers.remove(laser);
             laser.destroy();
+        }, null, this);
+        this.physics.add.collider(player, trashbots, (player, trashbot) => {
+            trashbot.bounceOnWall();
         }, null, this);
         setTimeout(() => { readyToShoot = true; }, TIME_SHOOT_PLAYER);
 
