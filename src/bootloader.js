@@ -63,6 +63,10 @@ class Bootloader extends Phaser.Scene {
 
         /* Bosses */
         this.load.image('boss1', "./assets/bossdemo1.png");
+        this.load.image('boss2', "./assets/boss2.png");
+        this.load.image('boss2toprg', "./assets/boss2-top-rg.png");
+        this.load.image('boss2botrg', "./assets/boss2-bot-rg.png");
+        this.load.image('boss2rotatable', "./assets/boss2-rotable.png");
 
         /* Doors */
         this.load.image('leftdoorframe', "./assets/leftdoorframe.png");
