@@ -9,6 +9,7 @@ class Boss2 extends Enemy {
 
     rotatable1;
     rotatable2;
+    rotGroup;
 
     emitters = [];
     followers = [];
@@ -48,11 +49,15 @@ class Boss2 extends Enemy {
         scene.add.existing(this);
         this.flares = this.scene.add.particles('flares');
         this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
+        this.rotGroup = this.scene.physics.add.group();
+        
 
         this.lastFired = 0;
         setTimeout(() => {
             this.rotatable1 = this.scene.physics.add.sprite(this.x, this.y, 'boss2rotatable');
             this.rotatable2 = this.scene.physics.add.sprite(this.x, this.y, 'boss2rotatable');
+            this.rotGroup.add(this.rotatable1);
+            this.rotGroup.add(this.rotatable2);
             this.botrg = this.scene.physics.add.sprite(this.x, this.y, 'boss2botrg');
             this.toprg = this.scene.physics.add.sprite(this.x, this.y, 'boss2toprg');
             this.deployRailguns();
@@ -65,6 +70,9 @@ class Boss2 extends Enemy {
         this.target = target;
     }
 
+    getRotatables() {
+        return this.rotGroup;
+    }
     deployRailguns() {
         this.deployTopRGAnimation = this.scene.tweens.add({
             targets: this.toprg,
@@ -250,7 +258,7 @@ class Boss2 extends Enemy {
             this.followers[0].forEach((f) => f.destroy());
             this.followers.shift();
             this.paths[0].destroy();
-            this.paths.unshift();
+            this.paths.shift();
             this.paths.push(newBeam);
             this.followers.push(newGroupOfFollowers);
         }

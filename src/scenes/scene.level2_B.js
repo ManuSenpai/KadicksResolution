@@ -38,6 +38,7 @@ var bossLifeBarBg;
 var bossLifeBar;
 var bossLifeBarGr;
 var bossShieldGr;
+var rotGroup;
 
 var score;
 var scoreText;
@@ -57,7 +58,7 @@ var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = le
 var keycard;
 var hittable = true;
 
-function hitPlayer(player, laser) {
+function laserPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -75,6 +76,22 @@ function hitPlayer(player, laser) {
     laser.setActive(false);
     laser.destroy();
     lasers.remove(laser);
+}
+
+function hitPlayer() {
+    recoverArmor.paused = true;
+    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
+    if (playerStats.ARMOR > 0) {
+        playerStats.ARMOR = (playerStats.ARMOR - boss.damage < 0) ? 0 : playerStats.ARMOR - boss.damage;
+        armorBar.width = playerStats.ARMOR * 2;
+    } else {
+        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;;
+        healthBar.width = playerStats.HEALTH * 2;
+        if (playerStats.HEALTH < 0) {
+            // TODO: GAME OVER
+        }
+    }
 }
 
 function beamPlayer(damage, context) {
@@ -267,10 +284,13 @@ class Level2_B extends Hostile {
         bossLifeBarBg.alpha = 0.4;
         bossLifeBar.alpha = 0.4;
 
+        rotGroup = boss.getRotatables();
+
         /*COLLIDERS */
-        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
+        this.physics.add.overlap(player, enemyLasers, laserPlayer, null, this);
         this.physics.add.collider(boss, lasers);
         this.physics.add.overlap(boss, lasers, hitEnemy, null, this);
+        this.physics.add.overlap(player, rotGroup, hitPlayer, null, this);
         this.drawMap(this);
 
         startGame = true;
@@ -342,6 +362,13 @@ class Level2_B extends Hostile {
 
             if (boss && boss.body) {
                 boss.move(player);
+            }
+
+            if ( boss.paths[0] && boss.paths[1]) {
+                if (Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[0].getBounds(), player.body) ||
+                Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
+                    beamPlayer(boss.damage, this);
+                }
             }
 
             enemyLasers.children.iterate((laser) => {
