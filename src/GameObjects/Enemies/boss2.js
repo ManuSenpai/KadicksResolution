@@ -50,7 +50,7 @@ class Boss2 extends Enemy {
         this.flares = this.scene.add.particles('flares');
         this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
         this.rotGroup = this.scene.physics.add.group();
-        
+
 
         this.lastFired = 0;
         setTimeout(() => {
@@ -105,13 +105,13 @@ class Boss2 extends Enemy {
                 if (!this.shootingRg) {
                     this.shootingRg = true;
                     setTimeout(() => this.loadAndShoot(), 500);
-                    
+
                 }
             }
             this.toprg.x = this.botrg.x;
-            if ( this.emitters[0] && this.emitters[1]) {
-                this.emitters[0].setPosition( this.toprg.x, this.botrg.y);
-                this.emitters[1].setPosition( this.toprg.x, this.toprg.y);
+            if (this.emitters[0] && this.emitters[1]) {
+                this.emitters[0].setPosition(this.toprg.x, this.botrg.y);
+                this.emitters[1].setPosition(this.toprg.x, this.toprg.y);
             }
 
         }
@@ -206,12 +206,20 @@ class Boss2 extends Enemy {
         if (this.timeouts[1]) clearTimeout(this.timeouts[1]);
         this.rotatable1.destroy();
         this.rotatable2.destroy();
-        this.followers[0].forEach((f) => f.destroy());
-        this.followers[1].forEach((f) => f.destroy());
+        if (this.followers[0]) this.followers[0].forEach((f) => f.destroy());
+        if (this.followers[1]) this.followers[1].forEach((f) => f.destroy());
         this.followers = [];
-        this.paths[0].destroy();
-        this.paths[1].destroy();
+        if ( this.paths[0]) this.paths[0].destroy();
+        if ( this.paths[1]) this.paths[1].destroy();
         this.paths = [];
+        this.toprg.destroy();
+        this.botrg.destroy();
+        if (this.emitters) {
+            this.emitters.forEach((emitter) => {
+                emitter.killAll();
+                emitter.stop();
+            });
+        }
 
     }
 
