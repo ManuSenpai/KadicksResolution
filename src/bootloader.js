@@ -13,7 +13,7 @@ var configScoreText = {
 
 
 const PLAYER_STATS = {
-    LEVEL: 1,
+    LEVEL: 2,
     // LEVEL: 0,
     HEALTH: 100,                        // Current health value
     MAX_HEALTH: 100,                    // Maximum health value 
@@ -101,6 +101,15 @@ class Bootloader extends Phaser.Scene {
         this.load.image('topbot2', "./assets/topbot2.png");
         this.load.image('leftright2', "./assets/leftright2.png");
         this.load.image('floor2', "./assets/floor2.png");
+        
+        /* Scenario 3 */
+        this.load.image('topleft3', "./assets/topleft3.png");
+        this.load.image('topright3', "./assets/topright3.png");
+        this.load.image('botleft3', "./assets/botleft3.png");
+        this.load.image('botright3', "./assets/botright3.png");
+        this.load.image('topbot3', "./assets/topbot3.png");
+        this.load.image('leftright3', "./assets/leftright3.png");
+        this.load.image('floor3', "./assets/floor3.png");
 
         /* UI */
         this.load.image('healthIcon', "./assets/healthIcon.png");

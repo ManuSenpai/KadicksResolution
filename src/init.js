@@ -13,6 +13,10 @@ import Level2 from './scenes/scene.level2.js';
 import Level2_1 from './scenes/scene.level2_1.js';
 import Level2_2 from './scenes/scene.level2_2.js';
 import Level2_B from './scenes/scene.level2_B.js';
+import Level3 from './scenes/scene.level3.js';
+import Level3_1 from './scenes/scene.level3_1.js';
+import Level3_2 from './scenes/scene.level3_2.js';
+import Level3_B from './scenes/scene.level3_B.js';
 
 const config = {
     width: window.innerWidth,
@@ -38,7 +42,11 @@ const config = {
         Level2,
         Level2_1,
         Level2_2,
-        Level2_B
+        Level2_B,
+        Level3,
+        Level3_1,
+        Level3_2,
+        Level3_B
     ]
 }
 
