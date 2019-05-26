@@ -1,8 +1,8 @@
 import Laser from '../GameObjects/laser.js';
 import Enemy from '../GameObjects/Enemies/enemy.js';
 import Hostile from './scene.hostile.js';
-import Jolt from '../GameObjects/Enemies/jolt.js';
 import Trashbot from '../GameObjects/Enemies/trashbot.js';
+import Wavebender from '../GameObjects/Enemies/wavebender.js';
 
 var ENEMY_VALUES = [];
 
@@ -18,11 +18,9 @@ var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
 var lastFired = 0;              // Time instant when last shot was fired
 
-var enemies;                    // Enemies on scene
 var trashbots;                  // Trashbots on scene
-var enemyLasers;                // lasers shot by foes
-var readyToShoot = false;       // Enemies are ready to shoot;
-var trailColliders;             // Trail colliders;
+var wavebenders;                // Wavebenders on scene
+var circles;                    // 
 var isBurning;                  // Checks if player is burning
 var lastBurntTime = 0;          // Time instant when player got burnt
 var playerTouchedFire = false;  // The player has touched the fire
@@ -53,23 +51,22 @@ var entrance;
 // ITEMS
 var keycard;
 
-function hitPlayer(player, laser) {
+function hitPlayer(player, enemy, context) {
     recoverArmor.paused = true;
+    enemy.resetWave();
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (this.playerStats.ARMOR > 0) {
-        this.hitArmor(laser.damage);
+    timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
+    if (context.playerStats.ARMOR > 0) {
+        context.hitArmor(enemy.damage);
     } else {
-        this.hitHealth(laser.damage);
-        if (this.playerStats.HEALTH < 0) {
+        context.hitHealth(enemy.damage);
+        if (context.playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
-    laser.destroy();
-    lasers.remove(laser);
 }
 
-function burnPlayer (context) {
+function burnPlayer(context) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
@@ -109,7 +106,7 @@ function meleeHit(player, enemy) {
  * @param {*} bump Bump Element
  */
 function untangleFromBumps(bump, agent) {
-    if( levelloaded ) this.untangleFromBumps(agent, bump);
+    if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
 function hitEnemy(enemy, laser) {
@@ -118,7 +115,7 @@ function hitEnemy(enemy, laser) {
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    if ( enemy.hasOwnProperty('hit') ) { enemy.hit(); }
+    if (enemy.hasOwnProperty('hit')) { enemy.hit(); }
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
@@ -127,7 +124,7 @@ function hitEnemy(enemy, laser) {
         enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
-        if (enemies.children.entries.length === 0 && trashbots.children.entries.length === 0) {
+        if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
             clearArea.apply(this);
         }
         score += enemy.score;
@@ -179,10 +176,10 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
-function generateJolts(context) {
+function generateWaveBenders(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
-    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 5;
+    var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 4 : 5;
 
     var nEnemies = Phaser.Math.Between(minAmountOfEnemies, maxAmountOfEnemies);
 
@@ -194,17 +191,23 @@ function generateJolts(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'jolt', scale: 1, rotation: 0, health: 80, damage: 30, speed: 50, score: 600
+            type: 'wavebender', scale: 0.35, rotation: 0, health: 300, damage: 40, speed: 100, score: 1200
         })
     }
 
-    enemies = context.physics.add.group({
+    wavebenders = context.physics.add.group({
         classType: Enemy
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Jolt(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        let newWaveBender = new Wavebender(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        context.physics.add.collider(newWaveBender, bumps);
+        context.physics.add.collider(newWaveBender, trashbots);
+        newWaveBender.setTarget(player);
+        wavebenders.add(newWaveBender);
     });
+
+    context.physics.add.collider( wavebenders, wavebenders );
 }
 
 function generateTrashbots(context) {
@@ -235,15 +238,15 @@ function generateTrashbots(context) {
         context.physics.add.collider(newTrashbot, bumps, bounceOnWalls, null, context);
         context.physics.add.collider(newTrashbot, trashbots, bounceOnWalls, null, context);
         trashbots.add(newTrashbot);
-        context.physics.add.overlap( player, newTrashbot.trailColliders, () => {
+        context.physics.add.overlap(player, newTrashbot.trailColliders, () => {
             playerTouchedFire = true;
-        }, null, context );
+        }, null, context);
     });
 
-    
+
 }
 
-function bounceOnWalls( trashbot, bump ) {
+function bounceOnWalls(trashbot, bump) {
     trashbot.bounceOnWall();
 }
 
@@ -269,7 +272,6 @@ class Level3_2 extends Hostile {
         entrance = data.entrance;
     }
     create() {
-        readyToShoot = false;
         this.load.on('complete', () => { levelloaded = true; });
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
@@ -309,13 +311,10 @@ class Level3_2 extends Hostile {
         lasers = this.physics.add.group({
             classType: Laser
         });
-        enemyLasers = this.physics.add.group({
-            classType: Laser
-        });
 
         /* ENEMIES */
-        generateJolts(this);
         generateTrashbots(this);
+        generateWaveBenders(this);
 
         /* UI */
         scoreText = this.make.text(configScoreText);
@@ -323,54 +322,32 @@ class Level3_2 extends Hostile {
         this.drawPlayerUI();
 
         /*COLLIDERS */
-        this.physics.add.overlap(player, enemyLasers, hitPlayer, null, this);
-        this.physics.add.collider(enemies, enemies);
-        this.physics.add.collider(trashbots, enemies, bounceOnWalls, null, this);
-        this.physics.add.collider(player, enemies, meleeHit, null, this);
-        this.physics.add.collider(enemies, lasers);
-        this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
         this.physics.add.overlap(trashbots, lasers, hitEnemy, null, this);
-        enemies.children.iterate((enem) => {
-            this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
-        })
+        this.physics.add.overlap(wavebenders, lasers, hitEnemy, null, this);
         this.drawMap(this);
 
         this.physics.add.collider(bumps, player);
-        bumps.children.iterate ( (bump) => {
+        bumps.children.iterate((bump) => {
             bump.body.immovable = true;
             bump.moves = false;
-        }); 
-        this.physics.add.collider(bumps, enemies);
-        this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
+        });
         this.physics.add.overlap(bumps, lasers, (bump, laser) => {
             lasers.remove(laser);
-            laser.destroy();
-        }, null, this);
-        this.physics.add.overlap(bumps, enemyLasers, (bump, laser) => {
-            enemyLasers.remove(laser);
             laser.destroy();
         }, null, this);
         this.physics.add.collider(player, trashbots, (player, trashbot) => {
             trashbot.bounceOnWall();
         }, null, this);
-        setTimeout(() => { readyToShoot = true; }, TIME_SHOOT_PLAYER);
 
     }
 
     checkIfBurning() {
         let result = false;
-        trashbots.children.iterate( (tbot) => {
-            this.physics.overlap(player, tbot.trailColliders, () =>  {
+        trashbots.children.iterate((tbot) => {
+            this.physics.overlap(player, tbot.trailColliders, () => {
                 result = true;
             }, null, this);
         })
-        // trashbots.children.iterate( (tbot) => {
-        //     tbot.trailColliders.children.iterate( (col) => {
-        //         if ( !col.body.touching.none ) {
-        //             result = true;
-        //         }
-        //     })
-        // })
         return result;
     }
 
@@ -380,12 +357,12 @@ class Level3_2 extends Hostile {
             playerIsHit = false;
         }
 
-        if ( playerTouchedFire ) {
+        if (playerTouchedFire) {
             isBurning = this.checkIfBurning();
         }
 
-        if ( isBurning ) {
-            if ( time > lastBurntTime ) {
+        if (isBurning) {
+            if (time > lastBurntTime) {
                 burnPlayer(this);
                 lastBurntTime = time + BURN_RATE;
             }
@@ -444,30 +421,17 @@ class Level3_2 extends Hostile {
         if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
         if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
 
-
-        enemies.children.iterate((enem) => {
-            enem.move(player);
-            enem.aim(player);
-            if (readyToShoot) {
-                let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
-                if (time > enem.lastFired) {
-                    var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
-                    var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
-                    enemyLasers.add(currentLaser);
-                    enem.lastFired = time + TURRET_FIRE_RATE;
-                }
-            }
-        });
-
-        trashbots.children.iterate( (bot) => {
+        trashbots.children.iterate((bot) => {
             bot.move();
+        })
+        wavebenders.children.iterate((wb) => {
+            wb.move();
+            if ( Phaser.Geom.Intersects.CircleToRectangle(wb.getCircles(), player.body) ) {
+                hitPlayer(player, wb, this);
+            }
         })
 
         lasers.children.iterate((laser) => {
-            if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-        });
-
-        enemyLasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         });
     }
