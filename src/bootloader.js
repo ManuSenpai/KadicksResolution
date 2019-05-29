@@ -45,6 +45,7 @@ class Bootloader extends Phaser.Scene {
         /* Image loading */
         this.load.image('player', "./assets/player.png");
         this.load.image('laser', "./assets/laser.png");
+        this.load.image('bossbullet', "./assets/bossbullet.png");
 
         /* Enemies L1 */
         this.load.image('turret', "./assets/turret.png");
@@ -70,6 +71,8 @@ class Bootloader extends Phaser.Scene {
         this.load.image('boss2toprg', "./assets/boss2-top-rg.png");
         this.load.image('boss2botrg', "./assets/boss2-bot-rg.png");
         this.load.image('boss2rotatable', "./assets/boss2-rotable.png");
+        this.load.image('boss3', "./assets/boss3.png");
+        
 
         /* Doors */
         this.load.image('leftdoorframe', "./assets/leftdoorframe.png");

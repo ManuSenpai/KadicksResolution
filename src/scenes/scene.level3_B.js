@@ -1,8 +1,8 @@
 import Laser from '../GameObjects/laser.js';
 import Hostile from './scene.hostile.js';
-import Boss2 from '../GameObjects/Enemies/boss2.js';
+import Boss3 from '../GameObjects/Enemies/boss3.js';
 
-const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss2', scale: 2, rotation: 0, health: 2250, damage: 35, speed: 80, score: 15000 }
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss3', scale: 0.5, rotation: 0, health: 3000, damage: 50, speed: 80, score: 50000 }
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -37,7 +37,6 @@ var timerUntilRecovery;
 var bossLifeBarBg;
 var bossLifeBar;
 var bossLifeBarGr;
-var bossShieldGr;
 var rotGroup;
 
 var score;
@@ -50,12 +49,7 @@ var stairNextLevel;
 
 var startGame = false;
 
-var TURRETS_LASER_SPEED = 1;
-var TURRET_FIRE_RATE = 300;
-var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = left turret; 1 = right turret;
-
 // ITEMS
-var keycard;
 var hittable = true;
 
 function laserPlayer(player, laser) {
@@ -251,7 +245,7 @@ class Level3_B extends Hostile {
         });
 
         /* NOSS */
-        boss = new Boss2(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
+        boss = new Boss3(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
         boss.setTarget(player);
 
         /* UI */
@@ -284,8 +278,6 @@ class Level3_B extends Hostile {
         bossLifeBarBg.alpha = 0.4;
         bossLifeBar.alpha = 0.4;
 
-        rotGroup = boss.getRotatables();
-
         /*COLLIDERS */
         this.physics.add.overlap(player, enemyLasers, laserPlayer, null, this);
         this.physics.add.collider(boss, lasers);
@@ -294,8 +286,6 @@ class Level3_B extends Hostile {
         this.drawMap(this);
 
         startGame = true;
-
-        boss.target = player;
 
     }
 
@@ -362,13 +352,6 @@ class Level3_B extends Hostile {
 
             if (boss && boss.body) {
                 boss.move(player);
-            }
-
-            if ( boss.paths[0] && boss.paths[1]) {
-                if (Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[0].getBounds(), player.body) ||
-                Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
-                    beamPlayer(boss.damage, this);
-                }
             }
 
             enemyLasers.children.iterate((laser) => {
