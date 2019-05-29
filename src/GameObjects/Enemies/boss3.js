@@ -11,6 +11,7 @@ class Boss3 extends Enemy {
     timeLine;
 
     shootInterval;
+    bullets;
 
     constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
         super(scene, x, y, type, scale, rotation, health, damage);
@@ -22,11 +23,14 @@ class Boss3 extends Enemy {
         this.speed = speed;
         this.score = score;
         scene.add.existing(this);
+
+        this.bullets = this.scene.physics.add.group();
         this.timeLine = this.scene.tweens.createTimeline();
         this.timeLine.loop = -1;
         this.timeLine.loopDelay = 2000;
         this.generateBossMovementTimeline();
         this.startAttack();
+
     }
 
     startAttack() {
@@ -35,6 +39,10 @@ class Boss3 extends Enemy {
 
     setTarget(target) {
         this.target = target;
+    }
+
+    getBullets() {
+        return this.bullets;
     }
 
     /**
@@ -95,20 +103,29 @@ class Boss3 extends Enemy {
     }
 
     onDestroy() {
-
+        clearInterval(this.shootInterval);
+        this.timeLine.destroy();
+        this.bullets.clear(true, true);
     }
 
     shoot(times = 1, timed = false) {
         let offset = 0;
         const that = this;
         function shootBullets() {
-            for (let i = 0; i < 8; i++) {
-                let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
-                that.scene.physics.world.enable(newBullet);
-                let angle = i * 45 + offset;
-                let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad( angle > 360 ? angle - 360 : angle ), BULLET_SPEED);
-                newBullet.body.setVelocity(bulletVel.x, bulletVel.y);
-                offset += 5;
+            if ( that.scene ) {
+                for (let i = 0; i < 8; i++) {
+                    let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
+                    that.bullets.add(newBullet);
+                    newBullet.body.setCollideWorldBounds(true);
+                    newBullet.body.onWorldBounds = true;
+                    that.scene.physics.world.enable(newBullet);
+                    let angle = i * 45 + offset;
+                    let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad(angle > 360 ? angle - 360 : angle), BULLET_SPEED);
+                    newBullet.body.setVelocity(bulletVel.x, bulletVel.y);
+                    offset += 5;
+                }
+            } else {
+                clearInterval(that.shootInterval);
             }
         }
         if (timed) {

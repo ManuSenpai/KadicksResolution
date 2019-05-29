@@ -38,6 +38,7 @@ var bossLifeBarBg;
 var bossLifeBar;
 var bossLifeBarGr;
 var rotGroup;
+var bossBullets;
 
 var score;
 var scoreText;
@@ -52,24 +53,24 @@ var startGame = false;
 // ITEMS
 var hittable = true;
 
-function laserPlayer(player, laser) {
+function bulletPlayer(player, bullet) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - laser.damage < 0) ? 0 : playerStats.ARMOR - laser.damage;
+        playerStats.ARMOR = (playerStats.ARMOR - boss.damage < 0) ? 0 : playerStats.ARMOR - boss.damage;
         armorBar.width = playerStats.ARMOR * 2;
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.HEALTH - laser.damage;;
+        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;;
         healthBar.width = playerStats.HEALTH * 2;
         if (playerStats.HEALTH < 0) {
             // TODO: GAME OVER
         }
     }
-    laser.setVisible(false);
-    laser.setActive(false);
-    laser.destroy();
-    lasers.remove(laser);
+    bullet.setVisible(false);
+    bullet.setActive(false);
+    bullet.destroy();
+    bossBullets.remove(bullet);
 }
 
 function hitPlayer() {
@@ -124,8 +125,8 @@ function hitEnemy(enemy, laser) {
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
-        enemy.destroy();
         enemy.onDestroy();
+        enemy.destroy();
         stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
         stairNextLevel.setScale(0.5, 0.5);
         this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
@@ -247,6 +248,7 @@ class Level3_B extends Hostile {
         /* NOSS */
         boss = new Boss3(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
         boss.setTarget(player);
+        bossBullets = boss.getBullets();
 
         /* UI */
         scoreText = this.make.text(configScoreText);
@@ -279,13 +281,15 @@ class Level3_B extends Hostile {
         bossLifeBar.alpha = 0.4;
 
         /*COLLIDERS */
-        this.physics.add.overlap(player, enemyLasers, laserPlayer, null, this);
         this.physics.add.collider(boss, lasers);
         this.physics.add.overlap(boss, lasers, hitEnemy, null, this);
-        this.physics.add.overlap(player, rotGroup, hitPlayer, null, this);
+        this.physics.add.overlap(player, bossBullets, bulletPlayer, null, this);
         this.drawMap(this);
 
         startGame = true;
+        this.physics.world.on('worldbounds', (body) => {
+            body.gameObject.destroy();
+        });
 
     }
 
