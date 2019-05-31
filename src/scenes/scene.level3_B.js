@@ -2,7 +2,7 @@ import Laser from '../GameObjects/laser.js';
 import Hostile from './scene.hostile.js';
 import Boss3 from '../GameObjects/Enemies/boss3.js';
 
-const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss3', scale: 0.5, rotation: 0, health: 3000, damage: 50, speed: 80, score: 50000 }
+const BOSS_VALUES = { x: window.innerWidth / 2, y: 200, type: 'boss3', scale: 0.5, rotation: 0, health: 3000, damage: 30, speed: 80, score: 50000 }
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -61,7 +61,7 @@ function bulletPlayer(player, bullet) {
         playerStats.ARMOR = (playerStats.ARMOR - boss.damage < 0) ? 0 : playerStats.ARMOR - boss.damage;
         armorBar.width = playerStats.ARMOR * 2;
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;;
+        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;
         healthBar.width = playerStats.HEALTH * 2;
         if (playerStats.HEALTH < 0) {
             // TODO: GAME OVER
@@ -112,31 +112,42 @@ function beamPlayer(damage, context) {
 }
 
 function hitEnemy(enemy, laser) {
-    enemy.health -= laser.damage;
-    if (enemy.health < 0) { enemy.health = 0; }
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    score += 20;
-    bossLifeBarGr.clear();
-    bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
-    if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.onDestroy();
-        enemy.destroy();
-        stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
-        stairNextLevel.setScale(0.5, 0.5);
-        this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
-        clearArea.apply(this);
-        this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
-        this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
-        this.dropLifeUp(player, window.innerWidth / 2, window.innerHeight / 2);
-        score += enemy.score;
-        this.setScore(score);
+    if (enemy.hittable) {
+        enemy.health -= laser.damage;
+        if (enemy.health < 0) { enemy.health = 0; }
+        score += 20;
+        bossLifeBarGr.clear();
+        bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
+        if (enemy.health < 1500 && enemy.attackMode === 1) {
+            enemy.attackMode = 2;
+            enemy.changeAttackMode();
+        }
+        if (enemy.health <= 0) {
+            enemy.setActive(false);
+            enemy.setVisible(false);
+            enemy.onDestroy();
+            enemy.destroy();
+            stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
+            stairNextLevel.setScale(0.5, 0.5);
+            this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
+            clearArea.apply(this);
+            this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
+            this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
+            this.dropLifeUp(player, window.innerWidth / 2, window.innerHeight / 2);
+            score += enemy.score;
+            this.setScore(score);
+        }
+    } else {
+        bossLifeBarGr.clear();
+        bossLifeBarGr.fillGradientStyle(0x0000ff, 0x00ff, 0x00ffff, 0x00ffff, 1);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
     }
+
     scoreText.setText('SCORE: ' + score);
 }
 
@@ -324,6 +335,8 @@ class Level3_B extends Hostile {
                 var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
                 var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
+                currentLaser.body.setCollideWorldBounds(true);
+                currentLaser.body.onWorldBounds = true;
                 lastFired = time + playerStats.FIRE_RATE;
             }
             if (cursors.left.isUp) {
@@ -353,14 +366,10 @@ class Level3_B extends Hostile {
             lasers.children.iterate((laser) => {
                 if (laser) { laser.move(delta) } else { lasers.remove(laser); }
             });
-
+            
             if (boss && boss.body) {
                 boss.move(player);
             }
-
-            enemyLasers.children.iterate((laser) => {
-                if (laser) { laser.move(delta) } else { lasers.remove(laser); }
-            });
         }
     }
 }
