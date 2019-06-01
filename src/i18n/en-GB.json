@@ -1,0 +1,28 @@
+{
+    "LANGUAGE": {
+        "TITLE": "SELECT LANGUAGE",
+        "EN": "ENGLISH",
+        "ES": "SPANISH",
+        "VA": "VALENCIAN",
+        "ACCEPT": "CONFIRM"
+    },
+    "MAIN": {
+        "NEW": "NEW GAME",
+        "SETTINGS": "SETTINGS"
+    },
+    "SETTINGS": {
+        "TITLE": "SETTINGS",
+        "DIFFICULTY": {
+            "SELECT": "DIFFICULTY",
+            "EASY": "EASY",
+            "NORMAL": "NORMAL",
+            "HARD": "HARD",
+            "SAVE": "SAVE AND RETURN TO MENU"
+        }
+    },
+    "CONTINUE": {
+        "CONTINUE": "CONTINUE?",
+        "YES": "YES",
+        "NO": "NO"
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "LANGUAGE": {
+        "TITLE": "SELECCIONA IDIOMA",
+        "EN": "ANGLÉS",
+        "ES": "ESPANYOL",
+        "VA": "VALENCIÀ",
+        "ACCEPT": "ACCEPTAR"
+    },
+    "MAIN": {
+        "NEW": "NOVA PARTIDA",
+        "SETTINGS": "OPCIONS"
+    },
+    "SETTINGS": {
+        "TITLE": "OPCIONS",
+        "DIFFICULTY": {
+            "SELECT": "SELECCIONA DIFICULTAT",
+            "EASY": "FÀCIL",
+            "NORMAL": "NORMAL",
+            "HARD": "DIFÍCIL",
+            "SAVE": "GUARDAR I TORNAR AL MENÚ"
+        }
+    },
+    "CONTINUE": {
+        "CONTINUE": "CONTINUAR?",
+        "YES": "SÍ",
+        "NO": "NO"
+    }
+}

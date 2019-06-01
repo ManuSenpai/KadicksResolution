@@ -15,6 +15,17 @@ var SettingsText = {
     }
 }
 
+var optionsText = {
+    x: window.innerWidth / 2,
+    style: {
+        fontSize: 60,
+        fontStyle: 'bold',
+        align: 'center'
+    }
+}
+
+var i18n;
+
 class Settings extends Phaser.Scene {
 
     constructor() {
@@ -23,19 +34,21 @@ class Settings extends Phaser.Scene {
     init(data) {
         this.configScoreText = data.configScoreText;
         this.playerStats = data.playerStats;
+        i18n = this.cache.json.get(this.playerStats.LANGUAGE);
+        this.currentLanguage = this.playerStats.LANGUAGE;
     }
     create() {
 
         this.background = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         
 
-        this.settingsTitle = this.make.text(SettingsText);
+        this.settingsTitle = this.make.text(SettingsText).setText(i18n.SETTINGS.TITLE);
         this.settingsTitle.setOrigin(0.5);
 
-        this.difficultyTitle = this.make.text(SettingsText).setText('DIFFICULTY').setY(innerHeight * 1 / 3).setFontSize(50);
+        this.difficultyTitle = this.make.text(SettingsText).setText(i18n.SETTINGS.DIFFICULTY.SELECT).setY(innerHeight * 1 / 3).setFontSize(50);
         this.difficultyTitle.setOrigin(0.5);
 
-        this.easyBtn = this.make.text(SettingsText).setText('EASY').setY(innerHeight * 1 / 2).setFontSize(40)
+        this.easyBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.EASY).setY(innerHeight * 1 / 2).setFontSize(40)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('EASY'))
             .on('pointerover', () => this.onButtonOver(this.easyBtn))
@@ -43,7 +56,7 @@ class Settings extends Phaser.Scene {
         this.easyBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'EASY') { this.easyBtn.setColor(ACTIVE_COLOR); }
 
-        this.normalBtn = this.make.text(SettingsText).setText('NORMAL').setY((innerHeight * 1 / 2) + 80).setFontSize(40)
+        this.normalBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.NORMAL).setY((innerHeight * 1 / 2) + 80).setFontSize(40)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('NORMAL'))
             .on('pointerover', () => this.onButtonOver(this.normalBtn))
@@ -51,7 +64,7 @@ class Settings extends Phaser.Scene {
         this.normalBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'NORMAL') { this.normalBtn.setColor(ACTIVE_COLOR); }
 
-        this.hardBtn = this.make.text(SettingsText).setText('HARD').setY((innerHeight * 1 / 2) + 160).setFontSize(40)
+        this.hardBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.HARD).setY((innerHeight * 1 / 2) + 160).setFontSize(40)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('HARD'))
             .on('pointerover', () => this.onButtonOver(this.hardBtn))
@@ -59,7 +72,7 @@ class Settings extends Phaser.Scene {
         this.hardBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'HARD') { this.hardBtn.setColor(ACTIVE_COLOR); }
 
-        this.goBackBtn = this.make.text(SettingsText).setText('SAVE AND RETURN TO MENU').setY((innerHeight * 1 / 2) + 300).setFontSize(50)
+        this.goBackBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.SAVE).setY((innerHeight * 1 / 2) + 300).setFontSize(50)
             .setInteractive()
             .on('pointerdown', () => this.goBackToMenu())
             .on('pointerover', () => this.onButtonOver(this.goBackBtn))
@@ -76,18 +89,21 @@ class Settings extends Phaser.Scene {
         switch (diffValue) {
             case 'EASY':
                 this.playerStats = difficulty.default.EASY.PLAYER_STATS;
+                this.playerStats.LANGUAGE = this.currentLanguage;
                 this.easyBtn.setColor(ACTIVE_COLOR);
                 this.normalBtn.setColor(UNACTIVE_COLOR);
                 this.hardBtn.setColor(UNACTIVE_COLOR);
                 break;
             case 'NORMAL':
                 this.playerStats = difficulty.default.NORMAL.PLAYER_STATS;
+                this.playerStats.LANGUAGE = this.currentLanguage;
                 this.easyBtn.setColor(UNACTIVE_COLOR);
                 this.normalBtn.setColor(ACTIVE_COLOR);
                 this.hardBtn.setColor(UNACTIVE_COLOR);
                 break;
             case 'HARD':
                 this.playerStats = difficulty.default.HARD.PLAYER_STATS;
+                this.playerStats.LANGUAGE = this.currentLanguage;
                 this.easyBtn.setColor(UNACTIVE_COLOR);
                 this.normalBtn.setColor(UNACTIVE_COLOR);
                 this.hardBtn.setColor(ACTIVE_COLOR);

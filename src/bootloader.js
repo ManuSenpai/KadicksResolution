@@ -28,7 +28,8 @@ const PLAYER_STATS = {
     ARMOR_RECOVERY_TIMER: 3000,         // Time untile armor recovery begins when player is unharmed
     TIME_RECOVER_ARMOR: 250,            // Time until armor recovers the armor recovery value
     ARMOR_RECOVERY: 5,                  // Armor recovery value per time unit
-    DIFFICULTY: "NORMAL"                // Difficulty level
+    DIFFICULTY: "NORMAL",               // Difficulty level
+    LANGUAGE: 'en'
 }
 
 class Bootloader extends Phaser.Scene {
@@ -38,9 +39,9 @@ class Bootloader extends Phaser.Scene {
     preload() {
         score = 0;
         this.load.on("complete", () => {
-            // this.scene.start("Scene_play", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            // this.scene.start("map_test");
+            // this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
+            this.scene.start("LanguageSelect", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
+
         })
         /* Image loading */
         this.load.image('player', "./assets/player.png");
@@ -133,6 +134,15 @@ class Bootloader extends Phaser.Scene {
 
         /* SCENARIO DISTRIBUTION */
         this.load.json('distribution', './src/scenes/scenario/scenarioDistribution.json');
+
+        /* LANGUAGE */
+        this.load.json('es', './src/i18n/es-ES.json');
+        this.load.json('en', './src/i18n/en-GB.json');
+        this.load.json('va', './src/i18n/val.json');
+
+        this.load.image('SPA', './assets/SPAflag.png');
+        this.load.image('GB', './assets/GBflag.png');
+        this.load.image('VAL', './assets/VALflag.png');
     }
     create() {
         scoreText = this.make.text(configScoreText);

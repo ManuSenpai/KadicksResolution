@@ -1,8 +1,8 @@
 var floor;
-// Text configuration object
 var NewGameButton = {
     x: window.innerWidth / 2,
     y: window.innerHeight * 2 / 3,
+    text: 'NEW GAME',
     style: {
         fontFamily: 'kadick',
         fontSize: 40,
@@ -23,54 +23,48 @@ var ProvisionalTitle = {
     }
 }
 
-var i18n;
-
-class Main_menu extends Phaser.Scene {
+class Continue extends Phaser.Scene {
     constructor() {
-        super({ key: "Main_Menu" });
+        super({ key: "Continue" });
     }
-    init(data) {
+    init(data){
         this.configScoreText = data.configScoreText;
         this.playerStats = data.playerStats;
-        i18n = this.cache.json.get(this.playerStats.LANGUAGE);
     }
 
     create() {
-
         floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         // this.playbutton = this.add.text( window.innerWidth/2, window.innerHeight/2, "NEW GAME", { fill: '#0f0' } )
         this.provisionalTitleText = this.make.text(ProvisionalTitle);
         this.provisionalTitleText.setOrigin(0.5);
 
-        this.playbutton = this.make.text(NewGameButton).setText(i18n.MAIN.NEW)
-            .setInteractive()
+        this.playbutton = this.make.text(NewGameButton).setInteractive()
             .on('pointerdown', () => this.newGamePointerDown())
             .on('pointerover', () => this.onButtonOver(this.playbutton))
             .on('pointerout', () => this.onButtonOut(this.playbutton));
         this.playbutton.setOrigin(0.5);
 
-        this.settingsbutton = this.make.text(NewGameButton).setText(i18n.MAIN.SETTINGS)
-            .setInteractive()
+        this.settingsbutton = this.make.text(NewGameButton).setInteractive()
             .on('pointerdown', () => this.settingsPointerDown())
             .on('pointerover', () => this.onButtonOver(this.settingsbutton))
             .on('pointerout', () => this.onButtonOut(this.settingsbutton));
-        this.settingsbutton.setY((window.innerHeight * 2 / 3) + 80);
+        this.settingsbutton.setText('SETTINGS').setY((window.innerHeight * 2 / 3) + 80);
         this.settingsbutton.setOrigin(0.5);
     }
-    onButtonOver(button) {
+    onButtonOver(button){
         button.setFontSize(50);
     }
-    onButtonOut(button) {
+    onButtonOut(button){
         button.setFontSize(40);
     }
-    newGamePointerDown() {
+    newGamePointerDown(){
         // this.scene.start("Scene_play", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
         // this.scene.start("Level1", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
         this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
     }
-    settingsPointerDown() {
+    settingsPointerDown(){
         this.scene.start("Settings", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
     }
 }
 
-export default Main_menu;
+export default Continue;

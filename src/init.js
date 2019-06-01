@@ -17,6 +17,7 @@ import Level3 from './scenes/scene.level3.js';
 import Level3_1 from './scenes/scene.level3_1.js';
 import Level3_2 from './scenes/scene.level3_2.js';
 import Level3_B from './scenes/scene.level3_B.js';
+import LanguageSelect from './scenes/scene.language.js';
 
 const config = {
     width: window.innerWidth,
@@ -46,7 +47,8 @@ const config = {
         Level3,
         Level3_1,
         Level3_2,
-        Level3_B
+        Level3_B,
+        LanguageSelect
     ]
 }
 

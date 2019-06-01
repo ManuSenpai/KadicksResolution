@@ -1,0 +1,28 @@
+{
+    "LANGUAGE": {
+        "TITLE": "SELECCIONA IDIOMA",
+        "EN": "INGLÉS",
+        "ES": "ESPAÑOL",
+        "VA": "VALENCIANO",
+        "ACCEPT": "ACEPTAR"
+    },
+    "MAIN": {
+        "NEW": "NUEVA PARTIDA",
+        "SETTINGS": "OPCIONES"
+    },
+    "SETTINGS": {
+        "TITLE": "OPCIONES",
+        "DIFFICULTY": {
+            "SELECT": "SELECCIONA DIFICULTAD",
+            "EASY": "FÁCIL",
+            "NORMAL": "NORMAL",
+            "HARD": "DIFÍCIL",
+            "SAVE": "GUARDAR Y VOLVER AL MENÚ"
+        }
+    },
+    "CONTINUE": {
+        "CONTINUE": "¿CONTINUAR?",
+        "YES": "SÍ",
+        "NO": "NO"
+    }
+}
