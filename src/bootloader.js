@@ -13,16 +13,16 @@ var configScoreText = {
 
 
 const PLAYER_STATS = {
-    LEVEL: 2,
-    // LEVEL: 0,
+    // LEVEL: 2,
+    LEVEL: 0,
     HEALTH: 100,                        // Current health value
     MAX_HEALTH: 100,                    // Maximum health value 
     ARMOR: 100,                         // Current armor value
     MAX_ARMOR: 100,                     // Maximum armor value
-    // DAMAGE: 15,                         // Damage caused by the player
-    DAMAGE: 150,                         // Damage caused by the player
-    // KEYCODES : 0,                       // Collected Key Codes
-    KEYCODES : 3,                       // Collected Key Codes
+    DAMAGE: 15,                         // Damage caused by the player
+    // DAMAGE: 150,                     // Damage caused by the player
+    KEYCODES : 0,                       // Collected Key Codes
+    // KEYCODES : 3,                    // Collected Key Codes
     FIRE_RATE: 250,                     // Fire rate
     LASER_SPEED: 2,                     // Laser speed
     ARMOR_RECOVERY_TIMER: 3000,         // Time untile armor recovery begins when player is unharmed
@@ -143,6 +143,9 @@ class Bootloader extends Phaser.Scene {
         this.load.image('SPA', './assets/SPAflag.png');
         this.load.image('GB', './assets/GBflag.png');
         this.load.image('VAL', './assets/VALflag.png');
+
+        /* OTHER */
+        this.load.image('continueIcon', './assets/continueIcon.png')
     }
     create() {
         scoreText = this.make.text(configScoreText);

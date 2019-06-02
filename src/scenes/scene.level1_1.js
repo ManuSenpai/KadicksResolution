@@ -65,8 +65,11 @@ function scanMeleeHitPlayer(player, enemy) {
         this.hitArmor(enemy.damage);
     } else {
         this.hitHealth(enemy.damage);
-        if (this.playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
+        if (this.playerStats.HEALTH <= 0) {
+            this.scene.start("Continue", {
+                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                currentPosition: currentPosition, entrance: 'center'
+            });
         }
     }
 

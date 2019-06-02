@@ -21,6 +21,8 @@
         }
     },
     "CONTINUE": {
+        "SCORE": "SCORE",
+        "GAMEOVER": "GAME OVER",
         "CONTINUE": "CONTINUE?",
         "YES": "YES",
         "NO": "NO"

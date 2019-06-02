@@ -63,8 +63,11 @@ function bulletPlayer(player, bullet) {
     } else {
         playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;
         healthBar.width = playerStats.HEALTH * 2;
-        if (playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
+        if (playerStats.HEALTH <= 0) {
+            this.scene.start("Continue", {
+                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                currentPosition: currentPosition, entrance: 'center'
+            });
         }
     }
     bullet.setVisible(false);

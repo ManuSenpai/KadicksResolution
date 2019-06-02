@@ -68,8 +68,11 @@ function laserPlayer(player, laser) {
     } else {
         playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.HEALTH - laser.damage;;
         healthBar.width = playerStats.HEALTH * 2;
-        if (playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
+        if (playerStats.HEALTH <= 0) {
+            this.scene.start("Continue", {
+                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                currentPosition: currentPosition, entrance: 'center'
+            });
         }
     }
     laser.setVisible(false);

@@ -21,6 +21,8 @@
         }
     },
     "CONTINUE": {
+        "SCORE": "PUNTOS",
+        "GAMEOVER": "FIN DE LA PARTIDA",
         "CONTINUE": "¿CONTINUAR?",
         "YES": "SÍ",
         "NO": "NO"

@@ -275,21 +275,45 @@ class Hostile extends Phaser.Scene {
 
     addDoorColliders(context) {
         if ( this.currentPosition.top && context.topleftdooropen) 
-        context.topleftdooropen.body.setSize(context.topleftdooropen.width * 1.5, context.topleftdooropen.height * 1.5)
+        {
+            if ( !context.topleftdooropen.body ) { context.physics.world.enable(context.topleftdooropen); }
+            context.topleftdooropen.body.setSize(context.topleftdooropen.width * 1.5, context.topleftdooropen.height * 1.5)
+        }
         if ( this.currentPosition.top && context.toprightdooropen) 
-        context.toprightdooropen.body.setSize(context.toprightdooropen.width* 1.5, context.toprightdooropen.height * 1.5)
+        {
+            if ( !context.toprightdooropen.body ) { context.physics.world.enable(context.toprightdooropen); }
+            context.toprightdooropen.body.setSize(context.toprightdooropen.width* 1.5, context.toprightdooropen.height * 1.5)
+        }
         if ( this.currentPosition.left && context.leftleftdooropen) 
-        context.leftleftdooropen.body.setSize(context.leftleftdooropen.width* 1.5, context.leftleftdooropen.height * 1.5)
+        {
+            if ( !context.leftleftdooropen.body ) { context.physics.world.enable(context.leftleftdooropen); }
+            context.leftleftdooropen.body.setSize(context.leftleftdooropen.width* 1.5, context.leftleftdooropen.height * 1.5)
+        }
         if ( this.currentPosition.left && context.leftrightdooropen) 
-        context.leftrightdooropen.body.setSize(context.leftrightdooropen.width* 1.5, context.leftrightdooropen.height * 1.5)
+        {
+            if ( !context.leftrightdooropen.body ) { context.physics.world.enable(context.leftrightdooropen); }
+            context.leftrightdooropen.body.setSize(context.leftrightdooropen.width* 1.5, context.leftrightdooropen.height * 1.5)
+        }
         if ( this.currentPosition.right && context.rightleftdooropen) 
-        context.rightleftdooropen.body.setSize(context.rightleftdooropen.width* 1.5, context.rightleftdooropen.height * 1.5)
+        {
+            if ( !context.rightleftdooropen.body ) { context.physics.world.enable(context.rightleftdooropen); }
+            context.rightleftdooropen.body.setSize(context.rightleftdooropen.width* 1.5, context.rightleftdooropen.height * 1.5)
+        }
         if ( this.currentPosition.right &&  context.rightrightdooropen) 
-        context.rightrightdooropen.body.setSize(context.rightrightdooropen.width* 1.5, context.rightrightdooropen.height * 1.5)
+        {
+            if ( !context.rightrightdooropen.body ) { context.physics.world.enable(context.rightrightdooropen); }
+            context.rightrightdooropen.body.setSize(context.rightrightdooropen.width* 1.5, context.rightrightdooropen.height * 1.5)
+        }
         if ( this.currentPosition.bottom && context.botleftdooropen) 
-        context.botleftdooropen.body.setSize(context.botleftdooropen.width* 1.5, context.botleftdooropen.height * 1.5)
+        {
+            if ( !context.botleftdooropen.body ) { context.physics.world.enable(context.botleftdooropen); }
+            context.botleftdooropen.body.setSize(context.botleftdooropen.width* 1.5, context.botleftdooropen.height * 1.5)
+        }
         if ( this.currentPosition.bottom && context.botrightdooropen) 
-        context.botrightdooropen.body.setSize(context.botrightdooropen.width* 1.5, context.botrightdooropen.height * 1.5)
+        {
+            if ( !context.botrightdooropen.body ) { context.physics.world.enable(context.botrightdooropen); }
+            context.botrightdooropen.body.setSize(context.botrightdooropen.width* 1.5, context.botrightdooropen.height * 1.5)
+        }
         context.physics.add.collider(this.player, context.topleftdooropen, this.goUp, null, context);
         context.physics.add.collider(this.player, context.toprightdooropen, this.goUp, null, context);
         context.physics.add.collider(this.player, context.leftleftdooropen, this.goLeft, null, context);

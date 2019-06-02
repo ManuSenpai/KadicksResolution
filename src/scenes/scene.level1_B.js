@@ -67,8 +67,11 @@ function hitPlayer(player, laser) {
     } else {
         playerStats.HEALTH = (playerStats.HEALTH - laser.damage < 0) ? 0 : playerStats.HEALTH - laser.damage;;
         healthBar.width = playerStats.HEALTH * 2;
-        if (playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
+        if (playerStats.HEALTH <= 0) {
+            this.scene.start("Continue", {
+                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                currentPosition: currentPosition, entrance: 'center'
+            });
         }
     }
     laser.setVisible(false);
@@ -89,8 +92,11 @@ function beamPlayer(damage, context) {
         } else {
             playerStats.HEALTH = (playerStats.HEALTH - damage < 0) ? 0 : playerStats.HEALTH - damage;;
             healthBar.width = playerStats.HEALTH * 2;
-            if (playerStats.HEALTH < 0) {
-                // TODO: GAME OVER
+            if (playerStats.HEALTH <= 0) {
+                this.scene.start("Continue", {
+                    score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                    currentPosition: currentPosition, entrance: 'center'
+                });
             }
         }
         setTimeout(() => {
