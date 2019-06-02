@@ -24,6 +24,8 @@ var ProvisionalTitle = {
 }
 
 var i18n;
+const OKCOLOR = "#0cff00";
+const NOTOKCOLOR = "#F00";
 
 class Main_menu extends Phaser.Scene {
     constructor() {

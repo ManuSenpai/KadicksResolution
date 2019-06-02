@@ -88,7 +88,7 @@ class Hostile extends Phaser.Scene {
 
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
-            let currentKey = this.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+            let currentKey = this.physics.add.sprite(window.innerWidth * 3 / 4 + (i * 64), window.innerHeight - 32, 'keycard');
             currentKey.setScale(0.1);
         }
     }
