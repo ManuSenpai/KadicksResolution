@@ -157,6 +157,8 @@ class LanguageSelect extends Phaser.Scene {
             this.confirmText.setInteractive()
             .on('pointerdown', () => {
                 this.scene.start("Main_Menu", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
+                // this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
+                // this.scene.start("Credits", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
             })
             .on('pointerover', () => this.onTextOver(this.confirmText))
             .on('pointerout', () => this.onTextOut(this.confirmText));

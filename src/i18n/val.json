@@ -26,5 +26,81 @@
         "CONTINUE": "CONTINUAR?",
         "YES": "SÍ",
         "NO": "NO"
-    }
+    },
+    "END": [
+        [
+            "ASIMOV HA SIGUT DERROTAT"
+        ],
+        [
+            "EL MÓN HA PERDUT UNA DE LES MENTS MÉS BRILLANTS",
+            "PERÒ TAMBÉ UNA DE LES MÉS PERILLOSES."
+        ],
+        [
+            "MENTRES ABANDONES EL COMPLEX",
+            "NOMÉS QUEDA DESPRÈS DE TU LA DESTRUCCIÓ I EL CAOS."
+        ],
+        [
+            "NINGÚ SABRÀ MAI QUE HO VAS FER.",
+            "NINGÚ SABRÀ MAI PER QUÈ HO VAS FER.",
+            "NINGÚ SABRÀ MAI COM HO VAS FER."
+        ],
+        [
+            "NO OBSTANT AIXÒ, TOT EL QUE LI OFERISCA A LA HUMANITAT",
+            "D'ARA EN AVANT SERÀ GRÀCIES A TU."
+        ],
+        [
+            "GUARDA AIXÒ EN LA TEUA MEMÒRIA, GUARDIÀ."
+        ]
+    ],
+    "CREDITS": [
+        [
+            "DIRECTOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR GRÁFIC",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "PROGRAMADOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "EFECTES ESPECIALS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR D'ESCENARIS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR DE PERSONATGES",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR D'ENEMICS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENY DE BOSS FIGHTS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "LOCALITZACIÓ",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "COPYRIGHT",
+            "UNIVERSITAT JAUME I 2019"
+        ],
+        [
+            "ESTE JOC HA SIGUT CREAT USANT",
+            "PHASER 3"
+        ]
+
+    ],
+    "THANKS" : [
+        "GRÀCIES PER JUGAR A",
+        "KADICK'S RESOLUTION"
+    ]
 }

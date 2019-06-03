@@ -20,6 +20,8 @@ import Level3_B from './scenes/scene.level3_B.js';
 import LanguageSelect from './scenes/scene.language.js';
 import Continue from './scenes/scene.continue.js';
 import mapUT from './scenes/scenario/mapUT.js';
+import Ending from './scenes/scenes.ending.js';
+import Credits from './scenes/scene.credits.js';
 
 const config = {
     width: window.innerWidth,
@@ -52,7 +54,9 @@ const config = {
         Level3_2,
         Level3_B,
         LanguageSelect,
-        Continue
+        Continue,
+        Ending,
+        Credits
     ]
 }
 

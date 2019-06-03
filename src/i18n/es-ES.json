@@ -26,5 +26,80 @@
         "CONTINUE": "¿CONTINUAR?",
         "YES": "SÍ",
         "NO": "NO"
-    }
+    },
+    "END": [
+        [
+            "ASIMOV HA SIDO DERROTADO"
+        ],
+        [
+            "EL MUNDO HA PERDIDO UNA DE LAS MENTES MÁS BRILLANTES",
+            "PERO TAMBIÉN UNA DE LAS MÁS PELIGROSAS."
+        ],
+        [
+            "MIENTRAS ABANDONAS EL COMPLEJO",
+            "SÓLO QUEDA DETRÁS DE TI LA DESTRUCCIÓN Y EL CAOS."
+        ],
+        [
+            "NADIE SABRÁ NUNCA QUE FUISTE TÚ QUIEN LO HIZO.",
+            "NADIE SABRÁ NUNCA POR QUÉ LO HICISTE.",
+            "NADIE SABRÁ NUNCA CÓMO LO HICISTE."
+        ],
+        [
+            "SIN EMBARGO, TODO LO QUE LE DEPARE A LA HUMANIDAD",
+            "DE AHORA EN ADELANTE SERÁ GRACIAS A TI."
+        ],
+        [
+            "GUARDA ESO EN TU MEMORIA, GUARDIÁN."
+        ]
+    ],
+    "CREDITS": [
+        [
+            "DIRECTOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISEÑADOR GRÁFICO",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "PROGRAMADOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "EFECTOS ESPECIALES",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISEÑADOR DE ESCENARIO",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISEÑADOR DE PERSONAJES",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISEÑADOR DE ENEMIGOS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISEÑADOR DE BOSS FIGHTS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "LOCALIZACIÓN",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "COPYRIGHT",
+            "UNIVERSITAT JAUME I 2019"
+        ],
+        [
+            "ESTE JUEGO HA SIDO CREADO USANDO",
+            "PHASER 3"
+        ]
+    ],
+    "THANKS" : [
+        "GRACIAS POR JUGAR A",
+        "KADICK'S RESOLUTION"
+    ]
 }

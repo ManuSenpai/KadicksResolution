@@ -138,12 +138,7 @@ function hitEnemy(enemy, laser) {
             stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
             stairNextLevel.setScale(0.5, 0.5);
             this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
-            clearArea.apply(this);
-            this.dropPURthm(player, window.innerWidth / 3, window.innerHeight / 2);
-            this.dropPUAttk(player, window.innerWidth * 2 / 3, window.innerHeight / 2);
-            this.dropLifeUp(player, window.innerWidth / 2, window.innerHeight / 2);
-            score += enemy.score;
-            this.setScore(score);
+            this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
         }
     } else {
         bossLifeBarGr.clear();

@@ -26,5 +26,80 @@
         "CONTINUE": "CONTINUE?",
         "YES": "YES",
         "NO": "NO"
-    }
+    },
+    "END": [
+        [
+            "ASIMOV HAS BEEN DEFEATED"
+        ],
+        [
+            "THE WORLD HAS LOST ONE OF THE MOST BRILLIANT MINDS",
+            "BUT ONE OF THE MOST DANGEROUS ONES."
+        ],
+        [
+            "AS YOU LEAVE THE COMPLEX",
+            "DESTRUCTION AND CHAOS ARE WHAT IS LEFT BEHIND YOU."
+        ],
+        [
+            "NO ONE WILL EVER KNOW IT WAS YOU.",
+            "NO ONE WILL EVER KNOW WHY YOU DID IT.",
+            "NO ONE WILL EVER KNOW HOW YOU MANAGED TO DO IT."
+        ],
+        [
+            "HOWEVER, WHATEVER COMES TO MANKIND FROM NOW ON",
+            "WILL ONLY BE BECAUSE OF YOU."
+        ],
+        [
+            "GET IT MEMORIZED, GUARDIAN."
+        ]
+    ],
+    "CREDITS": [
+        [
+            "DIRECTOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "GRAPHIC DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "PROGRAMMER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "SPECIAL EFFECTS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "SCENARIO DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "CHARACTER DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "ENEMY DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "BOSS FIGHTS DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "LOCALIZATION",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "COPYRIGHT",
+            "UNIVERSITAT JAUME I 2019"
+        ],
+        [
+            "THIS GAME WAS MADE USING",
+            "PHASER 3"
+        ]
+    ],
+    "THANKS" : [
+        "THANK YOU FOR PLAYING",
+        "KADICK'S RESOLUTION"
+    ]
 }

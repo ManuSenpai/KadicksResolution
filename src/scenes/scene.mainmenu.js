@@ -1,4 +1,5 @@
 var floor;
+import * as difficulty from '../settings/difficulty.js'
 // Text configuration object
 var NewGameButton = {
     x: window.innerWidth / 2,
@@ -26,6 +27,7 @@ var ProvisionalTitle = {
 var i18n;
 const OKCOLOR = "#0cff00";
 const NOTOKCOLOR = "#F00";
+var currentLanguage;
 
 class Main_menu extends Phaser.Scene {
     constructor() {
@@ -35,6 +37,10 @@ class Main_menu extends Phaser.Scene {
         this.configScoreText = data.configScoreText;
         this.playerStats = data.playerStats;
         i18n = this.cache.json.get(this.playerStats.LANGUAGE);
+        currentLanguage = this.playerStats.LANGUAGE;
+        // Doing this we reset the player stats if we come from the credits
+        this.playerStats = difficulty.default[this.playerStats.DIFFICULTY].PLAYER_STATS;
+        this.playerStats.LANGUAGE = currentLanguage;
     }
 
     create() {
