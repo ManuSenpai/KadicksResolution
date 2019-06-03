@@ -8,7 +8,10 @@
     },
     "MAIN": {
         "NEW": "NOVA PARTIDA",
-        "SETTINGS": "OPCIONS"
+        "SETTINGS": "OPCIONS",
+        "SEE_INTRODUCTION": "VEURE INTRODUCCIÓ?",
+        "YES": "SÍ",
+        "NO": "NO"
     },
     "SETTINGS": {
         "TITLE": "OPCIONS",

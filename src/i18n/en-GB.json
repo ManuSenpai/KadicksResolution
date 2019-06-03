@@ -8,7 +8,10 @@
     },
     "MAIN": {
         "NEW": "NEW GAME",
-        "SETTINGS": "SETTINGS"
+        "SETTINGS": "SETTINGS",
+        "SEE_INTRODUCTION": "SEE INTRODUCTION?",
+        "YES": "YES",
+        "NO": "NO"
     },
     "SETTINGS": {
         "TITLE": "SETTINGS",
