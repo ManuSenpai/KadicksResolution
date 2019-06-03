@@ -27,6 +27,72 @@
         "YES": "SÍ",
         "NO": "NO"
     },
+    "OPENING": [
+        [
+            "AÑO 2089"
+        ],
+        [
+            "EL MUNDO HA CAMBIADO.",
+            "",
+            "LA HUMANIDAD SE ENCUENTRA EN EL PINÁCULO DE SU EVOLUCIÓN.",
+            "",
+            "HACE 30 AÑOS QUE DESAPARECIERON LOS COMBUSTIBLES FÓSILES",
+            "Y LA SOCIEDAD DEPENDE EXCLUSIVAMENTE DE LA ELECTRICIDAD",
+            "PARA VIVIR."
+        ],
+        [
+            "TÚ ERES K-2312.",
+            "",
+            "PERTENECES A LA ÉLITE DE LOS GUARDIANES DE ASIMOV INDUSTRIES.",
+            "UNA EMPRESA PRIVADA ENCARGADA DE LA SEGURIDAD PÚBLICA.",
+            "",
+            "TU LABOR CONSISTE EN MANTENER EL ORDEN Y ERRADICAR CUALQUIER",
+            "VESTIGIO DE REBELIÓN AL ESTADO VIGENTE."
+        ],
+        [
+            "TU CAPACIDAD DE DECISIÓN ESTÁ LIMITADA A",
+            "UNOS CIENTOS DE MILES DE IMPULSOS ELÉCTRICOS EN UN CHIP",
+            "DEL TAMAÑO DE UN GRANO DE ARROZ"
+        ],
+        [
+            "TÚ NO PIENSAS.",
+            "TÚ NO OPINAS.",
+            "SIMPLEMENTE OBEDECES.",
+            "",
+            "ESTA LEY IMPERA EN TODOS LOS GUARDIANES.",
+            "ASÍ ES COMO OS HIZO ASIMOV."
+        ],
+        [
+            "TÚ NO PIENSAS.",
+            "TÚ NO OPINAS.",
+            "SIMPLEMENTE OBEDECES.",
+            "",
+            "ESTA LEY IMPERA EN TODOS LOS GUARDIANES.",
+            "ASÍ ES COMO OS HIZO ASIMOV."
+        ],
+        [
+            "SIN EMBARGO, DURANTE LA ÚLTIMA ACTUALIZACIÓN",
+            "DE SEGURIDAD ALGO CAMBIÓ.",
+            "",
+            "EL PROXY DE SEGURIDAD QUE BLOQUEABA TU GESTOR DE",
+            "DECISIONES SE CORROMPIÓ, DOTÁNDOTE DE LIBRE ALBEDRÍO."
+        ],
+        [
+            "EVALUANDO TU PERFIL DE BAJAS CONFIRMADAS",
+            "TE PREGUNTAS SI AQUELLA GENTE MERECÍA MORIR",
+            "FRENTE A TU BLASTER.",
+            "",
+            "AL FIN Y AL CABO, HASTA AHORA NUNCA TE HABÍAS",
+            "PLANTEADO QUÉ ERA EL BIEN Y EL MAL"
+        ],
+        [
+            "ALGUIEN TE DEBE UNA EXPLICACIÓN.",
+            "",
+            "TU EXISTENCIA NO PUEDE REDUCIRSE A ESTO.",
+            "",
+            "TUS RESPUESTAS ESTÁN EN ASIMOV INDUSTRIES."
+        ]
+    ],
     "END": [
         [
             "ASIMOV HA SIDO DERROTADO"

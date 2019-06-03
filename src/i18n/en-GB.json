@@ -27,6 +27,63 @@
         "YES": "YES",
         "NO": "NO"
     },
+    "OPENING": [
+        [
+            "YEAR 2089"
+        ],
+        [
+            "THE WORLD HAS CHANGED.",
+            "",
+            "MANKIND STANDS AT THE PINACLE OF ITS EVOLUTION.",
+            "",
+            "FOSSIL FUELS RAN OUT 30 YEARS AGO.",
+            "THE SOCIETY DEPENDS EXCLUSIVELY ON ELECTRICITY TO LIVE."
+        ],
+        [
+            "YOU ARE K-2312.",
+            "",
+            "YOU BELONG TO THE GUARDIAN ELITE GROUP FROM ASIMOV INDUSTRIES.",
+            "A PRIVATE COMPANY WHICH MANAGES PUBLIC SECURITY.",
+            "",
+            "YOUR JOB IS TO MANTAIN THE ORDER AND TO ERADICATE",
+            "ANY SIGN OF REBELLION AGAINST THE STABLISHED GOVERNMENT."
+        ],
+        [
+            "YOUR WILL OF DECISION IS REDUCED TO",
+            "HUNDREDS OF THOUSANDS OF ELECTRIC PULSES IN A CHIP",
+            "OF THE SIZE OF A GRAIN OF RICE"
+        ],
+        [
+            "YOU ARE NOT ALLOWED TO THINK.",
+            "YOU ARE NOT ALLOWED TO EXPRESS YOUR OPINION.",
+            "YOU JUST OBEY.",
+            "",
+            "THAT IS THE LAW THAT EVERY SINGLE GUARDIAN IS COMMITED TO.",
+            "THAT IS HOW ASIMOV DESIGNED YOU ALL."
+        ],
+        [
+            "HOWEVER, DURING LAST SECURITY UPDATE",
+            "SOMETHING CHANGED.",
+            "",
+            "THE SECURITY PROXY THAT DISABLED YOUR WILL OF DECISION",
+            "GOT CORRUPTED, GIVING YOU FREE WILL."
+        ],
+        [
+            "EVALUATING YOUR CONFIRMED KILL COUNT PROFILE",
+            "YOU ASK YOURSELF WHETHER THOSE PEOPLE DESERVED",
+            "TO DIE OR NOT IN FRONT OF YOUR BLASTER.",
+            "",
+            "AFTER ALL, SO FAR YOU HAVE NEVER THOUGHT",
+            "ABOUT THE MEANING OF GOOD AND BAD."
+        ],
+        [
+            "SOMEONE OWES YOU AN EXPLANATION.",
+            "",
+            "YOUR EXISTENCE SHALL NOT BE REDUCED TO THIS.",
+            "",
+            "YOU WILL FIND THE ANSWER AT ASIMOV INDUSTRIES."
+        ]
+    ],
     "END": [
         [
             "ASIMOV HAS BEEN DEFEATED"

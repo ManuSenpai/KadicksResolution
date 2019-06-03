@@ -74,7 +74,8 @@ class Main_menu extends Phaser.Scene {
     newGamePointerDown() {
         // this.scene.start("Scene_play", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
         // this.scene.start("Level1", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
-        this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
+        // this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
+        this.scene.start("Opening", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
     }
     settingsPointerDown() {
         this.scene.start("Settings", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });

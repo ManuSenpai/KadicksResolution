@@ -22,6 +22,7 @@ import Continue from './scenes/scene.continue.js';
 import mapUT from './scenes/scenario/mapUT.js';
 import Ending from './scenes/scenes.ending.js';
 import Credits from './scenes/scene.credits.js';
+import Opening from './scenes/scene.opening.js';
 
 const config = {
     width: window.innerWidth,
@@ -56,6 +57,7 @@ const config = {
         LanguageSelect,
         Continue,
         Ending,
+        Opening,
         Credits
     ]
 }
