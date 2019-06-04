@@ -12,6 +12,7 @@ const BURN_RATE = 300;          // Time passed until burn affects;
 
 const TIME_SHOOT_PLAYER = 1500; // Time to pass for the foes to start shooting at the player;
 const FIRE_DAMAGE = 10;         // Damage caused by fire
+const TIME_NOT_HITTABLE = 2500; // Time the player will not be hittable. Therefore, won't receive damage
 
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
@@ -48,10 +49,15 @@ var scenario;
 var currentPosition;
 var entrance;
 
+var hittable = true;
+var timeoutHittable;
+
 // ITEMS
 var keycard;
 
 function hitPlayer(player, enemy, context) {
+    hittable = false;
+    timeoutHittable = setTimeout(() => { hittable = true }, 2500);
     recoverArmor.paused = true;
     enemy.resetWave();
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -135,6 +141,7 @@ function hitEnemy(enemy, laser) {
         // Life value has changed as the medikit has been taken
         if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
             clearArea.apply(this);
+            if (timeoutHittable) { clearTimeout(timeoutHittable); }
         }
         score += enemy.score;
         this.setScore(score);
@@ -216,7 +223,7 @@ function generateWaveBenders(context) {
         wavebenders.add(newWaveBender);
     });
 
-    context.physics.add.collider( wavebenders, wavebenders );
+    context.physics.add.collider(wavebenders, wavebenders);
 }
 
 function generateTrashbots(context) {
@@ -435,8 +442,10 @@ class Level3_2 extends Hostile {
         })
         wavebenders.children.iterate((wb) => {
             wb.move();
-            if ( Phaser.Geom.Intersects.CircleToRectangle(wb.getCircles(), player.body) ) {
-                hitPlayer(player, wb, this);
+            if (hittable) {
+                if (Phaser.Geom.Intersects.CircleToRectangle(wb.getCircles(), player.body)) {
+                    hitPlayer(player, wb, this);
+                }
             }
         })
 

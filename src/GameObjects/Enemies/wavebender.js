@@ -2,7 +2,7 @@ import Enemy from "./enemy.js"
 
 const TRAIL_TIME = 350;
 const FIRE_INTERVAL_TIME = 10000;
-const WAVE_RADIUS = 200;
+const WAVE_RADIUS = 100;
 class Wavebender extends Enemy {
     scene;
     circle;

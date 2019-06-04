@@ -19,8 +19,8 @@ const PLAYER_STATS = {
     MAX_HEALTH: 100,                    // Maximum health value 
     ARMOR: 100,                         // Current armor value
     MAX_ARMOR: 100,                     // Maximum armor value
-    DAMAGE: 15,                         // Damage caused by the player
-    // DAMAGE: 150,                     // Damage caused by the player
+    // DAMAGE: 15,                         // Damage caused by the player
+    DAMAGE: 15,                     // Damage caused by the player
     KEYCODES : 0,                       // Collected Key Codes
     // KEYCODES : 3,                    // Collected Key Codes
     FIRE_RATE: 250,                     // Fire rate

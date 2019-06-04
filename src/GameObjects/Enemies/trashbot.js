@@ -136,7 +136,7 @@ class Trashbot extends Enemy {
         this.trashFace.destroy();
         // this.scene.tweens.killTweensOf(this.trailgroup.children.entries);
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
-        currentTweens.forEach((t) => { t.setVisible(false); t.complete(); t.stop(); });
+        currentTweens.forEach((t) => { t.complete(); });
         this.trailgroup.clear(true, true);
         this.trailgroup.destroy();
         this.trailAnimation.data.forEach(element => {

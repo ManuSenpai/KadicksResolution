@@ -93,7 +93,7 @@ function beamPlayer(damage, context) {
             playerStats.HEALTH = (playerStats.HEALTH - damage < 0) ? 0 : playerStats.HEALTH - damage;;
             healthBar.width = playerStats.HEALTH * 2;
             if (playerStats.HEALTH <= 0) {
-                this.scene.start("Continue", {
+                context.scene.start("Continue", {
                     score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
                     currentPosition: currentPosition, entrance: 'center'
                 });
