@@ -129,11 +129,15 @@ class Trashbot extends Enemy {
         if (this.trailInterval) { clearInterval(this.trailInterval); }
         if (this.trailFireInterval) { clearInterval(this.trailFireInterval); }
         if (this.trailFireTimeout) { clearTimeout(this.trailFireTimeout); }
+        this.emitters.forEach((emitter) => {
+            emitter.killAll();
+            emitter.stop();
+        })
         this.trashFace.destroy();
         // this.scene.tweens.killTweensOf(this.trailgroup.children.entries);
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
-        currentTweens.forEach((t) => t.complete());
-        this.trailgroup.clear();
+        currentTweens.forEach((t) => { t.setVisible(false); t.complete(); t.stop(); });
+        this.trailgroup.clear(true, true);
         this.trailgroup.destroy();
         this.trailAnimation.data.forEach(element => {
             element.target.destroy();

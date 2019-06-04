@@ -43,7 +43,7 @@ class Opening extends Phaser.Scene {
     }
 
     show(index, text) {
-        this.tweens.add({
+        let showTween = this.tweens.add({
             targets: text,
             opacity: 1,
             duration: 1000,
@@ -53,13 +53,15 @@ class Opening extends Phaser.Scene {
             onComplete: () => {
                 setTimeout(() => {
                     this.hide(index, text);
-                }, i18n.OPENING[index].length * 2000)
+                }, i18n.OPENING[index].length * 2000);
+                /** We do this to avoid memory leaks */
+                showTween.stop();
             }
         });
     }
 
     hide(index, text) {
-        this.tweens.add({
+        let hideTween = this.tweens.add({
             targets: text,
             opacity: 0,
             duration: 1000,
@@ -67,7 +69,9 @@ class Opening extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
+                hideTween.stop();
                 setTimeout(() => {
+                    /** We do this to avoid memory leaks */
                     this.currentText.destroy();
                     this.showTexts(index + 1);
                 }, 1000);
