@@ -36,6 +36,8 @@ class Boss3 extends Enemy {
         this.generateBoss1stMovement();
         this.startAttack();
 
+        this.bulletFX = this.scene.sound.add('enemlaser');
+
     }
 
     startAttack() {
@@ -284,6 +286,7 @@ class Boss3 extends Enemy {
                     newBullet.body.setVelocity(bulletVel.x, bulletVel.y);
                     offset += 5;
                 }
+                that.bulletFX.play();
             }
             if (++current < times) { setTimeout(() => shootBullets(), timed ? 200 : 0); }
         }
@@ -301,6 +304,7 @@ class Boss3 extends Enemy {
                     newBullet.body.onWorldBounds = true;
                     that.scene.physics.world.enable(newBullet);
                 }
+                that.bulletFX.play();
                 Phaser.Actions.PlaceOnCircle(group, circle);
                 // Phaser.Actions.PlaceOnCircle(that.bullets.getChildren(), circle);
 

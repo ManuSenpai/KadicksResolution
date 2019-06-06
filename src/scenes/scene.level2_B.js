@@ -60,8 +60,11 @@ var hittable = true;
 
 // AUDIO
 var shootFX;
+var hitFX;
+var hit2FX;
 
 function laserPlayer(player, laser) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -85,6 +88,7 @@ function laserPlayer(player, laser) {
 }
 
 function hitPlayer() {
+    hitFX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -104,6 +108,7 @@ function hitPlayer() {
 }
 
 function beamPlayer(damage, context) {
+    hitFX.play();
     if (boss.active && hittable) {
         hittable = false;
         recoverArmor.paused = true;
@@ -208,6 +213,8 @@ class Level2_B extends Hostile {
     }
     create() {
         shootFX = this.sound.add('laser');
+        hitFX = this.sound.add('hit1');
+        hit2FX = this.sound.add('hit2');
         this.setPlayerStats(playerStats);
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 

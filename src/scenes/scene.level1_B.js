@@ -58,9 +58,12 @@ var keycard;
 var hittable = true;
 
 var shootFX;
+var hitFX;
+var hit2FX;
 var enemShootFX;
 
 function hitPlayer(player, laser) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -84,6 +87,7 @@ function hitPlayer(player, laser) {
 }
 
 function beamPlayer(damage, context) {
+    hitFX.play();
     if (boss.active && hittable) {
         hittable = false;
         recoverArmor.paused = true;
@@ -190,6 +194,8 @@ class Level1_B extends Hostile {
         this.setPlayerStats(playerStats);
         shootFX = this.sound.add('laser');
         enemShootFX = this.sound.add('enemlaser');
+        hitFX = this.sound.add('hit1');
+        hit2FX = this.sound.add('hit2');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(

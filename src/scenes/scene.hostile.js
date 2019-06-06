@@ -46,6 +46,7 @@ class Hostile extends Phaser.Scene {
     scenarioDistribution;   // Represents Scenario Distribution for obstacles.
 
     powerups;
+    powerUpFX;
 
     constructor(key) {
         super({ key: key });
@@ -59,6 +60,7 @@ class Hostile extends Phaser.Scene {
         this.currentPosition = currentPosition;
         this.entrance = entrance;
         this.player = player;
+        this.powerUpFX = player.scene.sound.add('powerup');
 
     }
 
@@ -468,9 +470,7 @@ class Hostile extends Phaser.Scene {
     dropItems(player, x, y) {
         if (!this.powerups || (this.powerups && !this.powerups.children)) {
             this.powerups = this.physics.add.group();
-        } else {
-
-        }
+        } 
         if (Math.random() < POWER_UP_RATE) {
             // The enemy drops a powerUp
             let rand = Math.random();
@@ -515,6 +515,7 @@ class Hostile extends Phaser.Scene {
     }
 
     getLifeUp(player, lifeup) {
+        this.powerUpFX.play();
         this.playerStats.MAX_HEALTH += LIFE_UP_VALUE;
         this.playerStats.MAX_ARMOR += LIFE_UP_VALUE;
         this.playerStats.HEALTH = this.playerStats.MAX_HEALTH;
@@ -527,6 +528,7 @@ class Hostile extends Phaser.Scene {
     }
 
     getMedikit(player, medikit) {
+        this.powerUpFX.play();
         this.playerStats.HEALTH += MEDIKIT_VALUE;
         if (this.playerStats.HEALTH > this.playerStats.MAX_HEALTH) { this.playerStats.HEALTH = this.playerStats.MAX_HEALTH; }
         this.powerups.remove(medikit);
@@ -535,12 +537,14 @@ class Hostile extends Phaser.Scene {
     }
 
     getPUAttk(player, Attk) {
+        this.powerUpFX.play();
         this.playerStats.DAMAGE += PUATTK_VALUE;
         this.powerups.remove(Attk);
         Attk.destroy();
     }
 
     getPURthm(player, Rthm) {
+        this.powerUpFX.play();
         this.playerStats.FIRE_RATE += PURTHM_VALUE;
         this.powerups.remove(Rthm);
         Rthm.destroy();

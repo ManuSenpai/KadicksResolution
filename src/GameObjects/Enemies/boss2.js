@@ -50,6 +50,9 @@ class Boss2 extends Enemy {
         this.flares = this.scene.add.particles('flares');
         this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
         this.rotGroup = this.scene.physics.add.group();
+        this.staticFX = this.scene.sound.add('elecestatica');
+        this.railgun2FX = this.scene.sound.add('railgun2');
+        this.whooshFX = this.scene.sound.add('whoosh');
 
 
         this.lastFired = 0;
@@ -125,6 +128,7 @@ class Boss2 extends Enemy {
 
     /** Load railguns and shoot */
     loadAndShoot() {
+        this.staticFX.play();
         this.emitters.push(this.flares.createEmitter({
             x: this.botrg.x,
             y: this.botrg.y,
@@ -160,6 +164,7 @@ class Boss2 extends Enemy {
      * @param {number} _y y coordinate
      */
     crossRotatables(object, id, _x, _y) {
+        this.whooshFX.play();
         this.rotAnimations[id] = this.scene.tweens.add({
             targets: object,
             ease: 'Power1',
@@ -224,6 +229,7 @@ class Boss2 extends Enemy {
     }
 
     shootBeam(targetPoint) {
+        this.railgun2FX.play();
         this.emitters.forEach((emitter) => {
             emitter.killAll();
             emitter.stop();

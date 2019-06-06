@@ -55,8 +55,10 @@ var hittable = true;
 
 // AUDIO
 var shootFX;
+var hit2FX;
 
 function bulletPlayer(player, bullet) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -77,22 +79,6 @@ function bulletPlayer(player, bullet) {
     bullet.setActive(false);
     bullet.destroy();
     bossBullets.remove(bullet);
-}
-
-function hitPlayer() {
-    recoverArmor.paused = true;
-    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - boss.damage < 0) ? 0 : playerStats.ARMOR - boss.damage;
-        armorBar.width = playerStats.ARMOR * 2;
-    } else {
-        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;;
-        healthBar.width = playerStats.HEALTH * 2;
-        if (playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
-        }
-    }
 }
 
 function beamPlayer(damage, context) {
@@ -204,6 +190,7 @@ class Level3_B extends Hostile {
     create() {
         this.setPlayerStats(playerStats);
         shootFX = this.sound.add('laser');
+        hit2FX = this.sound.add('hit2');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(
