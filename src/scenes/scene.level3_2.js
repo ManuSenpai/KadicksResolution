@@ -55,7 +55,15 @@ var timeoutHittable;
 // ITEMS
 var keycard;
 
+// AUDIO
+var keyFX;
+var pickKeyFX;
+var shootFX;
+var hitFX;
+var hit2FX;
+
 function hitPlayer(player, enemy, context) {
+    hitFX.play();
     hittable = false;
     timeoutHittable = setTimeout(() => { hittable = true }, 2500);
     recoverArmor.paused = true;
@@ -76,6 +84,7 @@ function hitPlayer(player, enemy, context) {
 }
 
 function burnPlayer(context) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
@@ -158,6 +167,7 @@ function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
         spawnKey(this);
+        keyFX.play()
     }
     this.createDoors(this, currentPosition);
     this.addDoorColliders(this);
@@ -184,6 +194,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+    pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -289,10 +300,16 @@ class Level3_2 extends Hostile {
     }
     create() {
         this.load.on('complete', () => { levelloaded = true; });
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+        pickKeyFX = this.sound.add('pickkey');
+        hitFX = this.sound.add('hit1');
+        hit2FX = this.sound.add('hit2');
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+            keyFX.play()
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
@@ -408,6 +425,7 @@ class Level3_2 extends Hostile {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);

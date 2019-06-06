@@ -57,6 +57,9 @@ var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = le
 var keycard;
 var hittable = true;
 
+var shootFX;
+var enemShootFX;
+
 function hitPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -185,6 +188,8 @@ class Level1_B extends Hostile {
     }
     create() {
         this.setPlayerStats(playerStats);
+        shootFX = this.sound.add('laser');
+        enemShootFX = this.sound.add('enemlaser');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(
@@ -312,6 +317,7 @@ class Level1_B extends Hostile {
                 // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
+                shootFX.play();
                 var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
                 var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
@@ -360,11 +366,13 @@ class Level1_B extends Hostile {
                     if (turret_to_shoot === 0) {
                         // var laserAngle = Phaser.Math.Angle.Between(boss.leftTurret.x, boss.leftTurret.y, player.x, player.y);
                         var laserAngle = boss.leftTurret.rotation;
+                        enemShootFX.play();
                         var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
                         var currentLaser = new Laser(this, boss.leftTurret.x, boss.leftTurret.y, 'laser', 0.6, laserAngle, velocity, '0x77abff', boss.damage);
                         turret_to_shoot = 1;
                     } else {
                         var laserAngle = boss.rightTurret.rotation;
+                        enemShootFX.play();
                         var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED);
                         var currentLaser = new Laser(this, boss.rightTurret.x, boss.rightTurret.y, 'laser', 0.6, laserAngle, velocity, '0x77abff', boss.damage);
                         turret_to_shoot = 0;

@@ -146,6 +146,26 @@ class Bootloader extends Phaser.Scene {
         this.load.image('GB', './assets/GBflag.png');
         this.load.image('VAL', './assets/VALflag.png');
 
+        /* AUDIO */
+        this.load.audio('crash', ['./assets/audio/crash.mp3']);
+        this.load.audio('dropkey', ['./assets/audio/dropkey.mp3']);
+        this.load.audio('elecestatica', ['./assets/audio/elecestatica.mp3']);
+        this.load.audio('fire', ['./assets/audio/fire.mp3']);
+        this.load.audio('forcefield', ['./assets/audio/forcefield.mp3']);
+        this.load.audio('hit1', ['./assets/audio/hit1.mp3']);
+        this.load.audio('hit2', ['./assets/audio/hit2.mp3']);
+        this.load.audio('laser', ['./assets/audio/laser.mp3']);
+        this.load.audio('enemlaser', ['./assets/audio/enemlaser.mp3']);
+        this.load.audio('opendoor', ['./assets/audio/opendoor.mp3']);
+        this.load.audio('pickkey', ['./assets/audio/pickkey.mp3']);
+        this.load.audio('powerup', ['./assets/audio/powerup.mp3']);
+        this.load.audio('pulse', ['./assets/audio/pulse.mp3']);
+        this.load.audio('railgun', ['./assets/audio/railgun.mp3']);
+        this.load.audio('railgun2', ['./assets/audio/railgun2.mp3']);
+        this.load.audio('spark', ['./assets/audio/spark.mp3']);
+        this.load.audio('ting', ['./assets/audio/ting.mp3']);
+        this.load.audio('whoosh', ['./assets/audio/whoosh.mp3']);
+
         /* OTHER */
         this.load.image('continueIcon', './assets/continueIcon.png')
     }

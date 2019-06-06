@@ -19,6 +19,7 @@ class Wavebender extends Enemy {
         scene.add.existing(this);
         this.fireWave();
         this.setDepth(2);
+        this.pulseFX = scene.sound.add('pulse');
 
     }
 
@@ -50,6 +51,7 @@ class Wavebender extends Enemy {
             duration: 1500,
             opacity: 0,
             repeat: -1,
+            onRestart: () => this.pulseFX.play(),
             onUpdate: () => {
                 this.circle.x = this.x;
                 this.circle.y = this.y;

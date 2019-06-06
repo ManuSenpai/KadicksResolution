@@ -53,6 +53,9 @@ var startGame = false;
 // ITEMS
 var hittable = true;
 
+// AUDIO
+var shootFX;
+
 function bulletPlayer(player, bullet) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -138,7 +141,7 @@ function hitEnemy(enemy, laser) {
             stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
             stairNextLevel.setScale(0.5, 0.5);
             this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
-            this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
+            this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats });
         }
     } else {
         bossLifeBarGr.clear();
@@ -200,6 +203,7 @@ class Level3_B extends Hostile {
     }
     create() {
         this.setPlayerStats(playerStats);
+        shootFX = this.sound.add('laser');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(
@@ -330,6 +334,7 @@ class Level3_B extends Hostile {
                 // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
+                shootFX.play();
                 var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
                 var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
@@ -364,7 +369,7 @@ class Level3_B extends Hostile {
             lasers.children.iterate((laser) => {
                 if (laser) { laser.move(delta) } else { lasers.remove(laser); }
             });
-            
+
             if (boss && boss.body) {
                 boss.move(player);
             }

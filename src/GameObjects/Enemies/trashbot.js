@@ -35,6 +35,8 @@ class Trashbot extends Enemy {
         this.setDepth(1);
         this.trashFace.setDepth(2);
         this.trailColliders = scene.physics.add.group();
+        this.fireFX = scene.sound.add('fire');
+        this.tingFX = scene.sound.add('ting');
     }
 
     getTrailColliders() {
@@ -66,7 +68,7 @@ class Trashbot extends Enemy {
      * Sets on fire the trail of oil left by the trashbot
      */
     setFire() {
-
+        this.fireFX.play();
         if (this.trailInterval) clearInterval(this.trailInterval);
         if (this.trailFireInterval) clearInterval(this.trailFireInterval);
         
@@ -117,6 +119,7 @@ class Trashbot extends Enemy {
     }
 
     bounceOnWall() {
+        this.tingFX.play();
         if (this.body.touching.left || this.body.touching.right) {
             this.currentVelocity.x *= -1;
         }

@@ -33,6 +33,8 @@ class Coulomb extends Enemy {
         this.chargeTimeOut = setTimeout(this.startCharge.bind(this), TIME_BETWEEN_CHARGES);
         this.isCharging = false;
         this.isStunned = false;
+
+        this.crashFX = scene.sound.add('crash');
     }
 
     /**
@@ -73,6 +75,7 @@ class Coulomb extends Enemy {
         this.isCharging = false;
         this.isStunned = true;
         this.goBackToField();
+        this.crashFX.play();
         clearTimeout(this.chargeTimeOut);
 
         setTimeout(() => {

@@ -68,6 +68,11 @@ var entrance;                   // From where the player enters.
 // ITEMS
 var keycard;
 
+// AUDIO
+var keyFX;
+var pickKeyFX;
+var shootFX;
+
 function initializeText() {
     scoreText.setText('SCORE: ' + score);
 }
@@ -315,6 +320,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -343,6 +349,10 @@ class Level1 extends Phaser.Scene {
     }
     create() {
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
+
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+pickKeyFX = this.sound.add('pickkey');
 
         cursors = this.input.keyboard.addKeys(
             {
@@ -428,6 +438,7 @@ class Level1 extends Phaser.Scene {
 
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+keyFX.play()
         }
 
         // this.physics.add.collider(player, topleftdooropen);
@@ -487,6 +498,7 @@ class Level1 extends Phaser.Scene {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
             lasers.add(currentLaser);

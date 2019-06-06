@@ -44,6 +44,12 @@ var entrance;
 // ITEMS
 var keycard;
 
+// AUDIO
+var keyFX;
+var pickKeyFX;
+var shootFX;;
+var enemShootFX;
+
 function hitPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -92,7 +98,7 @@ function meleeHit(player, enemy) {
  * @param {*} bump Bump Element
  */
 function untangleFromBumps(bump, agent) {
-    if( levelloaded ) this.untangleFromBumps(agent, bump);
+    if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
 function hitEnemy(enemy, laser) {
@@ -128,6 +134,7 @@ function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
         spawnKey(this);
+keyFX.play()
     }
     this.createDoors(this, currentPosition);
     this.addDoorColliders(this);
@@ -154,6 +161,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -213,11 +221,16 @@ class Level1_2 extends Hostile {
     }
     create() {
         readyToShoot = false;
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+pickKeyFX = this.sound.add('pickkey');
+        enemShootFX = this.sound.add('enemlaser');
         this.load.on('complete', () => { levelloaded = true; });
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+keyFX.play()
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
@@ -242,7 +255,7 @@ class Level1_2 extends Hostile {
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
-        player.body.setOffset( player.width / 4, player.height / 4);
+        player.body.setOffset(player.width / 4, player.height / 4);
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
@@ -276,10 +289,10 @@ class Level1_2 extends Hostile {
         this.drawMap(this);
 
         this.physics.add.collider(bumps, player);
-        bumps.children.iterate ( (bump) => {
+        bumps.children.iterate((bump) => {
             bump.body.immovable = true;
             bump.moves = false;
-        }); 
+        });
         this.physics.add.collider(bumps, enemies);
         this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
         this.physics.add.overlap(bumps, lasers, (bump, laser) => {
@@ -321,6 +334,7 @@ class Level1_2 extends Hostile {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
@@ -357,6 +371,7 @@ class Level1_2 extends Hostile {
             if (readyToShoot) {
                 let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
                 if (time > enem.lastFired) {
+                    enemShootFX.play();
                     var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
                     var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
                     enemyLasers.add(currentLaser);

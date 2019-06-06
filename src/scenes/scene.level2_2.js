@@ -53,7 +53,16 @@ var entrance;
 // ITEMS
 var keycard;
 
+// AUDIO
+var keyFX;
+var hitFX;
+var hit2FX;
+var pickKeyFX;
+var shootFX;
+var enemShootFX;
+
 function hitPlayer(player, laser) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -72,7 +81,8 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
-function burnPlayer (context) {
+function burnPlayer(context) {
+    hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
@@ -90,6 +100,7 @@ function burnPlayer (context) {
 }
 
 function meleeHit(player, enemy) {
+    hitFX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
@@ -118,7 +129,7 @@ function meleeHit(player, enemy) {
  * @param {*} bump Bump Element
  */
 function untangleFromBumps(bump, agent) {
-    if( levelloaded ) this.untangleFromBumps(agent, bump);
+    if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
 function hitEnemy(enemy, laser) {
@@ -127,7 +138,7 @@ function hitEnemy(enemy, laser) {
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    if ( enemy.hasOwnProperty('hit') ) { enemy.hit(); }
+    if (enemy.hasOwnProperty('hit')) { enemy.hit(); }
     score += 20;
     if (enemy.health <= 0) {
         enemy.setActive(false);
@@ -154,6 +165,7 @@ function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
         spawnKey(this);
+        keyFX.play()
     }
     this.createDoors(this, currentPosition);
     this.addDoorColliders(this);
@@ -180,6 +192,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+    pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -244,15 +257,15 @@ function generateTrashbots(context) {
         context.physics.add.collider(newTrashbot, bumps, bounceOnWalls, null, context);
         context.physics.add.collider(newTrashbot, trashbots, bounceOnWalls, null, context);
         trashbots.add(newTrashbot);
-        context.physics.add.overlap( player, newTrashbot.trailColliders, () => {
+        context.physics.add.overlap(player, newTrashbot.trailColliders, () => {
             playerTouchedFire = true;
-        }, null, context );
+        }, null, context);
     });
 
-    
+
 }
 
-function bounceOnWalls( trashbot, bump ) {
+function bounceOnWalls(trashbot, bump) {
     trashbot.bounceOnWall();
 }
 
@@ -279,11 +292,18 @@ class Level2_2 extends Hostile {
     }
     create() {
         readyToShoot = false;
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+        hitFX = this.sound.add('hit1');
+        hit2FX = this.sound.add('hit2');
+        pickKeyFX = this.sound.add('pickkey');
+        enemShootFX = this.sound.add('enemlaser');
         this.load.on('complete', () => { levelloaded = true; });
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+            keyFX.play()
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
@@ -345,10 +365,10 @@ class Level2_2 extends Hostile {
         this.drawMap(this);
 
         this.physics.add.collider(bumps, player);
-        bumps.children.iterate ( (bump) => {
+        bumps.children.iterate((bump) => {
             bump.body.immovable = true;
             bump.moves = false;
-        }); 
+        });
         this.physics.add.collider(bumps, enemies);
         this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
         this.physics.add.overlap(bumps, lasers, (bump, laser) => {
@@ -368,8 +388,8 @@ class Level2_2 extends Hostile {
 
     checkIfBurning() {
         let result = false;
-        trashbots.children.iterate( (tbot) => {
-            this.physics.overlap(player, tbot.trailColliders, () =>  {
+        trashbots.children.iterate((tbot) => {
+            this.physics.overlap(player, tbot.trailColliders, () => {
                 result = true;
             }, null, this);
         })
@@ -389,12 +409,12 @@ class Level2_2 extends Hostile {
             playerIsHit = false;
         }
 
-        if ( playerTouchedFire ) {
+        if (playerTouchedFire) {
             isBurning = this.checkIfBurning();
         }
 
-        if ( isBurning ) {
-            if ( time > lastBurntTime ) {
+        if (isBurning) {
+            if (time > lastBurntTime) {
                 burnPlayer(this);
                 lastBurntTime = time + BURN_RATE;
             }
@@ -424,6 +444,7 @@ class Level2_2 extends Hostile {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
@@ -460,6 +481,7 @@ class Level2_2 extends Hostile {
             if (readyToShoot) {
                 let weaponAngle = Phaser.Math.Angle.Between(enem.weapon.x, enem.weapon.y, player.x, player.y);
                 if (time > enem.lastFired) {
+                    enemShootFX.play();
                     var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED);
                     var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5, weaponAngle, velocity, '0x77abff', enem.damage);
                     enemyLasers.add(currentLaser);
@@ -468,7 +490,7 @@ class Level2_2 extends Hostile {
             }
         });
 
-        trashbots.children.iterate( (bot) => {
+        trashbots.children.iterate((bot) => {
             bot.move();
         })
 

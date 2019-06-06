@@ -56,6 +56,8 @@ class Boss1 extends Enemy {
         this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
 
         if (this.attackMode === 2) this.startAimAnimation();
+
+        this.beamFX = scene.sound.add('railgun');
     }
 
     /**
@@ -179,6 +181,7 @@ class Boss1 extends Enemy {
 
         this.beamGraphics.strokeLineShape(this.leftBeamLine);
         this.beamGraphics.strokeLineShape(this.rightBeamLine);
+        this.beamFX.play();
         this.vanishInterval = setInterval(() => {
             this.beamGraphics.alpha -= 0.1;
         }, 50);

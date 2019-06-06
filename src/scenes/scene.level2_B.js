@@ -58,6 +58,9 @@ var turret_to_shoot = 0;        // The turret that will shoot the player. 0 = le
 var keycard;
 var hittable = true;
 
+// AUDIO
+var shootFX;
+
 function laserPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -204,6 +207,7 @@ class Level2_B extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        shootFX = this.sound.add('laser');
         this.setPlayerStats(playerStats);
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
@@ -336,6 +340,7 @@ class Level2_B extends Hostile {
                 // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
+                shootFX.play();
                 var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
                 var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
@@ -373,9 +378,9 @@ class Level2_B extends Hostile {
                 boss.move(player);
             }
 
-            if ( boss.paths[0] && boss.paths[1]) {
+            if (boss.paths[0] && boss.paths[1]) {
                 if (Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[0].getBounds(), player.body) ||
-                Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
+                    Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
                     beamPlayer(boss.damage, this);
                 }
             }
