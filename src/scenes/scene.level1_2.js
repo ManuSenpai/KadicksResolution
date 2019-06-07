@@ -220,6 +220,7 @@ class Level1_2 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         readyToShoot = false;
         shootFX = this.sound.add('laser');
         keyFX = this.sound.add('dropkey');

@@ -212,6 +212,7 @@ class Level2_B extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         shootFX = this.sound.add('laser');
         hitFX = this.sound.add('hit1');
         hit2FX = this.sound.add('hit2');

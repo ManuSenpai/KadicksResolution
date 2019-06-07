@@ -348,6 +348,7 @@ class Level1 extends Phaser.Scene {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         shootFX = this.sound.add('laser');

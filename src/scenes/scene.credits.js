@@ -17,7 +17,7 @@ class Credits extends Phaser.Scene {
         currentLanguage = this.playerStats.LANGUAGE;
     }
     create() {
-
+        window.onresize = () => this.scene.restart();
         let currentIndex = 0;
 
         /* Getting JSON i18n data */

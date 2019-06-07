@@ -348,6 +348,7 @@ class Level3 extends Phaser.Scene {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         shootFX = this.sound.add('laser');
         keyFX = this.sound.add('dropkey');
 pickKeyFX = this.sound.add('pickkey');

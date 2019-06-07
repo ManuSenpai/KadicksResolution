@@ -42,6 +42,8 @@ class Continue extends Phaser.Scene {
 
     create() {
 
+        window.onresize = () => this.scene.restart();
+
         /* Getting JSON i18n data */
 
         this.cameras.main.setBackgroundColor('#000000');

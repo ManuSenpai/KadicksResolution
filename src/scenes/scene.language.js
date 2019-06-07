@@ -46,6 +46,7 @@ class LanguageSelect extends Phaser.Scene {
         this.score = data.score;
     }
     create() {
+        window.onresize = () => this.scene.restart();
 
         /* Getting JSON i18n data */
 

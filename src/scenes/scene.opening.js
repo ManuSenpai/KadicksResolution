@@ -18,6 +18,8 @@ class Opening extends Phaser.Scene {
     }
     create() {
 
+        window.onresize = () => this.scene.restart();
+
         let currentIndex = 0;
 
         /* Getting JSON i18n data */

@@ -57,6 +57,7 @@ class Controls extends Phaser.Scene {
         currentLanguage = playerStats.LANGUAGE;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         shootFX = this.sound.add('laser');
         let currentIndex = 0;
 

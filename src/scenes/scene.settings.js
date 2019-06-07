@@ -38,7 +38,7 @@ class Settings extends Phaser.Scene {
         this.currentLanguage = this.playerStats.LANGUAGE;
     }
     create() {
-
+        window.onresize = () => this.scene.restart();
         this.background = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         
 

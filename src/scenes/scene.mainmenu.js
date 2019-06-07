@@ -56,6 +56,7 @@ class Main_menu extends Phaser.Scene {
     }
 
     create() {
+        window.onresize = () => this.scene.restart();
 
         floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         // this.playbutton = this.add.text( window.innerWidth/2, window.innerHeight/2, "NEW GAME", { fill: '#0f0' } )
