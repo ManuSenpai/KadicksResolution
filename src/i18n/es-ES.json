@@ -9,6 +9,7 @@
     "MAIN": {
         "NEW": "NUEVA PARTIDA",
         "SETTINGS": "OPCIONES",
+        "CONTROLS": "CONTROLES",
         "SEE_INTRODUCTION": "¿VER INTRODUCCIÓN?",
         "YES": "SÍ",
         "NO": "NO"
@@ -170,5 +171,16 @@
     "THANKS" : [
         "GRACIAS POR JUGAR A",
         "KADICK'S RESOLUTION"
-    ]
+    ],
+    "CONTROLS" : {
+        "MOVEMENT" : "MOVIMIENTO DEL JUGADOR",
+        "SHOOT" : [ "DISPARA CON", "CLICK IZQUIERDO"],
+        "POWERUPS" : ["RECOGE POWER-UPS", "PARA HACERTE PODEROSO"],
+        "ATTKUP" : "AUMENTA EL ATAQUE",
+        "RTHMUP" : "MEJORA EL CADENCIA",
+        "MAXLIFEUP" : ["AUMENTA MAXIMA VIDA", "Y ESCUDO"],
+        "HEAL" : "RECUPERA VIDA",
+        "KEYS": ["RECOGE 3 LLAVES PARA", "LUCHAR CONTRA EL BOSS", "DE CADA NIVEL"],
+        "BACK": "<- VOLVER AL MENÚ"
+    }
 }

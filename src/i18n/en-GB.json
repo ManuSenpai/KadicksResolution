@@ -9,6 +9,7 @@
     "MAIN": {
         "NEW": "NEW GAME",
         "SETTINGS": "SETTINGS",
+        "CONTROLS": "CONTROLS",
         "SEE_INTRODUCTION": "SEE INTRODUCTION?",
         "YES": "YES",
         "NO": "NO"
@@ -161,5 +162,16 @@
     "THANKS" : [
         "THANK YOU FOR PLAYING",
         "KADICK'S RESOLUTION"
-    ]
+    ],
+    "CONTROLS" : {
+        "MOVEMENT" : "PLAYER MOVEMENT",
+        "SHOOT" : ["SHOOT WITH", "LEFT CLICK"],
+        "POWERUPS" : ["PICK POWER-UPS", "TO IMPROVE PERFORMANCE"],
+        "ATTKUP" : "ATTACK UP",
+        "RTHMUP" : "FIRE RATE UP",
+        "MAXLIFEUP" : ["INCREASES MAXIMUM", "HEALTH AND ARMOR"],
+        "HEAL" : "HEALS PLAYER",
+        "KEYS": ["PICK 3 KEYS", "TO FIGHT THE BOSS", "OF EACH STAGE"],
+        "BACK": "<- BACK TO MENU"
+    }
 }

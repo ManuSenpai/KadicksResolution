@@ -23,6 +23,7 @@ import mapUT from './scenes/scenario/mapUT.js';
 import Ending from './scenes/scenes.ending.js';
 import Credits from './scenes/scene.credits.js';
 import Opening from './scenes/scene.opening.js';
+import Controls from './scenes/scene.controls.js';
 
 const config = {
     width: window.innerWidth,
@@ -58,7 +59,8 @@ const config = {
         Continue,
         Ending,
         Opening,
-        Credits
+        Credits,
+        Controls
     ]
 }
 

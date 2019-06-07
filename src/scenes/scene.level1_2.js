@@ -47,7 +47,7 @@ var keycard;
 // AUDIO
 var keyFX;
 var pickKeyFX;
-var shootFX;;
+var shootFX;
 var enemShootFX;
 
 function hitPlayer(player, laser) {
@@ -134,7 +134,7 @@ function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
         spawnKey(this);
-keyFX.play()
+        keyFX.play()
     }
     this.createDoors(this, currentPosition);
     this.addDoorColliders(this);
@@ -161,7 +161,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
-pickKeyFX.play();
+    pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -223,14 +223,14 @@ class Level1_2 extends Hostile {
         readyToShoot = false;
         shootFX = this.sound.add('laser');
         keyFX = this.sound.add('dropkey');
-pickKeyFX = this.sound.add('pickkey');
+        pickKeyFX = this.sound.add('pickkey');
         enemShootFX = this.sound.add('enemlaser');
         this.load.on('complete', () => { levelloaded = true; });
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
-keyFX.play()
+            keyFX.play()
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 

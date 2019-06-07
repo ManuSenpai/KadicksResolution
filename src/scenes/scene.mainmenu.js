@@ -80,6 +80,14 @@ class Main_menu extends Phaser.Scene {
             .on('pointerout', () => this.onButtonOut(this.settingsbutton));
         this.settingsbutton.setY((window.innerHeight * 2 / 3) + 80);
         this.settingsbutton.setOrigin(0.5);
+
+        this.controlsButton = this.make.text(NewGameButton).setText(i18n.MAIN.CONTROLS)
+            .setInteractive()
+            .on('pointerdown', () => this.scene.start("Controls", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats }) )
+            .on('pointerover', () => this.onButtonOver(this.controlsButton))
+            .on('pointerout', () => this.onButtonOut(this.controlsButton));
+        this.controlsButton.setY((window.innerHeight * 2 / 3) + 160);
+        this.controlsButton.setOrigin(0.5);
     }
     onButtonOver(button) {
         button.setFontSize(50);
