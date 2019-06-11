@@ -20,12 +20,15 @@ class Boss1 extends Enemy {
     aimGraphics;            // Graphics for drawing the aiming lasers to shoot the laser beams
     aimLineWidth;
     aimAnimationInterval;
+    shootBeamTimeout;
     beamGraphics;           // Graphics for the laser beams themselves
     leftAimLine;
     rightAimLine;
     leftBeamLine;
     rightBeamLine;
     vanishInterval;
+
+    alive = true;
 
     target;
 
@@ -85,16 +88,18 @@ class Boss1 extends Enemy {
     }
 
     onDestroy() {
+        this.alive = false;
         clearInterval(this.aimAnimationInterval);
         clearInterval(this.vanishInterval);
+        clearTimeout(this.shootBeamTimeout);
         this.rightTurret.destroy();
         this.leftTurret.destroy();
         this.aimGraphics.clear();
         this.aimGraphics.destroy();
         this.beamGraphics.clear();
         this.beamGraphics.destroy();
-        if ( this.leftBeamLine ) this.leftBeamLine.active = false;
-        if ( this.rightBeamLine ) this.rightBeamLine.active = false;
+        if (this.leftBeamLine) this.leftBeamLine.active = false;
+        if (this.rightBeamLine) this.rightBeamLine.active = false;
     }
 
     changeAttackMode() {
@@ -150,49 +155,53 @@ class Boss1 extends Enemy {
     }
 
     startAimAnimation() {
-        this.aimLineWidth = 1;
-        if ( this.scene ) this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
-        this.aimAnimationInterval = setInterval(() => {
-            this.aimGraphics.clear();
-            this.aimLineWidth++;
-            if (this.aimLineWidth >= 5) {
-                this.aimLineWidth = 0;
-                let targetPoint = { x: this.target.x, y: this.target.y };
-                clearInterval(this.aimAnimationInterval);
-                setTimeout(() => {
-                    this.shootBeam(targetPoint);
-                }, 150);
-            }
-            if ( this.scene ) this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
-        }, 200);
+        if ( this.alive ) {
+            this.aimLineWidth = 1;
+            if (this.scene) this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
+            this.aimAnimationInterval = setInterval(() => {
+                this.aimGraphics.clear();
+                this.aimLineWidth++;
+                if (this.aimLineWidth >= 5) {
+                    this.aimLineWidth = 0;
+                    let targetPoint = { x: this.target.x, y: this.target.y };
+                    clearInterval(this.aimAnimationInterval);
+                    this.shootBeamTimeout = setTimeout(() => {
+                        this.shootBeam(targetPoint);
+                    }, 150);
+                }
+                if (this.scene) this.aimGraphics = this.scene.add.graphics({ lineStyle: { width: this.aimLineWidth, color: 0xaafff3 } });
+            }, 200);
+        }
     }
 
     shootBeam(targetPoint) {
-        let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
-        let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
-        this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
-        this.leftBeamLine.active = true;
-        Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 2000);
-        Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle));
-        this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
-        this.rightBeamLine.active = true;
-        Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 2000);
-        Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle));
+        if (this.alive) {
+            let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
+            let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
+            this.leftBeamLine = new Phaser.Geom.Line(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
+            this.leftBeamLine.active = true;
+            Phaser.Geom.Line.SetToAngle(this.leftBeamLine, this.leftTurret.x, this.leftTurret.y, leftTurretAngle, 2000);
+            Phaser.Geom.Line.Offset(this.leftBeamLine, 38 * Math.cos(leftTurretAngle), 38 * Math.sin(leftTurretAngle));
+            this.rightBeamLine = new Phaser.Geom.Line(this.rightTurret.x, this.rightTurret.y, targetPoint.x, targetPoint.y);
+            this.rightBeamLine.active = true;
+            Phaser.Geom.Line.SetToAngle(this.rightBeamLine, this.rightTurret.x, this.rightTurret.y, rightTurretAngle, 2000);
+            Phaser.Geom.Line.Offset(this.rightBeamLine, 38 * Math.cos(rightTurretAngle), 38 * Math.sin(rightTurretAngle));
 
-        this.beamGraphics.strokeLineShape(this.leftBeamLine);
-        this.beamGraphics.strokeLineShape(this.rightBeamLine);
-        this.beamFX.play();
-        this.vanishInterval = setInterval(() => {
-            this.beamGraphics.alpha -= 0.1;
-        }, 50);
-        setTimeout(() => {
-            clearInterval(this.vanishInterval);
-            this.beamGraphics.clear();
-            this.beamGraphics.alpha = 1;
-            this.rightBeamLine.active = false;
-            this.leftBeamLine.active = false;
-        }, 300);
-        this.startAimAnimation();
+            this.beamGraphics.strokeLineShape(this.leftBeamLine);
+            this.beamGraphics.strokeLineShape(this.rightBeamLine);
+            this.beamFX.play();
+            this.vanishInterval = setInterval(() => {
+                this.beamGraphics.alpha -= 0.1;
+            }, 50);
+            setTimeout(() => {
+                clearInterval(this.vanishInterval);
+                this.beamGraphics.clear();
+                this.beamGraphics.alpha = 1;
+                this.rightBeamLine.active = false;
+                this.leftBeamLine.active = false;
+            }, 300);
+            this.startAimAnimation();
+        }
     }
 
     drawAimLines(target) {
