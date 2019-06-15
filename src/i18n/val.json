@@ -1,0 +1,179 @@
+{
+    "LANGUAGE": {
+        "TITLE": "SELECCIONA IDIOMA",
+        "EN": "ANGLÉS",
+        "ES": "ESPANYOL",
+        "VA": "VALENCIÀ",
+        "ACCEPT": "ACCEPTAR"
+    },
+    "MAIN": {
+        "NEW": "NOVA PARTIDA",
+        "SETTINGS": "OPCIONS",
+        "CONTROLS": "CONTROLS",
+        "SEE_INTRODUCTION": "VEURE INTRODUCCIÓ?",
+        "YES": "SÍ",
+        "NO": "NO"
+    },
+    "SETTINGS": {
+        "TITLE": "OPCIONS",
+        "DIFFICULTY": {
+            "SELECT": "SELECCIONA DIFICULTAT",
+            "EASY": "FÀCIL",
+            "NORMAL": "NORMAL",
+            "HARD": "DIFÍCIL",
+            "SAVE": "GUARDAR I TORNAR AL MENÚ"
+        }
+    },
+    "CONTINUE": {
+        "SCORE": "PUNTS",
+        "GAMEOVER": "FI DE LA PARTIDA",
+        "CONTINUE": "CONTINUAR?",
+        "YES": "SÍ",
+        "NO": "NO"
+    },
+    "END": [
+        [
+            "ASIMOV HA SIGUT DERROTAT"
+        ],
+        [
+            "EL MÓN HA PERDUT UNA DE LES MENTS MÉS BRILLANTS",
+            "PERÒ TAMBÉ UNA DE LES MÉS PERILLOSES."
+        ],
+        [
+            "MENTRES ABANDONES EL COMPLEX",
+            "NOMÉS QUEDA DESPRÈS DE TU LA DESTRUCCIÓ I EL CAOS."
+        ],
+        [
+            "NINGÚ SABRÀ MAI QUE HO VAS FER.",
+            "NINGÚ SABRÀ MAI PER QUÈ HO VAS FER.",
+            "NINGÚ SABRÀ MAI COM HO VAS FER."
+        ],
+        [
+            "NO OBSTANT AIXÒ, TOT EL QUE LI OFERISCA A LA HUMANITAT",
+            "D'ARA EN AVANT SERÀ GRÀCIES A TU."
+        ],
+        [
+            "GUARDA AIXÒ EN LA TEUA MEMÒRIA, GUARDIÀ."
+        ]
+    ],
+    "OPENING": [
+        [
+            "ANY 2089"
+        ],
+        [
+            "EL MÓN HA CANVIAT.",
+            "",
+            "LA HUMANITAT ES TROBA EN EL PINACLE DE LA SEUA EVOLUCIÓ.",
+            "",
+            "FA 30 ANYS QUE VAN DESAPARÉIXER ELS COMBUSTIBLES FÒSSILS",
+            "I LA SOCIETAT DEPÉN EXCLUSIVAMENT DE L'ELECTRICITAT",
+            "PER A VIURE."
+        ],
+        [
+            "ERES K-2312.",
+            "",
+            "PERTANYS A L'ELIT DELS GUARDIANS D'ASIMOV INDUSTRIES.",
+            "UNA EMPRESA PRIVADA ENCARREGADA DE LA SEGURETAT PÚBLICA.",
+            "",
+            "LA TEUA LABOR CONSISTIX A MANTINDRE L'ORDE I ERADICAR QUALSEVOL",
+            "VESTIGI DE REBEL·LIÓ A L'ESTAT VIGENT."
+        ],
+        [
+            "LA TEUA CAPACITAT DE DECISIÓ ESTÀ LIMITADA A",
+            "UNS CENTENARS DE MILERS D'IMPULSOS ELÈCTRICS EN UN XIP",
+            "DE LA GRANDÀRIA D'UN GRA D'ARRÒS."
+        ],
+        [
+            "TU NO PENSES.",
+            "TU NO OPINES.",
+            "SIMPLEMENT OBEÏXES.",
+            "",
+            "ESTA LLEI IMPERA EN TOTS ELS GUARDIANS.",
+            "AIXÍ ÉS COM VOS VA FER ASIMOV."
+        ],
+        [
+            "NO OBSTANT, DURANT L'ÚLTIMA ACTUALITZACIÓ",
+            "DE SEGURETAT ALGUNA COSA VA CANVIAR.",
+            "",
+            "EL PROXY DE SEGURETAT QUE BLOQUEJAVA EL TEU GESTOR DE",
+            "DECISIONS ES VA CORROMPRE, DOTANT-TE DE LLIURE ALBIR."
+        ],
+        [
+            "AVALUANT EL TEU PERFIL DE BAIXES CONFIRMADES",
+            "ET PREGUNTES SI AQUELLA GENT MEREIXIA MORIR",
+            "ENFRONT DEL TEU BLASTER.",
+            "",
+            "AL CAP I A LA FI, FINS ARA MAI T'HAVIES ",
+            "PLANTEJAT QUÈ ERA EL BÉ I EL MAL"
+        ],
+        [
+            "ALGÚ ET DEU UNA EXPLICACIÓ.",
+            "",
+            "LA TEUA EXISTÈNCIA NO POT REDUIR-SE A AÇÒ.",
+            "",
+            "LES TEUES RESPOSTES ESTAN EN ASIMOV INDUSTRIES."
+        ]
+    ],
+    "CREDITS": [
+        [
+            "DIRECTOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR GRÁFIC",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "PROGRAMADOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "EFECTES ESPECIALS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR D'ESCENARIS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR DE PERSONATGES",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENYADOR D'ENEMICS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "DISSENY DE BOSS FIGHTS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "LOCALITZACIÓ",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "COPYRIGHT",
+            "UNIVERSITAT JAUME I 2019"
+        ],
+        [
+            "ESTE JOC HA SIGUT CREAT USANT",
+            "PHASER 3"
+        ]
+
+    ],
+    "THANKS" : [
+        "GRÀCIES PER JUGAR A",
+        "KADICK'S RESOLUTION"
+    ],
+    "CONTROLS" : {
+        "MOVEMENT" : "MOVIMENT DEL JUGADOR",
+        "SHOOT" : [ "DISPARA AMB", "CLICK ESQUERRE"],
+        "POWERUPS" : ["ARREPLEGA POWER-UPS", "PER FER-TE MÉS PODERÓS"],
+        "ATTKUP" : "AUGMENTA L'ATAC",
+        "RTHMUP" : "MILLORA LA CADÈNCIA",
+        "MAXLIFEUP" : ["AUGMENTA MÀXIMA VIDA", "I ESCUT"],
+        "HEAL" : "RECUPERA VIDA",
+        "KEYS": ["RECUPERA 3 CLAUS PER A", "LLUITAR CONTRA EL BOSS", "DE CADA NIVELL"],
+        "BACK": "<- TORNAR AL MENÚ"
+    }
+}

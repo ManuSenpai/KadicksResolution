@@ -15,6 +15,7 @@ var botwall;
 var leftwall;
 var rightwall;
 var floor;
+var bumps;
 
 // DOORS
 var topleftdoorframe;
@@ -66,6 +67,11 @@ var entrance;                   // From where the player enters.
 
 // ITEMS
 var keycard;
+
+// AUDIO
+var keyFX;
+var pickKeyFX;
+var shootFX;
 
 function initializeText() {
     scoreText.setText('SCORE: ' + score);
@@ -314,6 +320,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -323,7 +330,7 @@ function pickKey() {
 
 function drawKeys(context, nKeys) {
     for (let i = 0; i < nKeys; i++) {
-        let currentKey = context.physics.add.sprite(window.innerWidth / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+        let currentKey = context.physics.add.sprite(32,  96 + (i * 48), 'keycard');
         currentKey.setScale(0.1);
     }
 }
@@ -341,7 +348,12 @@ class Level1 extends Phaser.Scene {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
+
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+pickKeyFX = this.sound.add('pickkey');
 
         cursors = this.input.keyboard.addKeys(
             {
@@ -354,23 +366,37 @@ class Level1 extends Phaser.Scene {
 
         /* ### SCENARIO: BASIC ### */
         // FLOOR
-        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor' + playerStats.LEVEL);
 
         // WALLS
-        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot1');
-        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot1');
-        leftwall = this.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright1');
-        rightwall = this.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright1');
+        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot' + playerStats.LEVEL);
+        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot' + playerStats.LEVEL);
+        leftwall = this.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright' + playerStats.LEVEL);
+        rightwall = this.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright' + playerStats.LEVEL);
 
         // CORNERS
-        topleft = this.physics.add.sprite(0, 0, 'topleft1');
+        topleft = this.physics.add.sprite(0, 0, 'topleft' + playerStats.LEVEL);
         topleft.setScale(2);
-        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright' + playerStats.LEVEL);
         topright.setScale(2);
-        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft' + playerStats.LEVEL);
         botleft.setScale(2);
-        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + playerStats.LEVEL);
         botright.setScale(2);
+
+        bumps = this.physics.add.group();
+        this.scenarioDistribution = this.cache.json.get('distribution');
+        if (currentPosition.distribution != 0) {
+            this.scenarioDistribution[currentPosition.distribution].forEach(element => {
+                let newProp = this.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
+                this.physics.world.enable(newProp);
+                newProp.setOrigin(0.5, 1);
+                newProp.setScale(1.5);
+                newProp.body.setSize(newProp.width, newProp.height * 0.75, false);
+                newProp.body.setOffset(0, newProp.height * 0.25);
+                bumps.add(newProp);
+            });
+        }
 
         // DOORS
         createDoors(this);
@@ -394,25 +420,28 @@ class Level1 extends Phaser.Scene {
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
-        armorIcon.displayWidth = 12;
-        armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0x000000');
+        
+        armorIcon = this.physics.add.sprite(96, (window.innerHeight - 36), 'armorIcon');
+        armorIcon.displayWidth = 36;
+        armorIcon.displayHeight = 36;
+        armorBarBg = this.add.rectangle(120, (window.innerHeight - 36), playerStats.MAX_ARMOR * 2, 36, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(120, (window.innerHeight - 36), playerStats.ARMOR * 2, 36, '0xffffff');
         armorBar.setOrigin(0, 0.5);
-        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
-        healthIcon.displayWidth = 12;
-        healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), playerStats.MAX_HEALTH * 2, 12, '0x000000');
-        healthBarBg.setOrigin(0, 0.5);
+        
+        healthIcon = this.physics.add.sprite( window.innerWidth - 96, (window.innerHeight - 36), 'healthIcon');
+        healthIcon.displayWidth = 36;
+        healthIcon.displayHeight = 36;
+        healthBarBg = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.MAX_HEALTH * 2, 36, '0x000000');
+        healthBarBg.setOrigin(1, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
-        healthBar.setOrigin(0, 0.5);
+        healthBar = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.HEALTH * 2, 36, '0xffffff');
+        healthBar.setOrigin(1, 0.5);
 
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+keyFX.play()
         }
 
         // this.physics.add.collider(player, topleftdooropen);
@@ -432,6 +461,16 @@ class Level1 extends Phaser.Scene {
         // this.physics.add.collider(player, botrightdooropen);
         this.physics.add.overlap(player, botrightdooropen, goDown, null, this);
 
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate ( (bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        }); 
+        
         drawKeys(this, playerStats.KEYCODES);
 
         drawMap(this);
@@ -462,6 +501,7 @@ class Level1 extends Phaser.Scene {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
             lasers.add(currentLaser);

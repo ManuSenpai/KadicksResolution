@@ -27,6 +27,8 @@ class Jolt extends Enemy {
         this.disableForcefield();
         this.scene = scene;
         this.lastFired = 0;
+
+        this.forceFX = scene.sound.add('forcefield');
     }
 
     activeForcefield() {
@@ -78,6 +80,7 @@ class Jolt extends Enemy {
             if (this.hitCounter >= 3) {
                 this.hitCounter = 0;
                 this.activeForcefield();
+                this.forceFX.play();
                 this.activatedTimeOut = setTimeout(this.disableForcefield.bind(this), this.shieldTime);
             }
         }

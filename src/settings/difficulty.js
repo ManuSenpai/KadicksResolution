@@ -16,6 +16,7 @@ export default {
             ARMOR_RECOVERY_TIMER : 2000,
             TIME_RECOVER_ARMOR : 200,
             ARMOR_RECOVERY : 5,
+            LEVEL: 0,
             DIFFICULTY : "EASY"
         }
     },
@@ -36,6 +37,7 @@ export default {
             ARMOR_RECOVERY_TIMER : 3000,
             TIME_RECOVER_ARMOR : 250,
             ARMOR_RECOVERY : 5,
+            LEVEL: 0,
             DIFFICULTY : "NORMAL"
         }
     },
@@ -56,6 +58,7 @@ export default {
             ARMOR_RECOVERY_TIMER : 4000,
             TIME_RECOVER_ARMOR : 250,
             ARMOR_RECOVERY : 5,
+            LEVEL: 0,
             DIFFICULTY : "HARD"
         }
     }

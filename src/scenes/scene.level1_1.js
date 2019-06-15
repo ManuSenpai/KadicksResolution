@@ -19,7 +19,7 @@ var enemyLasers;                // Pool of bullets shot by enemiess
 var laserTraps = [];            // Laser traps at stage
 var mouseTouchDown = false;     // Mouse is being left clicked
 var lastFired = 0;              // Time instant when last shot was fired
-
+var levelloaded = false;        // Represents that the level has finished loading
 var enemies;                    // Enemies on scene
 
 // SCENARIO
@@ -32,6 +32,7 @@ var botwall;
 var leftwall;
 var rightwall;
 var floor;
+var bumps;
 
 // UI
 var healthIcon;
@@ -54,6 +55,11 @@ var entrance;
 
 // ITEMS
 var keycard;
+// AUDIO
+var keyFX;
+var pickKeyFX;
+var shootFX;
+var sparkFX;
 
 function scanMeleeHitPlayer(player, enemy) {
     recoverArmor.paused = true;
@@ -64,8 +70,11 @@ function scanMeleeHitPlayer(player, enemy) {
         this.hitArmor(enemy.damage);
     } else {
         this.hitHealth(enemy.damage);
-        if (this.playerStats.HEALTH < 0) {
-            // TODO: GAME OVER
+        if (this.playerStats.HEALTH <= 0) {
+            this.scene.start("Continue", {
+                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                currentPosition: currentPosition, entrance: 'center'
+            });
         }
     }
 
@@ -83,12 +92,12 @@ function hitEnemy(enemy, laser) {
     laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.destroy();
+        sparkFX.play();
+        enemy.die();
+        enemies.remove(enemy);
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
-        
+
         if (enemies.children.entries.length === 0) {
             clearArea.apply(this);
         }
@@ -102,6 +111,7 @@ function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
         spawnKey(this);
+        keyFX.play()
     }
     this.createDoors(this, currentPosition);
     this.addDoorColliders(this);
@@ -128,12 +138,22 @@ function spawnKey(context) {
 }
 
 function pickKey() {
+    pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
     this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
     this.drawKeys(playerStats.KEYCODES);
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
+}
+
+/**
+ * Avoids an overlap between a bump element and a gameobject.
+ * @param {GameObject} agent Agent that overlaps with a game bump 
+ * @param {*} bump Bump Element
+ */
+function untangleFromBumps(bump, agent) {
+    if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
 function generateEnemies(context) {
@@ -160,7 +180,10 @@ function generateEnemies(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        enemies.add(new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score));
+        let newEnemy = new Scancatcher(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        newEnemy.name = "scancatcher";
+        newEnemy.body.immovable = true;
+        enemies.add(newEnemy);
     });
 }
 
@@ -186,8 +209,17 @@ class Level1_1 extends Hostile {
         entrance = data.entrance;
     }
     create() {
+        window.onresize = () => this.scene.restart();
+        this.load.on('complete', () => { levelloaded = true; });
+        shootFX = this.sound.add('laser');
+        keyFX = this.sound.add('dropkey');
+        pickKeyFX = this.sound.add('pickkey');
+        sparkFX = this.sound.add('spark');
+        this.setPlayerStats(playerStats);
+        this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
+            keyFX.play()
         }
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
@@ -196,6 +228,8 @@ class Level1_1 extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         this.drawScenario(this);
+        bumps = this.getBumps();
+        this.physics.world.enable(bumps);
 
         /* DOORS */
         this.createDoors(this, currentPosition);
@@ -210,10 +244,12 @@ class Level1_1 extends Hostile {
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
+        player.body.setSize(player.width / 2, player.height / 2);
+        player.body.setOffset(player.width / 4, player.height / 4);
 
         this.physics.world.enable(player);
         this.setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player);
-        this.addDoorColliders(this);
+
         this.drawKeys(playerStats.KEYCODES);
         /* LASERS */
         lasers = this.physics.add.group({
@@ -236,6 +272,18 @@ class Level1_1 extends Hostile {
         this.physics.add.collider(player, enemies, scanMeleeHitPlayer, null, this);
         this.physics.add.collider(enemies, lasers);
         this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
+
+        this.physics.add.collider(bumps, player);
+        bumps.children.iterate((bump) => {
+            bump.body.immovable = true;
+            bump.moves = false;
+        });
+        this.physics.add.overlap(bumps, enemies, untangleFromBumps, null, this);
+        this.physics.add.collider(bumps, enemies);
+        this.physics.add.overlap(bumps, lasers, (bump, laser) => {
+            lasers.remove(laser);
+            laser.destroy();
+        }, null, this);
         this.drawMap(this);
 
     }
@@ -267,6 +315,7 @@ class Level1_1 extends Hostile {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
@@ -309,7 +358,7 @@ class Level1_1 extends Hostile {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         });
 
-        
+
     }
 }
 

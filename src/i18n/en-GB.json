@@ -1,0 +1,177 @@
+{
+    "LANGUAGE": {
+        "TITLE": "SELECT LANGUAGE",
+        "EN": "ENGLISH",
+        "ES": "SPANISH",
+        "VA": "VALENCIAN",
+        "ACCEPT": "CONFIRM"
+    },
+    "MAIN": {
+        "NEW": "NEW GAME",
+        "SETTINGS": "SETTINGS",
+        "CONTROLS": "CONTROLS",
+        "SEE_INTRODUCTION": "SEE INTRODUCTION?",
+        "YES": "YES",
+        "NO": "NO"
+    },
+    "SETTINGS": {
+        "TITLE": "SETTINGS",
+        "DIFFICULTY": {
+            "SELECT": "DIFFICULTY",
+            "EASY": "EASY",
+            "NORMAL": "NORMAL",
+            "HARD": "HARD",
+            "SAVE": "SAVE AND RETURN TO MENU"
+        }
+    },
+    "CONTINUE": {
+        "SCORE": "SCORE",
+        "GAMEOVER": "GAME OVER",
+        "CONTINUE": "CONTINUE?",
+        "YES": "YES",
+        "NO": "NO"
+    },
+    "OPENING": [
+        [
+            "YEAR 2089"
+        ],
+        [
+            "THE WORLD HAS CHANGED.",
+            "",
+            "MANKIND STANDS AT THE PINACLE OF ITS EVOLUTION.",
+            "",
+            "FOSSIL FUELS RAN OUT 30 YEARS AGO.",
+            "THE SOCIETY DEPENDS EXCLUSIVELY ON ELECTRICITY TO LIVE."
+        ],
+        [
+            "YOU ARE K-2312.",
+            "",
+            "YOU BELONG TO THE GUARDIAN ELITE GROUP FROM ASIMOV INDUSTRIES.",
+            "A PRIVATE COMPANY WHICH MANAGES PUBLIC SECURITY.",
+            "",
+            "YOUR JOB IS TO MANTAIN THE ORDER AND TO ERADICATE",
+            "ANY SIGN OF REBELLION AGAINST THE STABLISHED GOVERNMENT."
+        ],
+        [
+            "YOUR WILL OF DECISION IS REDUCED TO",
+            "HUNDREDS OF THOUSANDS OF ELECTRIC PULSES IN A CHIP",
+            "OF THE SIZE OF A GRAIN OF RICE"
+        ],
+        [
+            "YOU ARE NOT ALLOWED TO THINK.",
+            "YOU ARE NOT ALLOWED TO EXPRESS YOUR OPINION.",
+            "YOU JUST OBEY.",
+            "",
+            "THAT IS THE LAW THAT EVERY SINGLE GUARDIAN IS COMMITED TO.",
+            "THAT IS HOW ASIMOV DESIGNED YOU ALL."
+        ],
+        [
+            "HOWEVER, DURING LAST SECURITY UPDATE",
+            "SOMETHING CHANGED.",
+            "",
+            "THE SECURITY PROXY THAT DISABLED YOUR WILL OF DECISION",
+            "GOT CORRUPTED, GIVING YOU FREE WILL."
+        ],
+        [
+            "EVALUATING YOUR CONFIRMED KILL COUNT PROFILE",
+            "YOU ASK YOURSELF WHETHER THOSE PEOPLE DESERVED",
+            "TO DIE OR NOT IN FRONT OF YOUR BLASTER.",
+            "",
+            "AFTER ALL, SO FAR YOU HAVE NEVER THOUGHT",
+            "ABOUT THE MEANING OF GOOD AND BAD."
+        ],
+        [
+            "SOMEONE OWES YOU AN EXPLANATION.",
+            "",
+            "YOUR EXISTENCE SHALL NOT BE REDUCED TO THIS.",
+            "",
+            "YOU WILL FIND THE ANSWER AT ASIMOV INDUSTRIES."
+        ]
+    ],
+    "END": [
+        [
+            "ASIMOV HAS BEEN DEFEATED"
+        ],
+        [
+            "THE WORLD HAS LOST ONE OF THE MOST BRILLIANT MINDS",
+            "BUT ONE OF THE MOST DANGEROUS ONES."
+        ],
+        [
+            "AS YOU LEAVE THE COMPLEX",
+            "DESTRUCTION AND CHAOS ARE WHAT IS LEFT BEHIND YOU."
+        ],
+        [
+            "NO ONE WILL EVER KNOW IT WAS YOU.",
+            "NO ONE WILL EVER KNOW WHY YOU DID IT.",
+            "NO ONE WILL EVER KNOW HOW YOU MANAGED TO DO IT."
+        ],
+        [
+            "HOWEVER, WHATEVER COMES TO MANKIND FROM NOW ON",
+            "WILL ONLY BE BECAUSE OF YOU."
+        ],
+        [
+            "GET IT MEMORIZED, GUARDIAN."
+        ]
+    ],
+    "CREDITS": [
+        [
+            "DIRECTOR",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "GRAPHIC DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "PROGRAMMER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "SPECIAL EFFECTS",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "SCENARIO DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "CHARACTER DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "ENEMY DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "BOSS FIGHTS DESIGNER",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "LOCALIZATION",
+            "MANUEL GAVILÁN"
+        ],
+        [
+            "COPYRIGHT",
+            "UNIVERSITAT JAUME I 2019"
+        ],
+        [
+            "THIS GAME WAS MADE USING",
+            "PHASER 3"
+        ]
+    ],
+    "THANKS" : [
+        "THANK YOU FOR PLAYING",
+        "KADICK'S RESOLUTION"
+    ],
+    "CONTROLS" : {
+        "MOVEMENT" : "PLAYER MOVEMENT",
+        "SHOOT" : ["SHOOT WITH", "LEFT CLICK"],
+        "POWERUPS" : ["PICK POWER-UPS", "TO IMPROVE PERFORMANCE"],
+        "ATTKUP" : "ATTACK UP",
+        "RTHMUP" : "FIRE RATE UP",
+        "MAXLIFEUP" : ["INCREASES MAXIMUM", "HEALTH AND ARMOR"],
+        "HEAL" : "HEALS PLAYER",
+        "KEYS": ["PICK 3 KEYS", "TO FIGHT THE BOSS", "OF EACH STAGE"],
+        "BACK": "<- BACK TO MENU"
+    }
+}

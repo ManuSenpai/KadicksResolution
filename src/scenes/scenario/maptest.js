@@ -96,11 +96,15 @@ class map_test extends Phaser.Scene {
                     };
 
                     if (numberOfBifurcations >= availableDoors.length) {
-                        availableDoors.forEach((door) => {
-                            this.pickDoor(door, currentNode);
-                            dungeon.push(door);
-                            contador++;
-                        });
+                        if (availableDoors.length > 0) {
+                            availableDoors.forEach((door) => {
+                                if (door && currentNode) {
+                                    this.pickDoor(door, currentNode);
+                                    dungeon.push(door);
+                                    contador++;
+                                }
+                            });
+                        }
                     } else {
                         while (numberOfBifurcations > 0) {
                             let doorIndex = Math.floor(Math.random() * numberOfBifurcations);
@@ -122,18 +126,26 @@ class map_test extends Phaser.Scene {
         var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         var rect = new Phaser.Geom.Rectangle(25, 25, 50, 50);
         level[0].isClear = true;
-        this.setKeyRooms();
+        this.setKeyRooms(level);
         this.createBossChamber();
-        this.scene.start("Level1", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: level[0], entrance: 'center'});
+        playerStats.LEVEL++;
+        playerStats.KEYCODES = 0;
+        this.scene.start("Level" + playerStats.LEVEL, {
+            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+            currentPosition: level[0], entrance: 'center'
+        });
         // this.scene.start("level1_B", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         // currentPosition: level[0], entrance: 'center'});
     }
 
-    setKeyRooms() {
-        for (let i = 0; i < 3; i++) {
-            let roomIndex = this.getRandomNumber(i * level.length / 3, ((i + 1) * level.length / 3) - 1);
-            level[roomIndex].isKey = true;
+    setKeyRooms(level) {
+        let KEYS = 0;
+        while (KEYS < 3) {
+            let roomIndex = Phaser.Math.Between(1, level.length - 1);
+            if (!level[roomIndex].isStart && !level[roomIndex].isKey && !level[roomIndex].isBoss) {
+                level[roomIndex].isKey = true;
+                KEYS++;
+            }
         }
     }
 
@@ -263,6 +275,7 @@ class Scenario_Node {
     isBoss = false;
     isClear = false;
     keyIsTaken = false;
+    distribution = 0;
     whereIsBoss = "";
     x = 0;
     y = 0;
