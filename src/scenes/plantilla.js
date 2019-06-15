@@ -352,7 +352,7 @@ class Level1_1 extends Hostile {
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 30), 'armorIcon');
+        armorIcon = this.physics.add.sprite(96, (window.innerHeight - 30), 'armorIcon');
         armorIcon.displayWidth = 12;
         armorIcon.displayHeight = 12;
         armorBarBg = this.add.rectangle(80, (window.innerHeight - 30), playerStats.ARMOR * 2, 12, '0x000000');

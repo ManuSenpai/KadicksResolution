@@ -90,7 +90,7 @@ class Hostile extends Phaser.Scene {
 
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
-            let currentKey = this.physics.add.sprite(window.innerWidth * 3 / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+            let currentKey = this.physics.add.sprite(32,  96 + (i * 48), 'keycard');
             currentKey.setScale(0.1);
         }
     }
@@ -552,27 +552,27 @@ class Hostile extends Phaser.Scene {
 
     drawPlayerUI() {
         if (this.armorIcon) this.armorIcon.destroy();
-        this.armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
-        this.armorIcon.displayWidth = 12;
-        this.armorIcon.displayHeight = 12;
+        this.armorIcon = this.physics.add.sprite(96, (window.innerHeight - 36), 'armorIcon');
+        this.armorIcon.displayWidth = 36;
+        this.armorIcon.displayHeight = 36;
         if (this.armorBarBg) this.armorBarBg.destroy();
-        this.armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.MAX_ARMOR * 2, 12, '0x000000');
+        this.armorBarBg = this.add.rectangle(120, (window.innerHeight - 36), this.playerStats.MAX_ARMOR * 2, 36, '0x000000');
         this.armorBarBg.setOrigin(0, 0.5);
         this.armorBarBg.alpha = 0.4;
         if (this.armorBar) this.armorBar.destroy();
-        this.armorBar = this.add.rectangle(80, (window.innerHeight - 50), this.playerStats.ARMOR * 2, 12, '0xffffff');
+        this.armorBar = this.add.rectangle(120, (window.innerHeight - 36), this.playerStats.ARMOR * 2, 36, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
         if (this.healthIcon) this.healthIcon.destroy();
-        this.healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
-        this.healthIcon.displayWidth = 12;
-        this.healthIcon.displayHeight = 12;
+        this.healthIcon = this.physics.add.sprite( window.innerWidth - 96, (window.innerHeight - 36), 'healthIcon');
+        this.healthIcon.displayWidth = 36;
+        this.healthIcon.displayHeight = 36;
         if (this.healthBarBg) this.healthBarBg.destroy();
-        this.healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.MAX_HEALTH * 2, 12, '0x000000');
-        this.healthBarBg.setOrigin(0, 0.5);
+        this.healthBarBg = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), this.playerStats.MAX_HEALTH * 2, 36, '0x000000');
+        this.healthBarBg.setOrigin(1, 0.5);
         this.healthBarBg.alpha = 0.4;
         if (this.healthBar) this.healthBar.destroy();
-        this.healthBar = this.add.rectangle(80, (window.innerHeight - 28), this.playerStats.HEALTH * 2, 12, '0xffffff');
-        this.healthBar.setOrigin(0, 0.5);
+        this.healthBar = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), this.playerStats.HEALTH * 2, 36, '0xffffff');
+        this.healthBar.setOrigin(1, 0.5);
     }
 
     hitArmor(damage) {

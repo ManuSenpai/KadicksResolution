@@ -330,7 +330,7 @@ pickKeyFX.play();
 
 function drawKeys(context, nKeys) {
     for (let i = 0; i < nKeys; i++) {
-        let currentKey = context.physics.add.sprite(window.innerWidth * 3 / 4 + (i * 64), window.innerHeight - 32, 'keycard');
+        let currentKey = context.physics.add.sprite(32,  96 + (i * 48), 'keycard');
         currentKey.setScale(0.1);
     }
 }
@@ -420,22 +420,24 @@ pickKeyFX = this.sound.add('pickkey');
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(64, (window.innerHeight - 50), 'armorIcon');
-        armorIcon.displayWidth = 12;
-        armorIcon.displayHeight = 12;
-        armorBarBg = this.add.rectangle(80, (window.innerHeight - 50), playerStats.MAX_ARMOR * 2, 12, '0x000000');
+        
+        armorIcon = this.physics.add.sprite(96, (window.innerHeight - 36), 'armorIcon');
+        armorIcon.displayWidth = 36;
+        armorIcon.displayHeight = 36;
+        armorBarBg = this.add.rectangle(120, (window.innerHeight - 36), playerStats.MAX_ARMOR * 2, 36, '0x000000');
         armorBarBg.setOrigin(0, 0.5);
         armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(80, (window.innerHeight - 50), playerStats.ARMOR * 2, 12, '0xffffff');
+        armorBar = this.add.rectangle(120, (window.innerHeight - 36), playerStats.ARMOR * 2, 36, '0xffffff');
         armorBar.setOrigin(0, 0.5);
-        healthIcon = this.physics.add.sprite(64, (window.innerHeight - 28), 'healthIcon');
-        healthIcon.displayWidth = 12;
-        healthIcon.displayHeight = 12;
-        healthBarBg = this.add.rectangle(80, (window.innerHeight - 28), playerStats.MAX_HEALTH * 2, 12, '0x000000');
-        healthBarBg.setOrigin(0, 0.5);
+        
+        healthIcon = this.physics.add.sprite( window.innerWidth - 96, (window.innerHeight - 36), 'healthIcon');
+        healthIcon.displayWidth = 36;
+        healthIcon.displayHeight = 36;
+        healthBarBg = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.MAX_HEALTH * 2, 36, '0x000000');
+        healthBarBg.setOrigin(1, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(80, (window.innerHeight - 28), playerStats.HEALTH * 2, 12, '0xffffff');
-        healthBar.setOrigin(0, 0.5);
+        healthBar = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.HEALTH * 2, 36, '0xffffff');
+        healthBar.setOrigin(1, 0.5);
 
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
