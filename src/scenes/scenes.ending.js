@@ -4,6 +4,7 @@ var i18n;
 var currentText;
 
 const ACTIVE_COLOR = "#FFDA2F";
+const SCREEN_FONT_FACTOR = 52;
 
 class Ending extends Phaser.Scene {
 
@@ -32,7 +33,7 @@ class Ending extends Phaser.Scene {
 
     showTexts(index) {
         if (index < i18n.END.length) {
-            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.END[index], { fontSize: 40, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
+            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.END[index], { fontSize: window.innerWidth / SCREEN_FONT_FACTOR, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText.x -= this.currentText.width/2;
             this.currentText.y -= this.currentText.height/2;
             this.currentText.opacity = 0;
