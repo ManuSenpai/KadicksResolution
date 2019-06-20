@@ -4,7 +4,12 @@ var i18n;
 var currentText;
 
 const ACTIVE_COLOR = "#00FF20";
-const SCREEN_FONT_FACTOR = 52;
+const STANDARD_WIDTH = 1920;
+const STANDARD_HEIGHT = 720;
+
+var scaleFactor;
+
+var textTimeout;
 
 class Opening extends Phaser.Scene {
 
@@ -16,10 +21,14 @@ class Opening extends Phaser.Scene {
         this.playerStats = data.playerStats;
         this.score = data.score;
         currentLanguage = this.playerStats.LANGUAGE;
+        let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        let scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = Math.min(scaleHeight, scaleWidth);
     }
     create() {
 
         window.onresize = () => this.scene.restart();
+        if ( textTimeout ) { clearTimeout(textTimeout); }
 
         let currentIndex = 0;
 
@@ -34,7 +43,7 @@ class Opening extends Phaser.Scene {
     showTexts(index) {
         if (index < i18n.OPENING.length) {
             // this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.OPENING[index], { fontSize: 40, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
-            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.OPENING[index], { fontSize: window.innerWidth / SCREEN_FONT_FACTOR, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
+            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.OPENING[index], { fontSize: 40 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText.x -= this.currentText.width / 2;
             this.currentText.y -= this.currentText.height / 2;
             this.currentText.opacity = 0;
@@ -55,7 +64,7 @@ class Opening extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
-                setTimeout(() => {
+                textTimeout = setTimeout(() => {
                     this.hide(index, text);
                 }, i18n.OPENING[index].length * 2000);
                 /** We do this to avoid memory leaks */

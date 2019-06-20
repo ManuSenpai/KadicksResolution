@@ -2,12 +2,15 @@ import Laser from '../GameObjects/laser.js';
 import LaserTrap from '../GameObjects/lasertrap.js';
 var currentLanguage;
 var i18n;
+const STANDARD_WIDTH = 1920;
+const STANDARD_HEIGHT = 720;
+
+var scaleFactor;
 
 var currentText;
 
 var SettingsText = {
     style: {
-        fontSize: 50,
         fontStyle: 'bold',
         align: 'center'
     }
@@ -55,6 +58,9 @@ class Controls extends Phaser.Scene {
         playerStats = data.playerStats;
         score = data.score;
         currentLanguage = playerStats.LANGUAGE;
+        let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        let scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = Math.min(scaleHeight, scaleWidth);
     }
     create() {
         window.onresize = () => this.scene.restart();
@@ -80,21 +86,21 @@ class Controls extends Phaser.Scene {
         dFill = this.add.graphics({ fillStyle: { color: 0xffca59 } });
         lcFill = this.add.graphics({ fillStyle: { color: 0xffca59 } });
         canvasFill = this.add.graphics({ fillStyle: { color: 0xffca59 } });
-        ctrlW = new Phaser.Geom.Rectangle(window.innerWidth / 8, window.innerHeight / 5, 64, 64);
-        ctrlS = new Phaser.Geom.Rectangle(window.innerWidth / 8, window.innerHeight / 5 + 64, 64, 64);
-        ctrlA = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 64, window.innerHeight / 5 + 64, 64, 64);
-        ctrlD = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 64, window.innerHeight / 5 + 64, 64, 64);
+        ctrlW = new Phaser.Geom.Rectangle(window.innerWidth / 8, window.innerHeight / 5, 64 * scaleFactor, 64 * scaleFactor);
+        ctrlS = new Phaser.Geom.Rectangle(window.innerWidth / 8, window.innerHeight / 5 + 64 * scaleFactor, 64 * scaleFactor, 64 * scaleFactor);
+        ctrlA = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 64 * scaleFactor, window.innerHeight / 5 + 64 * scaleFactor, 64 * scaleFactor, 64 * scaleFactor);
+        ctrlD = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 64 * scaleFactor, window.innerHeight / 5 + 64 * scaleFactor, 64 * scaleFactor, 64 * scaleFactor);
 
-        ctrlWIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 6, window.innerHeight / 5 + 6, 50, 50);
-        ctrlSIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 6, window.innerHeight / 5 + 70, 50, 50);
-        ctrlAIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 58, window.innerHeight / 5 + 70, 50, 50);
-        ctrlDIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 70, window.innerHeight / 5 + 70, 50, 50);
+        ctrlWIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 6 * scaleFactor, window.innerHeight / 5 + 6 * scaleFactor, 50 * scaleFactor, 50 * scaleFactor);
+        ctrlSIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 6 * scaleFactor, window.innerHeight / 5 + 70 * scaleFactor, 50 * scaleFactor, 50 * scaleFactor);
+        ctrlAIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 58 * scaleFactor, window.innerHeight / 5 + 70 * scaleFactor, 50 * scaleFactor, 50 * scaleFactor);
+        ctrlDIns = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 70 * scaleFactor, window.innerHeight / 5 + 70 * scaleFactor, 50 * scaleFactor, 50 * scaleFactor);
 
-        mouseForm = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 20, window.innerHeight * 3 / 4 - 150, 100, 200);
-        clickL = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 20, window.innerHeight * 3 / 4 - 150, 45, 75);
-        clickR = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 35, window.innerHeight * 3 / 4 - 150, 45, 75);
+        mouseForm = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 20 * scaleFactor, window.innerHeight * 3 / 4 - 150 * scaleFactor, 100 * scaleFactor, 200 * scaleFactor);
+        clickL = new Phaser.Geom.Rectangle(window.innerWidth / 8 - 20 * scaleFactor, window.innerHeight * 3 / 4 - 150 * scaleFactor, 45 * scaleFactor, 75 * scaleFactor);
+        clickR = new Phaser.Geom.Rectangle(window.innerWidth / 8 + 35 * scaleFactor, window.innerHeight * 3 / 4 - 150 * scaleFactor, 45 * scaleFactor, 75 * scaleFactor);
 
-        canvasRect = new Phaser.Geom.Rectangle(window.innerWidth * 2 / 3, 25, window.innerWidth / 3 - 50, window.innerHeight - 50);
+        canvasRect = new Phaser.Geom.Rectangle(window.innerWidth * 2 / 3, 25 * scaleFactor, window.innerWidth / 3 - 50 * scaleFactor, window.innerHeight - 50 * scaleFactor);
         canvasFill.fillRectShape(canvasRect);
 
         graphics.strokeRectShape(ctrlW);
@@ -117,65 +123,69 @@ class Controls extends Phaser.Scene {
             classType: Laser
         });
 
-        this.make.text(SettingsText).setText('W').setX(window.innerWidth / 8 + 32).setY(window.innerHeight / 5 + 32).setOrigin(0.5);
-        this.make.text(SettingsText).setText('S').setX(window.innerWidth / 8 + 32).setY(window.innerHeight / 5 + 96).setOrigin(0.5);
-        this.make.text(SettingsText).setText('A').setX(window.innerWidth / 8 - 32).setY(window.innerHeight / 5 + 96).setOrigin(0.5);
-        this.make.text(SettingsText).setText('D').setX(window.innerWidth / 8 + 96).setY(window.innerHeight / 5 + 96).setOrigin(0.5);
+        this.make.text(SettingsText).setText('W').setX(window.innerWidth / 8 + 32 * scaleFactor).setY(window.innerHeight / 5 + 32 * scaleFactor).setOrigin(0.5);
+        this.make.text(SettingsText).setText('S').setX(window.innerWidth / 8 + 32 * scaleFactor).setY(window.innerHeight / 5 + 96 * scaleFactor).setOrigin(0.5);
+        this.make.text(SettingsText).setText('A').setX(window.innerWidth / 8 - 32 * scaleFactor).setY(window.innerHeight / 5 + 96 * scaleFactor).setOrigin(0.5);
+        this.make.text(SettingsText).setText('D').setX(window.innerWidth / 8 + 96 * scaleFactor).setY(window.innerHeight / 5 + 96 * scaleFactor).setOrigin(0.5);
 
         this.make.text(SettingsText).setText(i18n.CONTROLS.MOVEMENT)
-            .setFontSize(30)
-            .setX(window.innerWidth / 8 + 32)
-            .setY(window.innerHeight / 6 - 20)
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 8 + 32 * scaleFactor)
+            .setY(window.innerHeight / 6 - 20 * scaleFactor)
             .setOrigin(0.5);
 
         this.make.text(SettingsText).setText(i18n.CONTROLS.SHOOT)
-            .setFontSize(30)
-            .setX(window.innerWidth / 8 + 32)
-            .setY(window.innerHeight / 2 - 32)
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 8 + 32 * scaleFactor)
+            .setY(window.innerHeight / 2 - 32 * scaleFactor)
             .setOrigin(0.5);
 
         this.make.text(SettingsText).setText(i18n.CONTROLS.POWERUPS)
-            .setFontSize(30)
-            .setX(window.innerWidth / 2 - 32)
-            .setY(window.innerHeight / 6 - 20)
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 2 - 32 * scaleFactor)
+            .setY(window.innerHeight / 6 - 20 * scaleFactor)
             .setOrigin(0.5);
 
         player = this.physics.add.sprite(window.innerWidth * 3 / 4, window.innerHeight / 2, 'player');
-        player.setScale(0.25);
+        player.setScale(0.25 * scaleFactor);
 
         attkup = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 4, 'powup-attk');
+        attkup.setScale(scaleFactor);
         this.make.text(SettingsText).setText(i18n.CONTROLS.ATTKUP)
-            .setFontSize(30)
-            .setX(window.innerWidth / 3 + 64)
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 3 + 64 * scaleFactor)
             .setY(window.innerHeight / 4);
-        rthmup = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 4 + 96, 'powup-rthm');
+        rthmup = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 4 + 96 * scaleFactor, 'powup-rthm');
+        rthmup.setScale( scaleFactor );
         this.make.text(SettingsText).setText(i18n.CONTROLS.RTHMUP)
-            .setFontSize(30)
-            .setX(window.innerWidth / 3 + 64)
-            .setY(window.innerHeight / 4 + 96);
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 3 + 64 * scaleFactor)
+            .setY(window.innerHeight / 4 + 96 * scaleFactor);
         heal = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 2, 'medikit');
+        heal.setScale( scaleFactor );
         this.make.text(SettingsText).setText(i18n.CONTROLS.HEAL)
-            .setFontSize(30)
-            .setX(window.innerWidth / 3 + 64)
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 3 + 64 * scaleFactor)
             .setY(window.innerHeight / 2);
-        maxLife = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 2 + 96, 'lifeup');
+        maxLife = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight / 2 + 96 * scaleFactor, 'lifeup');
+        maxLife.setScale( scaleFactor );
         this.make.text(SettingsText).setText(i18n.CONTROLS.MAXLIFEUP)
-            .setFontSize(30)
-            .setX(window.innerWidth / 3 + 64)
-            .setY(window.innerHeight / 2 + 64);
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 3 + 64 * scaleFactor)
+            .setY(window.innerHeight / 2 + 64 * scaleFactor);
 
-        keyCard = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight * 3 / 4 + 64, 'keycard');
-        keyCard.setScale(0.15);
+        keyCard = this.physics.add.sprite(window.innerWidth / 3, window.innerHeight * 3 / 4 + 64 * scaleFactor, 'keycard');
+        keyCard.setScale(0.15 * scaleFactor);
         this.make.text(SettingsText).setText(i18n.CONTROLS.KEYS)
-            .setFontSize(30)
-            .setX(window.innerWidth / 3 + 64)
-            .setY(window.innerHeight * 3 / 4 + 24);
+            .setFontSize(30 * scaleFactor)
+            .setX(window.innerWidth / 3 + 64 * scaleFactor)
+            .setY(window.innerHeight * 3 / 4 + 24 * scaleFactor);
         this.make.text(SettingsText).setText(i18n.CONTROLS.BACK)
             .setInteractive()
             .on('pointerdown', () => { this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: playerStats }) })
-            .setFontSize(30)
-            .setX(64)
-            .setY(window.innerHeight - 75)
+            .setFontSize(30 * scaleFactor)
+            .setX(64 * scaleFactor)
+            .setY(window.innerHeight - 75 * scaleFactor)
 
     }
 
@@ -202,27 +212,27 @@ class Controls extends Phaser.Scene {
             sFill.clear();
         }
         if (cursors.left.isDown) {
-            if (player.x > window.innerWidth * 2 / 3 + 30) { player.setVelocityX(-400); } else { player.setVelocityX(0); }
+            if (player.x > window.innerWidth * 2 / 3 + 30 * scaleFactor) { player.setVelocityX(-400 * scaleFactor); } else { player.setVelocityX(0); }
             aFill.fillRectShape(ctrlA);
         }
         if (cursors.right.isDown) {
             dFill.fillRectShape(ctrlD);
-            if (player.x < window.innerWidth - 75) { player.setVelocityX(400); } else { player.setVelocityX(0); }
+            if (player.x < window.innerWidth - 75 * scaleFactor) { player.setVelocityX(400 * scaleFactor); } else { player.setVelocityX(0); }
         }
         if (cursors.up.isDown) {
             wFill.fillRectShape(ctrlW);
-            if (player.y > 50) { player.setVelocityY(-400); } else { player.setVelocityY(0); }
+            if (player.y > 50 * scaleFactor) { player.setVelocityY(-400 * scaleFactor); } else { player.setVelocityY(0); }
         }
         if (cursors.down.isDown) {
             sFill.fillRectShape(ctrlS);
-            if (player.y < window.innerHeight - 50) { player.setVelocityY(400); } else { player.setVelocityY(0); }
+            if (player.y < window.innerHeight - 50 * scaleFactor) { player.setVelocityY(400 * scaleFactor ); } else { player.setVelocityY(0); }
         }
 
         if (this.input.activePointer.isDown) {
             if (time > lastFired) {
                 shootFX.play();
                 var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-                var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
+                var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5 * scaleFactor, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
                 lastFired = time + playerStats.FIRE_RATE;
             }
@@ -235,9 +245,9 @@ class Controls extends Phaser.Scene {
         lasers.children.iterate((laser) => {
             if (laser) {
                 laser.move(delta);
-                if (laser.x < window.innerWidth * 2 / 3 + 30 ||
-                    laser.x > window.innerWidth - 75 ||
-                    laser.y < 50 || laser.y > window.innerHeight - 75) { laser.destroy(); }
+                if (laser.x < window.innerWidth * 2 / 3 + 30 * scaleFactor ||
+                    laser.x > window.innerWidth - 75 * scaleFactor ||
+                    laser.y < 50 * scaleFactor || laser.y > window.innerHeight - 75 * scaleFactor) { laser.destroy(); }
             } else {
                 lasers.remove(laser);
             }
