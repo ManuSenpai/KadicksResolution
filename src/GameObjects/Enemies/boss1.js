@@ -32,10 +32,11 @@ class Boss1 extends Enemy {
 
     target;
 
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scalefactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         scene.physics.world.enable(this);
+        this.scalefactor = scalefactor;
         this.setScale(scale);
         this.setOrigin(0.5, 0.5);
         this.rotation = rotation;
@@ -46,17 +47,17 @@ class Boss1 extends Enemy {
         scene.add.existing(this);
 
         // Turrets
-        this.leftTurret = scene.add.sprite(this.x - 92, this.y - 82, 'turret');
-        this.leftTurret.setScale(0.5);
-        this.rightTurret = scene.add.sprite(this.x + 92, this.y - 82, 'turret');
-        this.rightTurret.setScale(0.5);
+        this.leftTurret = scene.add.sprite(this.x - 92 * scalefactor, this.y - 82 * scalefactor, 'turret');
+        this.leftTurret.setScale(0.5 * scalefactor);
+        this.rightTurret = scene.add.sprite(this.x + 92 * scalefactor, this.y - 82 * scalefactor, 'turret');
+        this.rightTurret.setScale(0.5 * scalefactor);
 
         this.lastFired = 0;
 
         setInterval(this.changeAttackMode.bind(this), TIME_BETWEEN_CHANGE);
 
-        this.aimGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xaafff3 } });
-        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
+        this.aimGraphics = scene.add.graphics({ lineStyle: { width: 1 * scalefactor, color: 0xaafff3 } });
+        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15 * scalefactor, color: 0xd1fcff } });
 
         if (this.attackMode === 2) this.startAimAnimation();
 
@@ -73,10 +74,10 @@ class Boss1 extends Enemy {
         } else {
             this.body.setVelocityX(-this.speed);
         }
-        this.leftTurret.x = this.x - 92;
-        this.leftTurret.y = this.y - 82;
-        this.rightTurret.x = this.x + 92;
-        this.rightTurret.y = this.y - 82;
+        this.leftTurret.x = this.x - 92 * this.scalefactor;
+        this.leftTurret.y = this.y - 82 * this.scalefactor;
+        this.rightTurret.x = this.x + 92 * this.scalefactor;
+        this.rightTurret.y = this.y - 82 * this.scalefactor;
     }
 
     // Aiming at player

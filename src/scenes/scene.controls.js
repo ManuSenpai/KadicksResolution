@@ -2,7 +2,8 @@ import Laser from '../GameObjects/laser.js';
 import LaserTrap from '../GameObjects/lasertrap.js';
 var currentLanguage;
 var i18n;
-const STANDARD_WIDTH = 1920;
+const STANDARD_WIDTH = 1536;
+
 const STANDARD_HEIGHT = 720;
 
 var scaleFactor;

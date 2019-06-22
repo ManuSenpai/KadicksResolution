@@ -1,4 +1,5 @@
-const STANDARD_WIDTH = 1920;
+const STANDARD_WIDTH = 1536;
+
 const STANDARD_HEIGHT = 720;
 
 var SettingsText = {
@@ -50,6 +51,7 @@ class LanguageSelect extends Phaser.Scene {
         let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         let scaleWidth = window.innerWidth / STANDARD_WIDTH;
         scaleFactor = Math.min(scaleHeight, scaleWidth);
+        this.acceptEnabled = false;
     }
     create() {
         window.onresize = () =>  { 

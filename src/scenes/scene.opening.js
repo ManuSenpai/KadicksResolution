@@ -4,7 +4,8 @@ var i18n;
 var currentText;
 
 const ACTIVE_COLOR = "#00FF20";
-const STANDARD_WIDTH = 1920;
+const STANDARD_WIDTH = 1536;
+
 const STANDARD_HEIGHT = 720;
 
 var scaleFactor;

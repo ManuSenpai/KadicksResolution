@@ -130,12 +130,12 @@ class map_test extends Phaser.Scene {
         this.createBossChamber();
         playerStats.LEVEL++;
         playerStats.KEYCODES = 0;
-        this.scene.start("Level" + playerStats.LEVEL, {
-            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-            currentPosition: level[0], entrance: 'center'
-        });
-        // this.scene.start("level1_B", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        // currentPosition: level[0], entrance: 'center'});
+        // this.scene.start("Level" + playerStats.LEVEL, {
+        //     score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+        //     currentPosition: level[0], entrance: 'center'
+        // });
+        this.scene.start("level1_B", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+        currentPosition: level[0], entrance: 'center'});
     }
 
     setKeyRooms(level) {

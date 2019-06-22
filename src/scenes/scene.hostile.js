@@ -10,6 +10,13 @@ const PUATTK_VALUE = 5;
 const PURTHM_VALUE = -15; // -15;
 const LIFE_UP_VALUE = 10;
 
+const STANDARD_WIDTH = 1536;
+
+const STANDARD_HEIGHT = 720;
+let scaleFactor;
+let scaleHeight;
+let scaleWidth;
+
 class Hostile extends Phaser.Scene {
 
     /* MAIN STATS */
@@ -52,6 +59,13 @@ class Hostile extends Phaser.Scene {
         super({ key: key });
     }
 
+    setScaleFactor() {
+        scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = (scaleHeight + scaleWidth)/2;
+        return scaleFactor;
+    }
+
     setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player) {
         this.scenario = scenario;
         this.score = score;
@@ -90,8 +104,8 @@ class Hostile extends Phaser.Scene {
 
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
-            let currentKey = this.physics.add.sprite(32,  96 + (i * 48), 'keycard');
-            currentKey.setScale(0.1);
+            let currentKey = this.physics.add.sprite(32 * scaleFactor,  (96 + (i * 48)) * scaleFactor, 'keycard');
+            currentKey.setScale(0.1 * scaleFactor);
         }
     }
 
@@ -100,32 +114,32 @@ class Hostile extends Phaser.Scene {
         this.floor = context.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor' + this.playerStats.LEVEL);
 
         // WALLS
-        this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.topwall);
         // this.topwall.body.immovable = true;
         this.topwall.body.moves = false;
-        this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot' + this.playerStats.LEVEL);
+        this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.botwall);
         // this.botwall.body.immovable = true;
         this.botwall.body.moves = false;
-        this.leftwall = context.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
+        this.leftwall = context.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.leftwall);
         // this.leftwall.body.immovable = true;
         this.leftwall.body.moves = false;
-        this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
+        this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.rightwall);
         // this.rightwall.body.immovable = true;
         this.rightwall.body.moves = false;
 
         // CORNERS
         this.topleft = context.physics.add.sprite(0, 0, 'topleft' + this.playerStats.LEVEL);
-        this.topleft.setScale(2);
+        this.topleft.setScale(2 * scaleFactor);
         this.topright = context.physics.add.sprite(window.innerWidth, 0, 'topright' + this.playerStats.LEVEL);
-        this.topright.setScale(2);
+        this.topright.setScale(2 * scaleFactor);
         this.botleft = context.physics.add.sprite(0, window.innerHeight - 5, 'botleft' + this.playerStats.LEVEL);
-        this.botleft.setScale(2);
+        this.botleft.setScale(2 * scaleFactor);
         this.botright = context.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright' + this.playerStats.LEVEL);
-        this.botright.setScale(2);
+        this.botright.setScale(2 * scaleFactor);
 
         if (this.bumps && this.bumps.children && this.bumps.children.length > 0) { this.bumps.clear(); }
         this.bumps = context.physics.add.group();
@@ -143,7 +157,7 @@ class Hostile extends Phaser.Scene {
             let newProp = context.physics.add.sprite(element.x * window.innerWidth, element.y * window.innerHeight, element.type);
             this.physics.world.enable(newProp);
             newProp.setOrigin(0.5, 1);
-            newProp.setScale(1.5);
+            newProp.setScale(1.5 * scaleFactor);
             this.bumps.add(newProp);
         });
     }
@@ -153,123 +167,163 @@ class Hostile extends Phaser.Scene {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "top") {
                     if (this.playerStats.KEYCODES >= 3) {
-                        context.topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
-                        context.toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+                        context.topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, 32 * scaleFactor, 'leftdooropen');
+                        context.topleftdooropen.setScale(scaleFactor);
+                        context.toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, 32 * scaleFactor, 'rightdooropen');
+                        context.toprightdooropen.setScale(scaleFactor);
                     }
                 } else {
-                    context.topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdooropen');
-                    context.toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdooropen');
+                    context.topleftdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, 32 * scaleFactor, 'leftdooropen');
+                    context.topleftdooropen.setScale(scaleFactor);
+                    context.toprightdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, 32 * scaleFactor, 'rightdooropen');
+                    context.toprightdooropen.setScale(scaleFactor);
                 }
             } else {
                 if (currentPosition.whereIsBoss === "top") {
-                    context.topleftdoor = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'bossleftdoor');
-                    context.toprightdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'bossrightdoor');
+                    context.topleftdoor = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, 32 * scaleFactor, 'bossleftdoor');
+                    context.topleftdoor.setScale(scaleFactor);
+                    context.toprightdoor = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, 32 * scaleFactor, 'bossrightdoor');
+                    context.toprightdoor.setScale(scaleFactor);
                 } else {
-                    context.topleftdoor = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdoor');
-                    context.toprightdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdoor');
+                    context.topleftdoor = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, 32 * scaleFactor, 'leftdoor');
+                    context.topleftdoor.setScale(scaleFactor);
+                    context.toprightdoor = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, 32 * scaleFactor, 'rightdoor');
+                    context.toprightdoor.setScale(scaleFactor);
                 }
             }
-            context.topleftdoorframe = context.physics.add.sprite(window.innerWidth / 2 - 32, 32, 'leftdoorframe');
-            context.toprightdoorframe = context.physics.add.sprite(window.innerWidth / 2 + 32, 32, 'rightdoorframe');
+            context.topleftdoorframe = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, 32 * scaleFactor, 'leftdoorframe');
+            context.topleftdoorframe.setScale(scaleFactor);
+            context.toprightdoorframe = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, 32 * scaleFactor, 'rightdoorframe');
+            context.toprightdoorframe.setScale(scaleFactor);
         }
         if (currentPosition.left) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "left") {
                     if (this.playerStats.KEYCODES >= 3) {
-                        context.leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
+                        context.leftrightdooropen = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'rightdooropen');
+                        context.leftrightdooropen.setScale(scaleFactor);
                         context.leftrightdooropen.angle = 270;
-                        context.leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
+                        context.leftleftdooropen = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'leftdooropen');
+                        context.leftleftdooropen.setScale(scaleFactor);
                         context.leftleftdooropen.angle = 270;
                     }
                 } else {
-                    context.leftrightdooropen = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdooropen');
+                    context.leftrightdooropen = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'rightdooropen');
+                    context.leftrightdooropen.setScale(scaleFactor);
                     context.leftrightdooropen.angle = 270;
-                    context.leftleftdooropen = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdooropen');
+                    context.leftleftdooropen = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'leftdooropen');
+                    context.leftleftdooropen.setScale(scaleFactor);
                     context.leftleftdooropen.angle = 270;
                 }
             } else {
                 if (currentPosition.whereIsBoss === "left") {
-                    context.leftrightdoor = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'bossrightdoor');
+                    context.leftrightdoor = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'bossrightdoor');
+                    context.leftrightdoor.setScale(scaleFactor);
                     context.leftrightdoor.angle = 270;
-                    context.leftleftdoor = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'bossleftdoor');
+                    context.leftleftdoor = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'bossleftdoor');
+                    context.leftleftdoor.setScale(scaleFactor);
                     context.leftleftdoor.angle = 270;
                 } else {
-                    context.leftrightdoor = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdoor');
+                    context.leftrightdoor = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'rightdoor');
+                    context.leftrightdoor.setScale(scaleFactor);
                     context.leftrightdoor.angle = 270;
-                    context.leftleftdoor = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdoor');
+                    context.leftleftdoor = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'leftdoor');
+                    context.leftleftdoor.setScale(scaleFactor);
                     context.leftleftdoor.angle = 270;
                 }
             }
-            context.leftleftdoorframe = context.physics.add.sprite(32, window.innerHeight / 2 + 32, 'leftdoorframe');
+            context.leftleftdoorframe = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'leftdoorframe');
+            context.leftleftdoorframe.setScale(scaleFactor);
             context.leftleftdoorframe.angle = 270;
-            context.leftrightdoorframe = context.physics.add.sprite(32, window.innerHeight / 2 - 32, 'rightdoorframe');
+            context.leftrightdoorframe = context.physics.add.sprite(32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'rightdoorframe');
+            context.leftrightdoorframe.setScale(scaleFactor);
             context.leftrightdoorframe.angle = 270;
         }
         if (currentPosition.right) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "right") {
                     if (this.playerStats.KEYCODES >= 3) {
-                        context.rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
+                        context.rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'leftdooropen');
+                        context.rightleftdooropen.setScale(scaleFactor);
                         context.rightleftdooropen.angle = 90;
-                        context.rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
+                        context.rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'rightdooropen');
+                        context.rightrightdooropen.setScale(scaleFactor);
                         context.rightrightdooropen.angle = 90;
                     }
                 } else {
-                    context.rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdooropen');
+                    context.rightleftdooropen = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'leftdooropen');
+                    context.rightleftdooropen.setScale(scaleFactor);
                     context.rightleftdooropen.angle = 90;
-                    context.rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdooropen');
+                    context.rightrightdooropen = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'rightdooropen');
+                    context.rightrightdooropen.setScale(scaleFactor);
                     context.rightrightdooropen.angle = 90;
                 }
             } else {
                 if (currentPosition.whereIsBoss === "right") {
-                    context.rightleftdoor = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'bossleftdoor');
+                    context.rightleftdoor = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'bossleftdoor');
+                    context.rightleftdoor.setScale(scaleFactor);
                     context.rightleftdoor.angle = 90;
-                    context.rightrightdoor = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'bossrightdoor');
+                    context.rightrightdoor = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'bossrightdoor');
+                    context.rightrightdoor.setScale(scaleFactor);
                     context.rightrightdoor.angle = 90;
                 } else {
-                    context.rightleftdoor = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdoor');
+                    context.rightleftdoor = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'leftdoor');
+                    context.rightleftdoor.setScale(scaleFactor);
                     context.rightleftdoor.angle = 90;
-                    context.rightrightdoor = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdoor');
+                    context.rightrightdoor = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'rightdoor');
+                    context.rightrightdoor.setScale(scaleFactor);
                     context.rightrightdoor.angle = 90;
                 }
             }
-            context.rightleftdoorframe = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 - 32, 'leftdoorframe');
+            context.rightleftdoorframe = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 - 32 * scaleFactor, 'leftdoorframe');
+            context.rightleftdoorframe.setScale(scaleFactor);
             context.rightleftdoorframe.angle = 90;
-            context.rightrightdoorframe = context.physics.add.sprite(window.innerWidth - 32, window.innerHeight / 2 + 32, 'rightdoorframe');
+            context.rightrightdoorframe = context.physics.add.sprite(window.innerWidth - 32 * scaleFactor, window.innerHeight / 2 + 32 * scaleFactor, 'rightdoorframe');
+            context.rightrightdoorframe.setScale(scaleFactor);
             context.rightrightdoorframe.angle = 90;
         }
         if (currentPosition.bottom) {
             if (currentPosition.isClear) {
                 if (currentPosition.whereIsBoss === "bot") {
                     if (this.playerStats.KEYCODES >= 3) {
-                        context.botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
+                        context.botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'leftdooropen');
+                        context.botleftdooropen.setScale(scaleFactor);
                         context.botleftdooropen.angle = 180;
-                        context.botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
+                        context.botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'rightdooropen');
+                        context.botrightdooropen.setScale(scaleFactor);
                         context.botrightdooropen.angle = 180;
                     }
                 } else {
-                    context.botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdooropen');
+                    context.botleftdooropen = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'leftdooropen');
+                    context.botleftdooropen.setScale(scaleFactor);
                     context.botleftdooropen.angle = 180;
-                    context.botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdooropen');
+                    context.botrightdooropen = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'rightdooropen');
+                    context.botrightdooropen.setScale(scaleFactor);
                     context.botrightdooropen.angle = 180;
                 }
             } else {
                 if (currentPosition.whereIsBoss === "bot") {
-                    context.botleftdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'bossleftdoor');
+                    context.botleftdoor = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'bossleftdoor');
+                    context.botleftdoor.setScale(scaleFactor);
                     context.botleftdoor.angle = 180;
-                    context.botrightdoor = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'bossrightdoor');
+                    context.botrightdoor = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'bossrightdoor');
+                    context.botrightdoor.setScale(scaleFactor);
                     context.botrightdoor.angle = 180;
 
                 } else {
-                    context.botleftdoor = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdoor');
+                    context.botleftdoor = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'leftdoor');
+                    context.botleftdoor.setScale(scaleFactor);
                     context.botleftdoor.angle = 180;
-                    context.botrightdoor = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdoor');
+                    context.botrightdoor = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'rightdoor');
+                    context.botrightdoor.setScale(scaleFactor);
                     context.botrightdoor.angle = 180;
                 }
             }
-            context.botleftdoorframe = context.physics.add.sprite(window.innerWidth / 2 + 32, window.innerHeight - 38, 'leftdoorframe');
+            context.botleftdoorframe = context.physics.add.sprite(window.innerWidth / 2 + 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'leftdoorframe');
+            context.botleftdoorframe.setScale(scaleFactor);
             context.botleftdoorframe.angle = 180;
-            context.botrightdoorframe = context.physics.add.sprite(window.innerWidth / 2 - 32, window.innerHeight - 38, 'rightdoorframe');
+            context.botrightdoorframe = context.physics.add.sprite(window.innerWidth / 2 - 32 * scaleFactor, window.innerHeight - 38 * scaleFactor, 'rightdoorframe');
+            context.botrightdoorframe.setScale(scaleFactor);
             context.botrightdoorframe.angle = 180;
         }
 
@@ -489,6 +543,7 @@ class Hostile extends Phaser.Scene {
     dropMediKit(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentMK = this.physics.add.sprite(x, y, 'medikit');
+        currentMK.setScale(scaleFactor);
         this.physics.add.overlap(player, currentMK, this.getMedikit, null, this);
         if (this.powerups && currentMK) { this.powerups.add(currentMK); }
     }
@@ -496,6 +551,7 @@ class Hostile extends Phaser.Scene {
     dropPUAttk(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentAttk = this.physics.add.sprite(x, y, 'powup-attk');
+        currentAttk.setScale(scaleFactor);
         this.physics.add.overlap(player, currentAttk, this.getPUAttk, null, this);
         if (this.powerups && currentAttk) { this.powerups.add(currentAttk); }
     }
@@ -503,6 +559,7 @@ class Hostile extends Phaser.Scene {
     dropPURthm(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentRthm = this.physics.add.sprite(x, y, 'powup-rthm');
+        currentRthm.setScale(scaleFactor);
         this.physics.add.overlap(player, currentRthm, this.getPURthm, null, this);
         if (this.powerups && currentRthm) { this.powerups.add(currentRthm); }
     }
@@ -510,6 +567,7 @@ class Hostile extends Phaser.Scene {
     dropLifeUp(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentLifeUp = this.physics.add.sprite(x, y, 'lifeup');
+        currentLifeUp.setScale(scaleFactor);
         this.physics.add.overlap(player, currentLifeUp, this.getLifeUp, null, this);
         if (this.powerups && currentLifeUp) { this.powerups.add(currentLifeUp); }
     }
@@ -533,7 +591,7 @@ class Hostile extends Phaser.Scene {
         if (this.playerStats.HEALTH > this.playerStats.MAX_HEALTH) { this.playerStats.HEALTH = this.playerStats.MAX_HEALTH; }
         this.powerups.remove(medikit);
         medikit.destroy();
-        this.healthBar.width = this.playerStats.HEALTH * 2;
+        this.healthBar.width = this.playerStats.HEALTH * 2 * scaleFactor;
     }
 
     getPUAttk(player, Attk) {
@@ -552,38 +610,38 @@ class Hostile extends Phaser.Scene {
 
     drawPlayerUI() {
         if (this.armorIcon) this.armorIcon.destroy();
-        this.armorIcon = this.physics.add.sprite(96, (window.innerHeight - 36), 'armorIcon');
-        this.armorIcon.displayWidth = 36;
-        this.armorIcon.displayHeight = 36;
+        this.armorIcon = this.physics.add.sprite(96 * scaleFactor, (window.innerHeight - 36 * scaleFactor), 'armorIcon');
+        this.armorIcon.displayWidth = 36 * scaleFactor;
+        this.armorIcon.displayHeight = 36 * scaleFactor;
         if (this.armorBarBg) this.armorBarBg.destroy();
-        this.armorBarBg = this.add.rectangle(120, (window.innerHeight - 36), this.playerStats.MAX_ARMOR * 2, 36, '0x000000');
+        this.armorBarBg = this.add.rectangle(120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.MAX_ARMOR * 2 * scaleFactor, 36 * scaleFactor, '0x000000');
         this.armorBarBg.setOrigin(0, 0.5);
         this.armorBarBg.alpha = 0.4;
         if (this.armorBar) this.armorBar.destroy();
-        this.armorBar = this.add.rectangle(120, (window.innerHeight - 36), this.playerStats.ARMOR * 2, 36, '0xffffff');
+        this.armorBar = this.add.rectangle(120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.ARMOR * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
         if (this.healthIcon) this.healthIcon.destroy();
-        this.healthIcon = this.physics.add.sprite( window.innerWidth - 96, (window.innerHeight - 36), 'healthIcon');
-        this.healthIcon.displayWidth = 36;
-        this.healthIcon.displayHeight = 36;
+        this.healthIcon = this.physics.add.sprite( window.innerWidth - 96 * scaleFactor, (window.innerHeight - 36 * scaleFactor), 'healthIcon');
+        this.healthIcon.displayWidth = 36 * scaleFactor;
+        this.healthIcon.displayHeight = 36 * scaleFactor;
         if (this.healthBarBg) this.healthBarBg.destroy();
-        this.healthBarBg = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), this.playerStats.MAX_HEALTH * 2, 36, '0x000000');
+        this.healthBarBg = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.MAX_HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0x000000');
         this.healthBarBg.setOrigin(1, 0.5);
         this.healthBarBg.alpha = 0.4;
         if (this.healthBar) this.healthBar.destroy();
-        this.healthBar = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), this.playerStats.HEALTH * 2, 36, '0xffffff');
+        this.healthBar = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
         this.healthBar.setOrigin(1, 0.5);
     }
 
     hitArmor(damage) {
         this.playerStats.ARMOR = (this.playerStats.ARMOR - damage < 0) ? 0 : this.playerStats.ARMOR - damage;
-        this.armorBar.width -= damage * 2;
+        this.armorBar.width -= damage * 2 * scaleFactor;
         if (this.armorBar.width < 0) { this.armorBar.width = 0; }
     }
 
     hitHealth(damage) {
         this.playerStats.HEALTH = (this.playerStats.HEALTH - damage < 0) ? 0 : this.playerStats.HEALTH - damage;
-        this.healthBar.width -= damage * 2;
+        this.healthBar.width -= damage * 2 * scaleFactor;
         if (this.healthBar.width < 0) { this.healthBar.width = 0; }
     }
 
@@ -593,7 +651,7 @@ class Hostile extends Phaser.Scene {
             if (this.playerStats.ARMOR > this.playerStats.MAX_ARMOR) {
                 this.playerStats.ARMOR = this.playerStats.MAX_ARMOR;
             }
-            if (this.armorBar) { this.armorBar.width = this.playerStats.ARMOR * 2; }
+            if (this.armorBar) { this.armorBar.width = this.playerStats.ARMOR * 2 * scaleFactor; }
         }
     }
 
@@ -613,45 +671,45 @@ class Hostile extends Phaser.Scene {
         let b2 = bump.body;
 
         if ( b2.touching.left ) {
-            agent.x -= (Math.abs(b1.right - b2.left) + 20);
+            agent.x -= (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
             b1.stop();
         }
 
         if ( b2.touching.right ) {
-            agent.x += (Math.abs(b1.left - b2.right) + 20);
+            agent.x += (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
             b1.stop();
         }
 
         if ( b2.touching.up ) {
-            agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
+            agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
             b1.stop();
         }
 
         if ( b2.touching.down ) {
-            agent.y += (Math.abs(b1.top - b2.bottom) + 20);
+            agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
             b1.stop();
         }
 
         // The level starts with one of the enemies overlapping an object so the touching property has not
         // been updated.
         if ( b2.touching.none ) {
-            let deltaXb1 = Math.abs(b1.x - window.innerWidth/2);
-            let deltaXb2 = Math.abs(b2.x - window.innerWidth/2);
-            let deltaYb1 = Math.abs(b1.y - window.innerHeight/2);
-            let deltaYb2 = Math.abs(b2.y - window.innerHeight/2);
+            let deltaXb1 = Math.abs(b1.x - window.innerWidth/2) * scaleFactor;
+            let deltaXb2 = Math.abs(b2.x - window.innerWidth/2) * scaleFactor;
+            let deltaYb1 = Math.abs(b1.y - window.innerHeight/2) * scaleFactor;
+            let deltaYb2 = Math.abs(b2.y - window.innerHeight/2) * scaleFactor;
             if ( deltaXb1 < deltaXb2 ) { 
-                if ( agent.x < window.innerWidth / 2 ) agent.x += (Math.abs(b1.right - b2.left) + 20);
-                else agent.x -= (Math.abs(b1.left - b2.right) + 20);
+                if ( agent.x < window.innerWidth / 2 ) agent.x += (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
+                else agent.x -= (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
             } else {
-                if ( agent.x < window.innerWidth / 2 ) agent.x -= (Math.abs(b1.left - b2.right) + 20);
-                else agent.x += (Math.abs(b1.right - b2.left) + 20);
+                if ( agent.x < window.innerWidth / 2 ) agent.x -= (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
+                else agent.x += (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
             }
             if ( deltaYb1 < deltaYb2 ) { 
-                if ( agent.y < window.innerHeight/ 2 ) agent.y += (Math.abs(b1.top - b2.bottom) + 20);
-                else agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
+                if ( agent.y < window.innerHeight/ 2 ) agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
+                else agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
             } else {
-                if ( agent.y < window.innerHeight/ 2 ) agent.y -= (Math.abs(b1.bottom - b2.top) + 20);
-                else agent.y += (Math.abs(b1.top - b2.bottom) + 20);
+                if ( agent.y < window.innerHeight/ 2 ) agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
+                else agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
             }
 
             b1.stop();

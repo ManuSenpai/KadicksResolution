@@ -61,6 +61,8 @@ var pickKeyFX;
 var shootFX;
 var sparkFX;
 
+let scaleFactor;
+
 function scanMeleeHitPlayer(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -119,7 +121,7 @@ function clearArea() {
 }
 
 function initializeText() {
-    scoreText.setText('SCORE: ' + score);
+    scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
 function onRecover() {
@@ -133,7 +135,7 @@ function startRecovery() {
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
-    keycard.setScale(0.125);
+    keycard.setScale(0.125 * scaleFactor);
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
@@ -167,11 +169,11 @@ function generateEnemies(context) {
 
     for (let i = 0; i < nEnemies; i++) {
         ENEMY_VALUES.push({
-            x: entrance === "right" ? Phaser.Math.Between(player.x + 64, window.innerWidth - 256)
-                : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
-            y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
-                : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+            x: entrance === "right" ? Phaser.Math.Between(player.x + 64 * scaleFactor, window.innerWidth - 256 * scaleFactor)
+                : entrance === "left" ? Phaser.Math.Between(256 * scaleFactor, player.x - 64 * scaleFactor) : Phaser.Math.Between(256 * scaleFactor, window.innerWidth - 256 * scaleFactor),
+            y: entrance === "down" ? Phaser.Math.Between(player.y + 64 * scaleFactor, window.innerHeight - 256 * scaleFactor)
+                : entrance === "up" ? Phaser.Math.Between(256 * scaleFactor, player.y - 64 * scaleFactor) : Phaser.Math.Between(256 * scaleFactor, window.innerHeight - 256 * scaleFactor),
+            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
         })
     }
 
@@ -216,6 +218,7 @@ class Level1_1 extends Hostile {
         pickKeyFX = this.sound.add('pickkey');
         sparkFX = this.sound.add('spark');
         this.setPlayerStats(playerStats);
+        scaleFactor = this.setScaleFactor();
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
@@ -241,7 +244,7 @@ class Level1_1 extends Hostile {
         if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
         if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
 
-        player.setScale(0.3);
+        player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
@@ -299,25 +302,25 @@ class Level1_1 extends Hostile {
         this.lastFired += delta;
         player.rotation = angle;
         if (cursors.left.isDown) {
-            player.setVelocityX(-400);
+            player.setVelocityX(-400 * scaleFactor);
             // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
-            player.setVelocityX(400);
+            player.setVelocityX(400 * scaleFactor);
             // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
-            player.setVelocityY(-400);
+            player.setVelocityY(-400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
-            player.setVelocityY(400);
+            player.setVelocityY(400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();
-            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
+            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED * scaleFactor);
+            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5 * scaleFactor, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
             lastFired = time + this.playerStats.FIRE_RATE;
         }
@@ -340,10 +343,10 @@ class Level1_1 extends Hostile {
             this.showMap();
         }
 
-        if (player.x < 64) { player.x = 64; }
-        if (player.y < 64) { player.y = 64; }
-        if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
-        if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
+        if (player.x < 64 * scaleFactor) { player.x = 64 * scaleFactor; }
+        if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
+        if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
+        if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }
 
         enemies.children.iterate((enem) => {
             let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
