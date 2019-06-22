@@ -62,6 +62,8 @@ var shootFX;
 var hitFX;
 var hit2FX;
 
+let scaleFactor;
+
 function hitPlayer(player, enemy, context) {
     hitFX.play();
     hittable = false;
@@ -175,7 +177,7 @@ function clearArea() {
 }
 
 function initializeText() {
-    scoreText.setText('SCORE: ' + score);
+    scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
 function onRecover() {
@@ -189,7 +191,7 @@ function startRecovery() {
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
-    keycard.setScale(0.125);
+    keycard.setScale(0.125 * scaleFactor);
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
@@ -218,7 +220,7 @@ function generateWaveBenders(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'wavebender', scale: 0.35, rotation: 0, health: 300, damage: 40, speed: 100, score: 1200
+            type: 'wavebender', scale: 0.35 * scaleFactor, rotation: 0, health: 300, damage: 40, speed: 100 * scaleFactor, score: 1200
         })
     }
 
@@ -227,7 +229,7 @@ function generateWaveBenders(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        let newWaveBender = new Wavebender(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        let newWaveBender = new Wavebender(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score, scaleFactor);
         context.physics.add.collider(newWaveBender, bumps);
         context.physics.add.collider(newWaveBender, trashbots);
         newWaveBender.setTarget(player);
@@ -252,7 +254,7 @@ function generateTrashbots(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'trashbot', scale: 1, rotation: 0, health: 200, damage: 40, speed: 200, score: 900
+            type: 'trashbot', scale: 1 * scaleFactor, rotation: 0, health: 200, damage: 40, speed: 200 * scaleFactor, score: 900
         })
     }
 
@@ -261,7 +263,7 @@ function generateTrashbots(context) {
     });
 
     ENEMY_VALUES.forEach((enem) => {
-        let newTrashbot = new Trashbot(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        let newTrashbot = new Trashbot(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score, scaleFactor);
         context.physics.add.collider(newTrashbot, bumps, bounceOnWalls, null, context);
         context.physics.add.collider(newTrashbot, trashbots, bounceOnWalls, null, context);
         trashbots.add(newTrashbot);
@@ -269,7 +271,6 @@ function generateTrashbots(context) {
             playerTouchedFire = true;
         }, null, context);
     });
-
 
 }
 
@@ -307,6 +308,7 @@ class Level3_2 extends Hostile {
         hitFX = this.sound.add('hit1');
         hit2FX = this.sound.add('hit2');
         this.setPlayerStats(playerStats);
+        scaleFactor = this.setScaleFactor();
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
@@ -326,12 +328,12 @@ class Level3_2 extends Hostile {
 
         /* ### PLAYER ### */
         if (entrance === 'center') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player'); }
-        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 128, 'player'); }
-        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128, 'player'); }
-        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
-        if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
+        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 192 * scaleFactor, 'player'); }
+        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 192 * scaleFactor, 'player'); }
+        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 192 * scaleFactor, window.innerHeight / 2, 'player'); }
+        if (entrance === 'right') { player = this.physics.add.sprite(192 * scaleFactor, window.innerHeight / 2, 'player'); }
 
-        player.setScale(0.3);
+        player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
@@ -410,27 +412,27 @@ class Level3_2 extends Hostile {
         this.lastFired += delta;
         player.rotation = angle;
         if (cursors.left.isDown) {
-            player.setVelocityX(-400);
+            player.setVelocityX(-400 * scaleFactor);
             // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
-            player.setVelocityX(400);
+            player.setVelocityX(400 * scaleFactor);
             // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
-            player.setVelocityY(-400);
+            player.setVelocityY(-400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
-            player.setVelocityY(400);
+            player.setVelocityY(400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();
-            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
+            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED * scaleFactor);
+            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5 * scaleFactor, angle, velocity, '0xff38c0', playerStats.DAMAGE);
             lasers.add(currentLaser);
-            lastFired = time + this.playerStats.FIRE_RATE;
+            lastFired = time + playerStats.FIRE_RATE;
         }
         if (cursors.left.isUp) {
             if (player.body.velocity.x < 0) { player.setVelocityX(0); }
@@ -451,11 +453,11 @@ class Level3_2 extends Hostile {
             this.showMap();
         }
 
-        if (player.x < 64) { player.x = 64; }
-        if (player.y < 64) { player.y = 64; }
-        if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
-        if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
-
+        if (player.x < 64  * scaleFactor) { player.x = 64 * scaleFactor; }
+        if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
+        if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
+        if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }
+        
         trashbots.children.iterate((bot) => {
             bot.move();
         })

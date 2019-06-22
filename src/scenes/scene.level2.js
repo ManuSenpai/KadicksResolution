@@ -435,8 +435,6 @@ class Level2 extends Phaser.Scene {
                 this.physics.world.enable(newProp);
                 newProp.setOrigin(0.5, 1);
                 newProp.setScale(1.5 * scaleFactor);
-                newProp.body.setSize(newProp.width * scaleFactor, newProp.height * 0.75 * scaleFactor, false);
-                newProp.body.setOffset(0, newProp.height * 0.25 * scaleFactor);
                 bumps.add(newProp);
             });
         }

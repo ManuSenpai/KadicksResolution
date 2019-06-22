@@ -17,16 +17,18 @@ class Trashbot extends Enemy {
     alive = true;
     emitters = [];
     flares;
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scaleFactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         this.speed = speed;
         this.score = score;
+        this.scaleFactor = scaleFactor;
         scene.add.existing(this);
         this.setRandomAngle();
         this.currentVelocity = scene.physics.velocityFromRotation(this.rotation, this.speed);
         this.body.setVelocity(this.currentVelocity.x, this.currentVelocity.y);
         this.trashFace = scene.add.sprite(this.x, this.y, 'trashbotniceface');
+        this.trashFace.setScale(scaleFactor);
         this.scene.physics.world.enable(this.trashFace);
         this.trailgroup = scene.physics.add.group();
         this.trailInterval = setInterval(() => this.generateTrail(), TRAIL_TIME);
@@ -46,14 +48,15 @@ class Trashbot extends Enemy {
     generateTrail() {
         if (this.alive) {
             let newTrail = this.scene.add.sprite(this.x, this.y, 'trashtrail');
+            newTrail.setScale(this.scaleFactor);
             this.trailgroup.add(newTrail);
             newTrail.z = 2;
             this.trailAnimation = this.scene.tweens.add({
                 targets: newTrail,
                 ease: 'Power1',
                 duration: TRAIL_DELETE_TIME,
-                scaleX: 0.2,
-                scaleY: 0.2,
+                scaleX: 0.2 * this.scaleFactor,
+                scaleY: 0.2 * this.scaleFactor,
                 onComplete: function () {
                     if (this.trailgroup) this.trailgroup.remove(newTrail);
                     newTrail.destroy();

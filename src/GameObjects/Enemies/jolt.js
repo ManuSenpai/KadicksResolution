@@ -42,7 +42,7 @@ class Jolt extends Enemy {
             this.forcefield.setVisible(true);
             this.forcefield.setActive(true);
             this.forcefield.setScale(1.5 * this.scalefactor);
-            if ( this.forcefield.body ) { this.forcefield.body.setCircle(85 * this.scalefactor, -21 * this.scalefactor, -21 * this.scalefactor); }
+            if ( this.forcefield.body ) { this.forcefield.body.setCircle(85, -21, -21); }
         }
     }
 

@@ -9,11 +9,6 @@ import Coulomb from '../GameObjects/Enemies/coulomb.js';
 var ENEMY_VALUES = [];
 var TOUGHER_ENEMY_VALUES = [];
 
-const LASER_VALUES = [
-    { x1: 80, y1: 80, x2: (window.innerWidth - 80), y2: 80, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 },
-    { x1: 80, y1: 600, x2: (window.innerWidth - 80), y2: 600, color: '0x77abff', damage: 10, thickness: 10, timeOfBlink: 3000, timeOfLaser: 1500 }
-];
-
 var cursors;                    // Set keys to be pressed
 var player;                     // Player game object
 var lasers;                     // Pool of bullets shot by the player
@@ -60,12 +55,13 @@ var entrance;
 // ITEMS
 var keycard;
 
-//AUDIO
 var keyFX;
 var hitFX;
 var pickKeyFX;
 var shootFX;
 var sparkFX;
+
+let scaleFactor;
 
 function tacklePlayer(player, enemy) {
     hitFX.play();
@@ -105,8 +101,9 @@ function hitEnemy(enemy, laser) {
     laser.destroy();
     score += 20;
     if (enemy.health <= 0) {
-        sparkFX.play();
+
         enemy.die();
+        sparkFX.play();
         enemies.remove(enemy);
         // enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
@@ -133,7 +130,7 @@ function clearArea() {
 }
 
 function initializeText() {
-    scoreText.setText('SCORE: ' + score);
+    scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
 function onRecover() {
@@ -147,7 +144,7 @@ function startRecovery() {
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
-    keycard.setScale(0.125);
+    keycard.setScale(0.125 * scaleFactor);
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
@@ -173,18 +170,18 @@ function collisionBetweenTougher(tough1, tough2) {
     const collisionAngle = Phaser.Math.Angle.Between(tough1.x, tough1.y, tough2.x, tough2.y);
     const velocity = this.physics.velocityFromRotation(collisionAngle, 500);
     if (tough1.x < tough2.x) {
-        tough1.body.setVelocityX(-Math.abs(velocity.x));
-        tough2.body.setVelocityX(Math.abs(velocity.x));
+        tough1.body.setVelocityX(-Math.abs(velocity.x) * scaleFactor);
+        tough2.body.setVelocityX(Math.abs(velocity.x) * scaleFactor);
     } else {
-        tough1.body.setVelocityX(Math.abs(velocity.x));
-        tough2.body.setVelocityX(-Math.abs(velocity.x));
+        tough1.body.setVelocityX(Math.abs(velocity.x) * scaleFactor);
+        tough2.body.setVelocityX(-Math.abs(velocity.x) * scaleFactor);
     }
     if (tough1.y < tough2.y) {
-        tough1.body.setVelocityY(-Math.abs(velocity.y));
-        tough2.body.setVelocityY(Math.abs(velocity.y));
+        tough1.body.setVelocityY(-Math.abs(velocity.y) * scaleFactor);
+        tough2.body.setVelocityY(Math.abs(velocity.y) * scaleFactor);
     } else {
-        tough1.body.setVelocityY(Math.abs(velocity.y));
-        tough2.body.setVelocityY(-Math.abs(velocity.y));
+        tough1.body.setVelocityY(Math.abs(velocity.y) * scaleFactor);
+        tough2.body.setVelocityY(-Math.abs(velocity.y) * scaleFactor);
     }
     setTimeout(() => {
         tough1.crashIntoWall();
@@ -197,19 +194,19 @@ function untangleEnemies(enemy1, enemy2) {
     let b2 = enemy2.body;
 
     if (b1.y > b2.y) {
-        b1.y -= Math.abs(b1.top - b2.bottom);
+        b1.y -= Math.abs(b1.top - b2.bottom) * scaleFactor;
         b1.stop();
     }
     else {
-        b1.y += Math.abs(b2.top - b1.bottom);
+        b1.y += Math.abs(b2.top - b1.bottom) * scaleFactor;
         b1.stop();
     }
 
     if (b1.x < b2.x) {
-        b1.x -= Math.abs(b1.left - b2.right);
+        b1.x -= Math.abs(b1.left - b2.right) * scaleFactor;
         b1.stop();
     } else {
-        b1.x += Math.abs(b1.right - b2.left);
+        b1.x += Math.abs(b1.right - b2.left) * scaleFactor;
         b1.stop();
     }
 }
@@ -244,7 +241,7 @@ function generateMinions(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 100, damage: 20, speed: 80 * scaleFactor, score: 350
         })
     }
 
@@ -274,7 +271,7 @@ function generateTougher(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'coulomb', scale: 1, rotation: 0, health: 200, damage: 35, speed: 1750, score: 1000
+            type: 'coulomb', scale: 1 * scaleFactor, rotation: 0, health: 200, damage: 35, speed: 1750 * scaleFactor, score: 1000
         })
     }
 
@@ -283,7 +280,7 @@ function generateTougher(context) {
     });
 
     TOUGHER_ENEMY_VALUES.forEach((enem) => {
-        let newCoulomb = new Coulomb(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score);
+        let newCoulomb = new Coulomb(context, enem.x, enem.y, enem.type, enem.scale, enem.rotation, enem.health, enem.damage, enem.speed, enem.score, scaleFactor);
         newCoulomb.setTarget(player);
         newCoulomb.name = "coulomb";
         tougherEnemies.add(newCoulomb);
@@ -319,6 +316,7 @@ class Level3_1 extends Hostile {
         hitFX = this.sound.add('hit1');
         pickKeyFX = this.sound.add('pickkey');
         sparkFX = this.sound.add('spark');
+        scaleFactor = this.setScaleFactor();
         this.setPlayerStats(playerStats);
         this.setCurrentPosition(currentPosition);
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
@@ -340,12 +338,12 @@ class Level3_1 extends Hostile {
 
         /* ### PLAYER ### */
         if (entrance === 'center') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player'); }
-        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 128, 'player'); }
-        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128, 'player'); }
-        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
-        if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
+        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 192 * scaleFactor, 'player'); }
+        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 192 * scaleFactor, 'player'); }
+        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 192 * scaleFactor, window.innerHeight / 2, 'player'); }
+        if (entrance === 'right') { player = this.physics.add.sprite(192 * scaleFactor, window.innerHeight / 2, 'player'); }
 
-        player.setScale(0.3);
+        player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
@@ -409,25 +407,25 @@ class Level3_1 extends Hostile {
         this.lastFired += delta;
         player.rotation = angle;
         if (cursors.left.isDown) {
-            player.setVelocityX(-400);
+            player.setVelocityX(-400 * scaleFactor);
             // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
-            player.setVelocityX(400);
+            player.setVelocityX(400 * scaleFactor);
             // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
-            player.setVelocityY(-400);
+            player.setVelocityY(-400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
-            player.setVelocityY(400);
+            player.setVelocityY(400 * scaleFactor);
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();
-            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
+            var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED * scaleFactor);
+            var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5 * scaleFactor, angle, velocity, '0xff38c0', this.playerStats.DAMAGE);
             lasers.add(currentLaser);
             lastFired = time + this.playerStats.FIRE_RATE;
         }
@@ -450,10 +448,10 @@ class Level3_1 extends Hostile {
             this.showMap();
         }
 
-        if (player.x < 64) { player.x = 64; }
-        if (player.y < 64) { player.y = 64; }
-        if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
-        if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
+        if (player.x < 64 * scaleFactor) { player.x = 64 * scaleFactor; }
+        if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
+        if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
+        if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }
 
         enemies.children.iterate((enem) => {
             let enemAngle = Phaser.Math.Angle.Between(enem.x, enem.y, player.x, player.y);
@@ -472,8 +470,6 @@ class Level3_1 extends Hostile {
         enemyLasers.children.iterate((laser) => {
             if (laser) { laser.move(delta) } else { lasers.remove(laser); }
         });
-
-
     }
 }
 

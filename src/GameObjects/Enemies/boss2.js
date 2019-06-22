@@ -36,10 +36,11 @@ class Boss2 extends Enemy {
 
     target;
 
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scaleFactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         scene.physics.world.enable(this);
+        this.scaleFactor = scaleFactor;
         this.setScale(scale);
         this.setOrigin(0.5, 0.5);
         this.rotation = rotation;
@@ -48,7 +49,7 @@ class Boss2 extends Enemy {
         this.score = score;
         scene.add.existing(this);
         this.flares = this.scene.add.particles('flares');
-        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15, color: 0xd1fcff } });
+        this.beamGraphics = scene.add.graphics({ lineStyle: { width: 15 * this.scaleFactor, color: 0xd1fcff } });
         this.rotGroup = this.scene.physics.add.group();
         this.staticFX = this.scene.sound.add('elecestatica');
         this.railgun2FX = this.scene.sound.add('railgun2');
@@ -58,14 +59,18 @@ class Boss2 extends Enemy {
         this.lastFired = 0;
         setTimeout(() => {
             this.rotatable1 = this.scene.physics.add.sprite(this.x, this.y, 'boss2rotatable');
+            this.rotatable1.setScale(this.scaleFactor);
             this.rotatable2 = this.scene.physics.add.sprite(this.x, this.y, 'boss2rotatable');
+            this.rotatable2.setScale(this.scaleFactor);
             this.rotGroup.add(this.rotatable1);
             this.rotGroup.add(this.rotatable2);
             this.botrg = this.scene.physics.add.sprite(this.x, this.y, 'boss2botrg');
+            this.botrg.setScale(this.scaleFactor);
             this.toprg = this.scene.physics.add.sprite(this.x, this.y, 'boss2toprg');
+            this.toprg.setScale(this.scaleFactor);
             this.deployRailguns();
-            this.crossRotatables(this.rotatable1, 0, 32, window.innerHeight / 2);
-            this.crossRotatables(this.rotatable2, 1, window.innerWidth - 32, window.innerHeight / 2);
+            this.crossRotatables(this.rotatable1, 0, 32 * this.scaleFactor, window.innerHeight / 2);
+            this.crossRotatables(this.rotatable2, 1, window.innerWidth - 32 * this.scaleFactor, window.innerHeight / 2);
         }, 3000);
     }
 
@@ -82,14 +87,14 @@ class Boss2 extends Enemy {
             ease: 'Power1',
             duration: CROSS_SPEED,
             x: window.innerWidth / 2,
-            y: 64
+            y: 64 * this.scaleFactor
         });
         this.deployBotRGAnimation1 = this.scene.tweens.add({
             targets: this.botrg,
             ease: 'Power1',
             duration: CROSS_SPEED,
             x: window.innerWidth / 2,
-            y: window.innerHeight - 64
+            y: window.innerHeight - 64 * this.scaleFactor
         });
 
     }
@@ -100,9 +105,9 @@ class Boss2 extends Enemy {
      */
     move(player) {
         if (this.botrg && this.toprg) {
-            if (this.botrg.x < (player.x - 10)) {
+            if (this.botrg.x < (player.x - 10 * this.scaleFactor)) {
                 this.botrg.body.setVelocityX(this.speed * 3);
-            } else if (this.botrg.x > (player.x + 10)) {
+            } else if (this.botrg.x > (player.x + 10 * this.scaleFactor)) {
                 this.botrg.body.setVelocityX(-this.speed * 3);
             } else {
                 if (!this.shootingRg) {
@@ -133,8 +138,8 @@ class Boss2 extends Enemy {
             x: this.botrg.x,
             y: this.botrg.y,
             angle: -90,
-            speed: { min: 100, max: -500 },
-            gravityY: 400,
+            speed: { min: 100 * this.scaleFactor, max: -500 * this.scaleFactor },
+            gravityY: 400 * this.scaleFactor,
             scale: { start: 0.2, end: 0.2 },
             lifespan: 200,
             blendMode: 'ADD',
@@ -145,8 +150,8 @@ class Boss2 extends Enemy {
             x: this.toprg.x,
             y: this.toprg.y,
             angle: 90,
-            speed: { min: 100, max: -500 },
-            gravityY: 400,
+            speed: { min: 100 * this.scaleFactor, max: -500 * this.scaleFactor },
+            gravityY: 400 * this.scaleFactor,
             scale: { start: 0.2, end: 0.2 },
             lifespan: 200,
             blendMode: 'ADD',
@@ -199,8 +204,8 @@ class Boss2 extends Enemy {
      * @param {number} xCoord current X coordinate 
      */
     getOppositeX(xCoord) {
-        if (xCoord < 64) return window.innerWidth - 32;
-        else return 32;
+        if (xCoord < 64 * this.scaleFactor) return window.innerWidth - 32 * this.scaleFactor;
+        else return 32 * this.scaleFactor;
     }
 
     onDestroy() {

@@ -57,17 +57,17 @@ var hittable = true;
 var shootFX;
 var hit2FX;
 
+let scaleFactor;
+
 function bulletPlayer(player, bullet) {
     hit2FX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
-        playerStats.ARMOR = (playerStats.ARMOR - boss.damage < 0) ? 0 : playerStats.ARMOR - boss.damage;
-        armorBar.width = playerStats.ARMOR * 2;
+        this.hitArmor(boss.damage);
     } else {
-        playerStats.HEALTH = (playerStats.HEALTH - boss.damage < 0) ? 0 : playerStats.HEALTH - boss.damage;
-        healthBar.width = playerStats.HEALTH * 2;
+        this.hitHealth(boss.damage);
         if (playerStats.HEALTH <= 0) {
             this.scene.start("Continue", {
                 score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
@@ -81,28 +81,6 @@ function bulletPlayer(player, bullet) {
     bossBullets.remove(bullet);
 }
 
-function beamPlayer(damage, context) {
-    if (boss.active && hittable) {
-        hittable = false;
-        recoverArmor.paused = true;
-        if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-        timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
-        if (playerStats.ARMOR > 0) {
-            playerStats.ARMOR = (playerStats.ARMOR - damage < 0) ? 0 : playerStats.ARMOR - damage;
-            armorBar.width = playerStats.ARMOR * 2;
-        } else {
-            playerStats.HEALTH = (playerStats.HEALTH - damage < 0) ? 0 : playerStats.HEALTH - damage;;
-            healthBar.width = playerStats.HEALTH * 2;
-            if (playerStats.HEALTH < 0) {
-                // TODO: GAME OVER
-            }
-        }
-        setTimeout(() => {
-            hittable = true;
-        }, 500);
-    }
-}
-
 function hitEnemy(enemy, laser) {
     laser.setVisible(false);
     laser.setActive(false);
@@ -114,7 +92,7 @@ function hitEnemy(enemy, laser) {
         score += 20;
         bossLifeBarGr.clear();
         bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246 * scaleFactor), (window.innerHeight - 48 * scaleFactor), boss.health * (492 * scaleFactor / BOSS_VALUES.health), 16 * scaleFactor);
         if (enemy.health < 1500 && enemy.attackMode === 1) {
             enemy.attackMode = 2;
             enemy.changeAttackMode();
@@ -124,15 +102,12 @@ function hitEnemy(enemy, laser) {
             enemy.setVisible(false);
             enemy.onDestroy();
             enemy.destroy();
-            stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200, 'stairnextlevel');
-            stairNextLevel.setScale(0.5, 0.5);
-            this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);
             this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats });
         }
     } else {
         bossLifeBarGr.clear();
         bossLifeBarGr.fillGradientStyle(0x0000ff, 0x00ff, 0x00ffff, 0x00ffff, 1);
-        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), boss.health * (492 / BOSS_VALUES.health), 16);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246 * scaleFactor), (window.innerHeight - 48 * scaleFactor), boss.health * (492 * scaleFactor/ BOSS_VALUES.health), 16 * scaleFactor);
     }
 
     scoreText.setText('SCORE: ' + score);
@@ -149,17 +124,11 @@ function clearArea() {
 }
 
 function initializeText() {
-    scoreText.setText('SCORE: ' + score);
+    scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
 function onRecover() {
-    if (playerStats.ARMOR < playerStats.MAX_ARMOR) {
-        playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
-        if (playerStats.ARMOR > playerStats.MAX_ARMOR) {
-            playerStats.ARMOR = playerStats.MAX_ARMOR;
-        }
-        armorBar.width = playerStats.ARMOR * 2;
-    }
+    this.recoverArmor();
 }
 
 function startRecovery() {
@@ -189,6 +158,7 @@ class Level3_B extends Hostile {
     }
     create() {
         window.onresize = () => this.scene.restart();
+        scaleFactor = this.setScaleFactor();
         this.setPlayerStats(playerStats);
         shootFX = this.sound.add('laser');
         hit2FX = this.sound.add('hit2');
@@ -205,31 +175,32 @@ class Level3_B extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         // FLOOR
-        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor2');
+        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
 
         // WALLS
-        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128, 'topbot2');
-        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128, 'topbot2');
-        leftwall = this.add.tileSprite(0, 0, 128, window.innerHeight * 2, 'leftright2');
-        rightwall = this.add.tileSprite(window.innerWidth, 0, 128, window.innerHeight * 2, 'leftright2');
+        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
+        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
+        leftwall = this.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
+        rightwall = this.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
 
         // CORNERS
-        topleft = this.physics.add.sprite(0, 0, 'topleft2');
-        topleft.setScale(2);
-        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright2');
-        topright.setScale(2);
-        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft2');
-        botleft.setScale(2);
-        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright2');
-        botright.setScale(2);
+        topleft = this.physics.add.sprite(0, 0, 'topleft1');
+        topleft.setScale(2 * scaleFactor);
+        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        topright.setScale(2 * scaleFactor);
+        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        botleft.setScale(2 * scaleFactor);
+        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        botright.setScale(2 * scaleFactor);
+
 
         /* DOORS */
         this.createDoors(this, currentPosition);
 
         /* ### PLAYER ### */
-        player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128, 'player');
+        player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128 * scaleFactor, 'player');
 
-        player.setScale(0.3);
+        player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
@@ -247,36 +218,20 @@ class Level3_B extends Hostile {
         });
 
         /* NOSS */
-        boss = new Boss3(this, BOSS_VALUES.x, BOSS_VALUES.y, BOSS_VALUES.type, BOSS_VALUES.scale, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score);
+        boss = new Boss3(this, window.innerWidth / 2, BOSS_VALUES.y * scaleFactor, BOSS_VALUES.type, BOSS_VALUES.scale * scaleFactor, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score, scaleFactor);
         boss.setTarget(player);
         bossBullets = boss.getBullets();
 
         /* UI */
         scoreText = this.make.text(configScoreText);
         initializeText();
-        armorIcon = this.physics.add.sprite(96, (window.innerHeight - 36), 'armorIcon');
-        armorIcon.displayWidth = 36;
-        armorIcon.displayHeight = 36;
-        armorBarBg = this.add.rectangle(120, (window.innerHeight - 36), playerStats.MAX_ARMOR * 2, 36, '0x000000');
-        armorBarBg.setOrigin(0, 0.5);
-        armorBarBg.alpha = 0.4;
-        armorBar = this.add.rectangle(120, (window.innerHeight - 36), playerStats.ARMOR * 2, 36, '0xffffff');
-        armorBar.setOrigin(0, 0.5);
-        
-        healthIcon = this.physics.add.sprite( window.innerWidth - 96, (window.innerHeight - 36), 'healthIcon');
-        healthIcon.displayWidth = 36;
-        healthIcon.displayHeight = 36;
-        healthBarBg = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.MAX_HEALTH * 2, 36, '0x000000');
-        healthBarBg.setOrigin(1, 0.5);
-        healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(window.innerWidth - 120, (window.innerHeight - 36), playerStats.HEALTH * 2, 36, '0xffffff');
-        healthBar.setOrigin(1, 0.5);
+        this.drawPlayerUI();
 
-        bossLifeBarBg = this.add.rectangle((window.innerWidth / 2 - 250), (window.innerHeight - 40), 500, 24, '0x000000');
+        bossLifeBarBg = this.add.rectangle((window.innerWidth / 2 - 250 * scaleFactor), (window.innerHeight - 40 * scaleFactor), 500 * scaleFactor, 24 * scaleFactor, '0x000000');
         bossLifeBarGr = this.add.graphics();
         bossLifeBarGr.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246), (window.innerHeight - 48), 492, 16);
-        bossLifeBar = this.add.rectangle((window.innerWidth / 2 + 246), (window.innerHeight - 38), 0, 16, '0x000000');
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246 * scaleFactor), (window.innerHeight - 48 * scaleFactor), 492 * scaleFactor, 16 * scaleFactor);
+        bossLifeBar = this.add.rectangle((window.innerWidth / 2 + 246 * scaleFactor), (window.innerHeight - 38 * scaleFactor), 0, 16 * scaleFactor, '0x000000');
         bossLifeBarBg.setOrigin(0, 0.5);
         bossLifeBar.setOrigin(1, 0.5);
         bossLifeBarBg.alpha = 0.4;
@@ -307,25 +262,25 @@ class Level3_B extends Hostile {
             this.lastFired += delta;
             player.rotation = angle;
             if (cursors.left.isDown) {
-                player.setVelocityX(-400);
+                player.setVelocityX(-400 * scaleFactor);
                 // player.anims.play('left', true);
             }
             if (cursors.right.isDown) {
-                player.setVelocityX(400);
+                player.setVelocityX(400 * scaleFactor);
                 // player.anims.play('right', true);
             }
             if (cursors.up.isDown) {
-                player.setVelocityY(-400);
+                player.setVelocityY(-400 * scaleFactor);
                 // player.anims.play('turn');
             }
             if (cursors.down.isDown) {
-                player.setVelocityY(400);
+                player.setVelocityY(400 * scaleFactor);
                 // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
                 shootFX.play();
-                var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
-                var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
+                var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED * scaleFactor);
+                var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5 * scaleFactor, angle, velocity, '0xff38c0', playerStats.DAMAGE);
                 lasers.add(currentLaser);
                 currentLaser.body.setCollideWorldBounds(true);
                 currentLaser.body.onWorldBounds = true;
@@ -350,10 +305,10 @@ class Level3_B extends Hostile {
                 this.showMap();
             }
 
-            if (player.x < 64) { player.x = 64; }
-            if (player.y < 64) { player.y = 64; }
-            if (player.x > window.innerWidth - 64) { player.x = window.innerWidth - 70; }
-            if (player.y > window.innerHeight - 64) { player.y = window.innerHeight - 70; }
+            if (player.x < 64 * scaleFactor) { player.x = 64 * scaleFactor; }
+            if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
+            if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
+            if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }
 
             lasers.children.iterate((laser) => {
                 if (laser) { laser.move(delta) } else { lasers.remove(laser); }

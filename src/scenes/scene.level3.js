@@ -434,8 +434,6 @@ class Level3 extends Phaser.Scene {
                 this.physics.world.enable(newProp);
                 newProp.setOrigin(0.5, 1);
                 newProp.setScale(1.5 * scaleFactor);
-                newProp.body.setSize(newProp.width * scaleFactor, newProp.height * 0.75 * scaleFactor, false);
-                newProp.body.setOffset(0, newProp.height * 0.25 * scaleFactor);
                 bumps.add(newProp);
             });
         }
@@ -445,10 +443,11 @@ class Level3 extends Phaser.Scene {
 
         /* ### PLAYER ### */
         if (entrance === 'center') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player'); }
-        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 128, 'player'); }
-        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128, 'player'); }
-        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 128, window.innerHeight / 2, 'player'); }
-        if (entrance === 'right') { player = this.physics.add.sprite(128, window.innerHeight / 2, 'player'); }
+        if (entrance === 'down') { player = this.physics.add.sprite(window.innerWidth / 2, 192 * scaleFactor, 'player'); }
+        if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 192 * scaleFactor, 'player'); }
+        if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 192 * scaleFactor, window.innerHeight / 2, 'player'); }
+        if (entrance === 'right') { player = this.physics.add.sprite(192 * scaleFactor, window.innerHeight / 2, 'player'); }
+        
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
         player.setCollideWorldBounds(true);

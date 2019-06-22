@@ -225,7 +225,7 @@ class Level1_B extends Hostile {
         this.createDoors(this, currentPosition);
 
         /* ### PLAYER ### */
-        player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128, 'player');
+        player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 128 * scaleFactor, 'player');
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
