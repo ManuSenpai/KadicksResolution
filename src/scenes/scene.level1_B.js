@@ -368,7 +368,7 @@ class Level1_B extends Hostile {
                 }
             }
 
-            if (boss.leftBeamLine && boss.rightBeamLine) {
+            if (boss && boss.leftBeamLine && boss.leftBeamLine.active && boss.rightBeamLine && boss.rightBeamLine.active) {
                 if (Phaser.Geom.Intersects.LineToRectangle(boss.leftBeamLine, player.body) ||
                     Phaser.Geom.Intersects.LineToRectangle(boss.rightBeamLine, player.body)) {
                     beamPlayer(boss.damage * 1.5, this);

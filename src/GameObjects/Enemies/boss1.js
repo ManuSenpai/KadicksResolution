@@ -99,8 +99,8 @@ class Boss1 extends Enemy {
         this.aimGraphics.destroy();
         this.beamGraphics.clear();
         this.beamGraphics.destroy();
-        if (this.leftBeamLine) this.leftBeamLine.active = false;
-        if (this.rightBeamLine) this.rightBeamLine.active = false;
+        if (this.leftBeamLine) { this.leftBeamLine.active = false; }
+        if (this.rightBeamLine) { this.rightBeamLine.active = false; }
     }
 
     changeAttackMode() {
