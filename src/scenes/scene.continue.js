@@ -20,6 +20,11 @@ var languageText = {
 var floor;
 var i18n;
 
+const STANDARD_WIDTH = 1536;
+const STANDARD_HEIGHT = 720;
+var scaleFactor;
+var scaleHeight;
+var scaleWidth;
 class Continue extends Phaser.Scene {
 
     gameOverText;
@@ -38,6 +43,11 @@ class Continue extends Phaser.Scene {
         this.currentPosition = data.currentPosition;
         this.entrance = data.entrance;
         i18n = this.cache.json.get(this.playerStats.LANGUAGE);
+
+        scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        // scaleFactor = Math.min(scaleHeight, scaleWidth);
+        scaleFactor = (scaleHeight + scaleWidth)/2;
     }
 
     create() {
@@ -47,7 +57,8 @@ class Continue extends Phaser.Scene {
         /* Getting JSON i18n data */
 
         this.cameras.main.setBackgroundColor('#000000');
-        this.physics.add.sprite( window.innerWidth/2, window.innerHeight/2, 'continueIcon').setScale(2);
+        this.physics.add.sprite( window.innerWidth/2, window.innerHeight/2, 'continueIcon').setScale(2 * scaleFactor);
+
 
         this.setTexts();
 
@@ -82,10 +93,10 @@ class Continue extends Phaser.Scene {
         this.noText.setOrigin(0.5);
     }
     onTextOver(text) {
-        text.setFontSize(50);
+        text.setFontSize(50 * scaleFactor);
     }
     onTextOut(text) {
-        text.setFontSize(40);
+        text.setFontSize(40 * scaleFactor);
     }
 
     setTexts() {
@@ -94,33 +105,35 @@ class Continue extends Phaser.Scene {
             .setText(i18n.CONTINUE.GAMEOVER)
             .setX(window.innerWidth / 2)
             .setY(window.innerHeight * 1 / 5)
-            .setFontSize(50);
+            .setFontSize(50 * scaleFactor);
         this.gameOverText.setOrigin(0.5);
 
         this.scoreText = this.make.text(languageText)
             .setText(i18n.CONTINUE.SCORE + ': ' + this.score)
             .setX(window.innerWidth / 2)
-            .setY(window.innerHeight * 2 / 5 - 64)
-            .setFontSize(40);
+            .setY(window.innerHeight * 2 / 5 - 64 * scaleFactor)
+            .setFontSize(40 * scaleFactor);
         this.scoreText.setOrigin(0.5);
 
         this.continuteText = this.make.text(languageText)
             .setText(i18n.CONTINUE.CONTINUE)
             .setX(window.innerWidth / 2)
             .setY(window.innerHeight * 2 / 5)
-            .setFontSize(40);
+            .setFontSize(40 * scaleFactor);
         this.continuteText.setOrigin(0.5);
 
         this.yesText = this.make.text(languageText)
             .setText(i18n.CONTINUE.YES)
             .setX(window.innerWidth / 2)
-            .setY(window.innerHeight * 4 / 5);
+            .setY(window.innerHeight * 4 / 5)
+            .setFontSize(40 * scaleFactor);
         this.yesText.setOrigin(0.5);
 
         this.noText = this.make.text(languageText)
             .setText(i18n.CONTINUE.NO)
             .setX(window.innerWidth / 2)
-            .setY(window.innerHeight * 4 / 5 + 64);
+            .setY(window.innerHeight * 4 / 5 + 64 * scaleFactor)
+            .setFontSize(40 * scaleFactor);
         this.noText.setOrigin(0.5);
     }
 }

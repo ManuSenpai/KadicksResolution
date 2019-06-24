@@ -301,7 +301,7 @@ class Boss3 extends Enemy {
                 var circle = new Phaser.Geom.Circle(sourcepoint.x, sourcepoint.y, 150 * that.scaleFactor);
                 for (let i = 0; i < 8; i++) {
                     let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
-                    newBullet.setScale( scaleFactor );
+                    newBullet.setScale( that.scaleFactor );
                     group.push(newBullet);
                     that.bullets.add(newBullet);
                     newBullet.body.setCollideWorldBounds(true);

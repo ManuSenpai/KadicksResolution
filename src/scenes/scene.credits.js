@@ -5,6 +5,14 @@ var currentText;
 
 const ACTIVE_COLOR = "#00FF20";
 
+const STANDARD_WIDTH = 1536;
+
+const STANDARD_HEIGHT = 720;
+
+var scaleFactor;
+
+var textTimeout;
+
 class Credits extends Phaser.Scene {
 
     constructor() {
@@ -15,9 +23,13 @@ class Credits extends Phaser.Scene {
         this.playerStats = data.playerStats;
         this.score = data.score;
         currentLanguage = this.playerStats.LANGUAGE;
+        let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        let scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = Math.min(scaleHeight, scaleWidth);
     }
     create() {
         window.onresize = () => this.scene.restart();
+        if ( textTimeout ) { clearTimeout(textTimeout); }
         let currentIndex = 0;
 
         /* Getting JSON i18n data */
@@ -30,13 +42,13 @@ class Credits extends Phaser.Scene {
 
     showTexts(index) {
         if (index < i18n.CREDITS.length) {
-            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.CREDITS[index], { fontSize: 40, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
+            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.CREDITS[index], { fontSize: 40 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText.x -= this.currentText.width / 2;
             this.currentText.y -= this.currentText.height / 2;
             this.currentText.opacity = 0;
             this.show(index, currentText);
         } else {
-            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.THANKS, { fontSize: 50, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
+            this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.THANKS, { fontSize: 50 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText.x -= this.currentText.width / 2;
             this.currentText.y -= this.currentText.height / 2;
             setTimeout(() => {
@@ -54,7 +66,7 @@ class Credits extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
-                setTimeout(() => {
+                textTimeout = setTimeout(() => {
                     this.hide(index, text);
                 }, 2000)
             }
@@ -70,7 +82,7 @@ class Credits extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
-                setTimeout(() => {
+                textTimeout = setTimeout(() => {
                     this.currentText.destroy();
                     this.showTexts(index + 1);
                 }, 1000);

@@ -52,6 +52,9 @@ var scenario;
 var currentPosition;
 var entrance;
 
+var hittable = true;
+var timeoutHittable;
+
 // ITEMS
 var keycard;
 
@@ -65,28 +68,33 @@ let scaleFactor;
 
 function tacklePlayer(player, enemy) {
     hitFX.play();
-    enemy.tackle(player);
+    if ( enemy.isCharging ) { enemy.tackle(player); }
     meleeHitPlayer.call(this, player, enemy);
 }
 
 function meleeHitPlayer(player, enemy) {
     hitFX.play();
-    recoverArmor.paused = true;
-    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        // armorBar.width -= enemy.damage * 2;
-        this.hitArmor(enemy.damage);
-    } else {
-        this.hitHealth(enemy.damage);
-        if (this.playerStats.HEALTH <= 0) {
-            this.scene.start("Continue", {
-                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-                currentPosition: currentPosition, entrance: 'center'
-            });
+
+    if (hittable) {
+        recoverArmor.paused = true;
+        if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
+        timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
+        if (playerStats.ARMOR > 0) {
+            // armorBar.width -= enemy.damage * 2;
+            this.hitArmor(enemy.damage);
+        } else {
+            this.hitHealth(enemy.damage);
+            if (this.playerStats.HEALTH <= 0) {
+                this.scene.start("Continue", {
+                    score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+                    currentPosition: currentPosition, entrance: 'center'
+                });
+            }
         }
     }
 
+    hittable = false;
+    timeoutHittable = setTimeout(() => { hittable = true }, 2500);
     let hitAngle = Phaser.Math.Angle.Between(player.x, player.y, enemy.x, enemy.y);
     var velocity = this.physics.velocityFromRotation(hitAngle, -100);
     player.x += velocity.x;
@@ -111,6 +119,7 @@ function hitEnemy(enemy, laser) {
 
         if (enemies.children.entries.length === 0 && tougherEnemies.children.entries.length === 0) {
             clearArea.apply(this);
+            if (timeoutHittable) { clearTimeout(timeoutHittable); }
         }
         score += enemy.score;
         this.setScore(score);

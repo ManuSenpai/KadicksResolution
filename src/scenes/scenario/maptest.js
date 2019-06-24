@@ -134,7 +134,7 @@ class map_test extends Phaser.Scene {
             score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
             currentPosition: level[0], entrance: 'center'
         });
-        // this.scene.start("Level3_2", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+        // this.scene.start("Credits", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
         // currentPosition: level[0], entrance: 'center'});
     }
 
