@@ -221,22 +221,22 @@ class Level2_B extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         // FLOOR
-        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor2');
 
         // WALLS
-        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
-        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
-        leftwall = this.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
-        rightwall = this.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
+        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot2');
+        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot2');
+        leftwall = this.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright2');
+        rightwall = this.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright2');
 
         // CORNERS
-        topleft = this.physics.add.sprite(0, 0, 'topleft1');
+        topleft = this.physics.add.sprite(0, 0, 'topleft2');
         topleft.setScale(2 * scaleFactor);
-        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright2');
         topright.setScale(2 * scaleFactor);
-        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft2');
         botleft.setScale(2 * scaleFactor);
-        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright2');
         botright.setScale(2 * scaleFactor);
 
         /* DOORS */
@@ -247,6 +247,7 @@ class Level2_B extends Hostile {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
         player.body.setOffset(player.width / 4, player.height / 4);
@@ -263,7 +264,7 @@ class Level2_B extends Hostile {
         });
 
         /* NOSS */
-        boss = new Boss2(this, window.innerWidth/2, BOSS_VALUES.y * scaleFactor, BOSS_VALUES.type, BOSS_VALUES.scale * scaleFactor, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score, scaleFactor);
+        boss = new Boss2(this, window.innerWidth / 2, BOSS_VALUES.y * scaleFactor, BOSS_VALUES.type, BOSS_VALUES.scale * scaleFactor, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed, BOSS_VALUES.score, scaleFactor);
         boss.setTarget(player);
 
         /* UI */
@@ -363,9 +364,11 @@ class Level2_B extends Hostile {
                 boss.move(player);
             }
 
-            if (boss.paths[0] && boss.paths[1]) {
-                if (Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[0].getBounds(), player.body) ||
-                    Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
+            if (boss.paths[0] || boss.paths[1]) {
+                if (boss.paths[0] && Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[0].getBounds(), player.body)) {
+                    beamPlayer(boss.damage, this);
+                }
+                if (boss.paths[1] && Phaser.Geom.Intersects.RectangleToRectangle(boss.paths[1].getBounds(), player.body)) {
                     beamPlayer(boss.damage, this);
                 }
             }

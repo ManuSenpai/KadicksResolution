@@ -335,6 +335,7 @@ class Level3_2 extends Hostile {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
         player.body.setOffset(player.width / 4, player.height / 4);
@@ -453,11 +454,11 @@ class Level3_2 extends Hostile {
             this.showMap();
         }
 
-        if (player.x < 64  * scaleFactor) { player.x = 64 * scaleFactor; }
+        if (player.x < 64 * scaleFactor) { player.x = 64 * scaleFactor; }
         if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
         if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
         if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }
-        
+
         trashbots.children.iterate((bot) => {
             bot.move();
         })

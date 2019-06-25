@@ -418,7 +418,7 @@ function spawnKey(context) {
 }
 
 function pickKey() {
-pickKeyFX.play();
+    pickKeyFX.play();
     currentPosition.keyIsTaken = true;
     keycard.destroy();
     playerStats.KEYCODES++;
@@ -448,7 +448,7 @@ class Level3 extends Phaser.Scene {
         let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         let scaleWidth = window.innerWidth / STANDARD_WIDTH;
         // scaleFactor = Math.min(scaleHeight, scaleWidth);
-        scaleFactor = (scaleHeight + scaleWidth)/2;
+        scaleFactor = (scaleHeight + scaleWidth) / 2;
     }
     create() {
         window.onresize = () => this.scene.restart();
@@ -507,9 +507,10 @@ class Level3 extends Phaser.Scene {
         if (entrance === 'up') { player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 192 * scaleFactor, 'player'); }
         if (entrance === 'left') { player = this.physics.add.sprite(window.innerWidth - 192 * scaleFactor, window.innerHeight / 2, 'player'); }
         if (entrance === 'right') { player = this.physics.add.sprite(192 * scaleFactor, window.innerHeight / 2, 'player'); }
-        
+
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         this.physics.world.enable(player);
 
@@ -536,8 +537,8 @@ class Level3 extends Phaser.Scene {
         healthBarBg = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.MAX_HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0x000000');
         healthBarBg.setOrigin(1, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
-        healthBar.setOrigin(1, 0.5);
+        healthBar = this.add.rectangle((window.innerWidth - 120 * scaleFactor) - playerStats.MAX_HEALTH * 2 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
+        healthBar.setOrigin(0, 0.5);
 
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);
@@ -629,7 +630,7 @@ class Level3 extends Phaser.Scene {
             }
         }
 
-        if (player.x < 64  * scaleFactor) { player.x = 64 * scaleFactor; }
+        if (player.x < 64 * scaleFactor) { player.x = 64 * scaleFactor; }
         if (player.y < 64 * scaleFactor) { player.y = 64 * scaleFactor; }
         if (player.x > window.innerWidth - 64 * scaleFactor) { player.x = window.innerWidth - 70 * scaleFactor; }
         if (player.y > window.innerHeight - 64 * scaleFactor) { player.y = window.innerHeight - 70 * scaleFactor; }

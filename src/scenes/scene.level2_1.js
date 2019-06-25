@@ -68,7 +68,7 @@ let scaleFactor;
 
 function tacklePlayer(player, enemy) {
     hitFX.play();
-    if ( enemy.isCharging ) { enemy.tackle(player); }
+    if (enemy.isCharging) { enemy.tackle(player); }
     meleeHitPlayer.call(this, player, enemy);
 }
 
@@ -354,6 +354,7 @@ class Level2_1 extends Hostile {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
         player.body.setOffset(player.width / 4, player.height / 4);

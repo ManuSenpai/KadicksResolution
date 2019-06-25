@@ -49,6 +49,7 @@ class Trashbot extends Enemy {
         if (this.alive) {
             let newTrail = this.scene.add.sprite(this.x, this.y, 'trashtrail');
             newTrail.setScale(this.scaleFactor);
+            newTrail.setDepth(0);
             this.trailgroup.add(newTrail);
             newTrail.z = 2;
             this.trailAnimation = this.scene.tweens.add({

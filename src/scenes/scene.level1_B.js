@@ -70,9 +70,9 @@ function hitPlayer(player, laser) {
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
-        this.hitArmor( laser.damage );
+        this.hitArmor(laser.damage);
     } else {
-        this.hitHealth( laser.damage );
+        this.hitHealth(laser.damage);
         if (playerStats.HEALTH <= 0) {
             this.scene.start("Continue", {
                 score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
@@ -94,9 +94,9 @@ function beamPlayer(damage, context) {
         if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
         timerUntilRecovery = context.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: context, loop: false });
         if (playerStats.ARMOR > 0) {
-            context.hitArmor( damage );
+            context.hitArmor(damage);
         } else {
-            context.hitHealth( damage );
+            context.hitHealth(damage);
             if (playerStats.HEALTH <= 0) {
                 context.scene.start("Continue", {
                     score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
@@ -229,6 +229,7 @@ class Level1_B extends Hostile {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
         player.body.setOffset(player.width / 4, player.height / 4);
@@ -245,7 +246,7 @@ class Level1_B extends Hostile {
         });
 
         /* NOSS */
-        boss = new Boss1(this, window.innerWidth/2, BOSS_VALUES.y * scaleFactor, BOSS_VALUES.type, BOSS_VALUES.scale * scaleFactor, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed * scaleFactor, BOSS_VALUES.score, scaleFactor);
+        boss = new Boss1(this, window.innerWidth / 2, BOSS_VALUES.y * scaleFactor, BOSS_VALUES.type, BOSS_VALUES.scale * scaleFactor, BOSS_VALUES.rotation, BOSS_VALUES.health, BOSS_VALUES.damage, BOSS_VALUES.speed * scaleFactor, BOSS_VALUES.score, scaleFactor);
 
         /* UI */
         scoreText = this.make.text(configScoreText);

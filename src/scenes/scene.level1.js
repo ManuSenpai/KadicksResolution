@@ -513,6 +513,7 @@ class Level1 extends Phaser.Scene {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         this.physics.world.enable(player);
 
@@ -540,8 +541,8 @@ class Level1 extends Phaser.Scene {
         healthBarBg = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.MAX_HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0x000000');
         healthBarBg.setOrigin(1, 0.5);
         healthBarBg.alpha = 0.4;
-        healthBar = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
-        healthBar.setOrigin(1, 0.5);
+        healthBar = this.add.rectangle((window.innerWidth - 120 * scaleFactor) - playerStats.MAX_HEALTH * 2 * scaleFactor, (window.innerHeight - 36 * scaleFactor), playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
+        healthBar.setOrigin(0, 0.5);
 
         if (currentPosition.isKey && currentPosition.isClear && !currentPosition.keyIsTaken) {
             spawnKey(this);

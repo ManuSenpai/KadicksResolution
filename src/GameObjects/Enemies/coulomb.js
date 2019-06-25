@@ -78,7 +78,12 @@ class Coulomb extends Enemy {
         this.crashFX.play();
         clearTimeout(this.chargeTimeOut);
 
-        setTimeout(() => {
+        if ( this.x < 0 || this.x > window.innerWidth || this.y < 0 || this.y > window.innerHeight ) {
+            this.x = window.innerWidth / 2;
+            this.y = window.innerHeight / 2;
+        }
+
+        this.stunTimeOut = setTimeout(() => {
             this.isStunned = false;
             this.chargeTimeOut = setTimeout(this.startCharge.bind(this), TIME_BETWEEN_CHARGES);
         }, STUN_TIME);
@@ -109,6 +114,8 @@ class Coulomb extends Enemy {
     }
 
     die() {
+        if ( this.stunTimeOut ){ clearTimeout( this.stunTimeOut ); }
+        if ( this.chargeTimeOut ){ clearTimeout( this.chargeTimeOut ); }
         this.setActive(false);
         this.setVisible(false);
         this.destroy();

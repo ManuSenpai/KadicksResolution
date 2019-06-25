@@ -629,8 +629,8 @@ class Hostile extends Phaser.Scene {
         this.healthBarBg.setOrigin(1, 0.5);
         this.healthBarBg.alpha = 0.4;
         if (this.healthBar) this.healthBar.destroy();
-        this.healthBar = this.add.rectangle(window.innerWidth - 120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
-        this.healthBar.setOrigin(1, 0.5);
+        this.healthBar = this.add.rectangle( (window.innerWidth - 120 * scaleFactor) - this.playerStats.MAX_HEALTH * 2 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
+        this.healthBar.setOrigin(0, 0.5);
     }
 
     hitArmor(damage) {

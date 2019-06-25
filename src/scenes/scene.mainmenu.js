@@ -52,7 +52,7 @@ class Main_menu extends Phaser.Scene {
         i18n = this.cache.json.get(this.playerStats.LANGUAGE);
         currentLanguage = this.playerStats.LANGUAGE;
         // Doing this we reset the player stats if we come from the credits
-        this.playerStats = difficulty.default[this.playerStats.DIFFICULTY].PLAYER_STATS;
+        this.playerStats = JSON.parse( JSON.stringify(difficulty.default[this.playerStats.DIFFICULTY].PLAYER_STATS)); 
         this.playerStats.LANGUAGE = currentLanguage;
         let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         let scaleWidth = window.innerWidth / STANDARD_WIDTH;
@@ -62,7 +62,7 @@ class Main_menu extends Phaser.Scene {
 
     create() {
         window.onresize = () => this.scene.restart();
-
+        this.playerStats.LEVEL = 0;
         // floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         this.cameras.main.setBackgroundColor('#880070');
         // this.playbutton = this.add.text( window.innerWidth/2, window.innerHeight/2, "NEW GAME", { fill: '#0f0' } )
@@ -105,9 +105,8 @@ class Main_menu extends Phaser.Scene {
         button.setFontSize(40 * scaleFactor);
     }
     newGamePointerDown(seeIntro = true) {
-        // this.scene.start("Scene_play", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
-        // this.scene.start("Level1", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
-        // this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
+        // this.playerStats = difficulty.default[this.playerStats.DIFFICULTY].PLAYER_STATS;
+        // this.playerStats.LEVEL = 0;
         if (seeIntro) { this.scene.start("Opening", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats }); } else {
             this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
         }

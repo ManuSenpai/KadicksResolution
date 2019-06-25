@@ -107,7 +107,7 @@ function hitEnemy(enemy, laser) {
     } else {
         bossLifeBarGr.clear();
         bossLifeBarGr.fillGradientStyle(0x0000ff, 0x00ff, 0x00ffff, 0x00ffff, 1);
-        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246 * scaleFactor), (window.innerHeight - 48 * scaleFactor), boss.health * (492 * scaleFactor/ BOSS_VALUES.health), 16 * scaleFactor);
+        bossLifeBarGr.fillRect((window.innerWidth / 2 - 246 * scaleFactor), (window.innerHeight - 48 * scaleFactor), boss.health * (492 * scaleFactor / BOSS_VALUES.health), 16 * scaleFactor);
     }
 
     scoreText.setText('SCORE: ' + score);
@@ -175,22 +175,22 @@ class Level3_B extends Hostile {
 
         /* ### SCENARIO: BASIC ### */
         // FLOOR
-        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+        floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor3');
 
         // WALLS
-        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
-        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot1');
-        leftwall = this.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
-        rightwall = this.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright1');
+        topwall = this.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot3');
+        botwall = this.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot3');
+        leftwall = this.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright3');
+        rightwall = this.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright3');
 
         // CORNERS
-        topleft = this.physics.add.sprite(0, 0, 'topleft1');
+        topleft = this.physics.add.sprite(0, 0, 'topleft3');
         topleft.setScale(2 * scaleFactor);
-        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright1');
+        topright = this.physics.add.sprite(window.innerWidth, 0, 'topright3');
         topright.setScale(2 * scaleFactor);
-        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft1');
+        botleft = this.physics.add.sprite(0, window.innerHeight - 5, 'botleft3');
         botleft.setScale(2 * scaleFactor);
-        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright1');
+        botright = this.physics.add.sprite(window.innerWidth, window.innerHeight - 5, 'botright3');
         botright.setScale(2 * scaleFactor);
 
 
@@ -202,6 +202,7 @@ class Level3_B extends Hostile {
 
         player.setScale(0.3 * scaleFactor);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         player.body.setSize(player.width / 2, player.height / 2);
         player.body.setOffset(player.width / 4, player.height / 4);
