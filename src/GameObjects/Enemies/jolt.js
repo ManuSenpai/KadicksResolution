@@ -10,20 +10,29 @@ class Jolt extends Enemy {
     shieldTime = 3000;
     scene;
     lastFired;
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scalefactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         this.speed = speed;
-        this.body.setVelocity(speed, speed, 0);
+        this.scalefactor = scalefactor;
+        this.setDepth(3);
+        this.body.setVelocity(speed * scalefactor, speed * scalefactor, 0);
         this.score = score;
         scene.add.existing(this);
         this.shield = scene.add.sprite(this.x + this.width / 2, 0, 'joltshield');
+        this.shield.setOrigin(0.5, 0.5);
+        this.shield.setScale(scalefactor);
+        this.shield.setDepth(3);
         this.weapon = scene.add.sprite(this.x, 0, 'joltweapon');
+        this.weapon.setOrigin(0.5, 0.5);
+        this.weapon.setScale(scalefactor);
+        this.weapon.setDepth(3);
         this.forcefield = this.scene.add.sprite(this.x, this.y, 'joltforcefield');
         this.forcefield.setOrigin(0.5, 0.5);
-        this.forcefield.setScale(1.5);
+        this.forcefield.setScale(1.5 * this.scalefactor);
         this.scene.physics.world.enable(this.forcefield);
         this.forcefield.body.setBounce(0, 0);
+        this.forcefield.setDepth(4);
         this.disableForcefield();
         this.scene = scene;
         this.lastFired = 0;
@@ -36,7 +45,7 @@ class Jolt extends Enemy {
         if (this.forcefield) {
             this.forcefield.setVisible(true);
             this.forcefield.setActive(true);
-            this.forcefield.setScale(1.5);
+            this.forcefield.setScale(1.5 * this.scalefactor);
             if ( this.forcefield.body ) { this.forcefield.body.setCircle(85, -21, -21); }
         }
     }
@@ -56,16 +65,16 @@ class Jolt extends Enemy {
      * @param target Gameobject: Target that the enemy will chase
      */
     move(target) {
-        this.shield.x = this.x + this.width / 3;
+        this.shield.x = this.x + this.width * this.scalefactor / 3;
         this.shield.y = this.y;
         this.weapon.x = this.x;
-        this.weapon.y = this.y - this.height / 3;
+        this.weapon.y = this.y - this.height * this.scalefactor / 3;
         if (this.isForceFieldOn && this.forcefield) {
             this.forcefield.x = this.x;
             this.forcefield.y = this.y;
         }
         let angle = Phaser.Math.Angle.Between(this.x, this.y, target.x + this.scene.cameras.main.scrollX, target.y + this.scene.cameras.main.scrollY);
-        let velocity = this.scene.physics.velocityFromRotation(angle, this.speed);
+        let velocity = this.scene.physics.velocityFromRotation(angle, this.speed * this.scalefactor);
         this.body.setVelocity(velocity.x, velocity.y, 0);
     }
 
@@ -89,6 +98,7 @@ class Jolt extends Enemy {
     onDestroy() {
         this.shield.destroy();
         this.weapon.destroy();
+        if ( this.activatedTimeOut ) { clearTimeout( this.activatedTimeOut ); }
         if (this.isForceFieldOn && this.forcefield) { this.forcefield.destroy(); }
     }
 }

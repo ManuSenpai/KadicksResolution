@@ -11,11 +11,12 @@ class Wavebender extends Enemy {
     circleTween;
     target;
     resetWaveTimeout;
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scaleFactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         this.speed = speed;
         this.score = score;
+        this.scaleFactor = scaleFactor;
         scene.add.existing(this);
         this.fireWave();
         this.setDepth(2);
@@ -46,7 +47,7 @@ class Wavebender extends Enemy {
 
         this.circleTween = this.scene.tweens.add({
             targets: this.circle,
-            radius: WAVE_RADIUS,
+            radius: WAVE_RADIUS * this.scaleFactor,
             ease: 'Quintic.easeInOut',
             duration: 1500,
             opacity: 0,

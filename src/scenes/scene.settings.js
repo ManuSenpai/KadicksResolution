@@ -1,5 +1,11 @@
 import * as difficulty from '../settings/difficulty.js'
 
+const STANDARD_WIDTH = 1536;
+
+const STANDARD_HEIGHT = 720;
+
+var scaleFactor;
+
 const ACTIVE_COLOR = "#FFDA2F";
 const UNACTIVE_COLOR = "#FFF"
 
@@ -36,19 +42,22 @@ class Settings extends Phaser.Scene {
         this.playerStats = data.playerStats;
         i18n = this.cache.json.get(this.playerStats.LANGUAGE);
         this.currentLanguage = this.playerStats.LANGUAGE;
+        let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        let scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = Math.min(scaleHeight, scaleWidth);
     }
     create() {
         window.onresize = () => this.scene.restart();
-        this.background = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
-        
+        // this.background = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
+        this.cameras.main.setBackgroundColor('#880070');
 
         this.settingsTitle = this.make.text(SettingsText).setText(i18n.SETTINGS.TITLE);
-        this.settingsTitle.setOrigin(0.5);
+        this.settingsTitle.setOrigin(0.5).setX(window.innerWidth/2).setY(window.innerHeight/4).setFontSize(60 * scaleFactor);
 
-        this.difficultyTitle = this.make.text(SettingsText).setText(i18n.SETTINGS.DIFFICULTY.SELECT).setY(innerHeight * 1 / 3).setFontSize(50);
-        this.difficultyTitle.setOrigin(0.5);
+        this.difficultyTitle = this.make.text(SettingsText).setText(i18n.SETTINGS.DIFFICULTY.SELECT);
+        this.difficultyTitle.setOrigin(0.5).setX(window.innerWidth/2).setY(window.innerHeight * 1 / 3).setFontSize(50 * scaleFactor);
 
-        this.easyBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.EASY).setY(innerHeight * 1 / 2).setFontSize(40)
+        this.easyBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.EASY).setX(window.innerWidth/2).setY(innerHeight * 1 / 2).setFontSize(40 * scaleFactor)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('EASY'))
             .on('pointerover', () => this.onButtonOver(this.easyBtn))
@@ -56,7 +65,7 @@ class Settings extends Phaser.Scene {
         this.easyBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'EASY') { this.easyBtn.setColor(ACTIVE_COLOR); }
 
-        this.normalBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.NORMAL).setY((innerHeight * 1 / 2) + 80).setFontSize(40)
+        this.normalBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.NORMAL).setX(window.innerWidth/2).setY((innerHeight * 1 / 2) + 80 * scaleFactor).setFontSize(40 * scaleFactor)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('NORMAL'))
             .on('pointerover', () => this.onButtonOver(this.normalBtn))
@@ -64,7 +73,7 @@ class Settings extends Phaser.Scene {
         this.normalBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'NORMAL') { this.normalBtn.setColor(ACTIVE_COLOR); }
 
-        this.hardBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.HARD).setY((innerHeight * 1 / 2) + 160).setFontSize(40)
+        this.hardBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.HARD).setX(window.innerWidth/2).setY((innerHeight * 1 / 2) + 160 * scaleFactor).setFontSize(40 * scaleFactor)
             .setInteractive()
             .on('pointerdown', () => this.setDifficulty('HARD'))
             .on('pointerover', () => this.onButtonOver(this.hardBtn))
@@ -72,7 +81,7 @@ class Settings extends Phaser.Scene {
         this.hardBtn.setOrigin(0.5);
         if( this.playerStats.DIFFICULTY === 'HARD') { this.hardBtn.setColor(ACTIVE_COLOR); }
 
-        this.goBackBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.SAVE).setY((innerHeight * 1 / 2) + 300).setFontSize(50)
+        this.goBackBtn = this.make.text(optionsText).setText(i18n.SETTINGS.DIFFICULTY.SAVE).setX(window.innerWidth/2).setY((innerHeight * 1 / 2) + 300 * scaleFactor).setFontSize(50 * scaleFactor)
             .setInteractive()
             .on('pointerdown', () => this.goBackToMenu())
             .on('pointerover', () => this.onButtonOver(this.goBackBtn))
@@ -80,10 +89,10 @@ class Settings extends Phaser.Scene {
         this.goBackBtn.setOrigin(0.5);
     }
     onButtonOver(button) {
-        button.setFontSize(50);
+        button.setFontSize(50 * scaleFactor);
     }
     onButtonOut(button) {
-        button.setFontSize(40);
+        button.setFontSize(40 * scaleFactor);
     }
     setDifficulty(diffValue) {
         switch (diffValue) {

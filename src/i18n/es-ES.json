@@ -67,14 +67,6 @@
             "ASÍ ES COMO OS HIZO ASIMOV."
         ],
         [
-            "TÚ NO PIENSAS.",
-            "TÚ NO OPINAS.",
-            "SIMPLEMENTE OBEDECES.",
-            "",
-            "ESTA LEY IMPERA EN TODOS LOS GUARDIANES.",
-            "ASÍ ES COMO OS HIZO ASIMOV."
-        ],
-        [
             "SIN EMBARGO, DURANTE LA ÚLTIMA ACTUALIZACIÓN",
             "DE SEGURIDAD ALGO CAMBIÓ.",
             "",
@@ -173,13 +165,13 @@
         "KADICK'S RESOLUTION"
     ],
     "CONTROLS" : {
-        "MOVEMENT" : "MOVIMIENTO DEL JUGADOR",
-        "SHOOT" : [ "DISPARA CON", "CLICK IZQUIERDO"],
-        "POWERUPS" : ["RECOGE POWER-UPS", "PARA HACERTE PODEROSO"],
-        "ATTKUP" : "AUMENTA EL ATAQUE",
-        "RTHMUP" : "MEJORA EL CADENCIA",
-        "MAXLIFEUP" : ["AUMENTA MAXIMA VIDA", "Y ESCUDO"],
-        "HEAL" : "RECUPERA VIDA",
+        "MOVEMENT": "MOVIMIENTO DEL JUGADOR",
+        "SHOOT": [ "DISPARA CON", "CLICK IZQUIERDO"],
+        "POWERUPS": ["RECOGE POWER-UPS", "PARA HACERTE PODEROSO"],
+        "ATTKUP": "AUMENTA EL ATAQUE",
+        "RTHMUP": "MEJORA EL CADENCIA",
+        "MAXLIFEUP": ["AUMENTA MAXIMA VIDA", "Y ESCUDO"],
+        "HEAL": "RECUPERA VIDA",
         "KEYS": ["RECOGE 3 LLAVES PARA", "LUCHAR CONTRA EL BOSS", "DE CADA NIVEL"],
         "BACK": "<- VOLVER AL MENÚ"
     }

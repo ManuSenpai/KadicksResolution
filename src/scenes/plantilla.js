@@ -321,6 +321,7 @@ class Level1_1 extends Hostile {
         player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
+player.setDepth(10);
         player.setCollideWorldBounds(true);
         this.physics.world.enable(player);
 

@@ -1,10 +1,13 @@
+const STANDARD_WIDTH = 1536;
+
+const STANDARD_HEIGHT = 720;
+
 var SettingsText = {
     x: window.innerWidth / 2,
     y: window.innerHeight * 1 / 4,
     text: 'SETTINGS',
     style: {
         fontFamily: 'kadick',
-        fontSize: 60,
         fontStyle: 'bold',
         align: 'center'
     }
@@ -12,7 +15,6 @@ var SettingsText = {
 
 var languageText = {
     style: {
-        fontSize: 40,
         fontStyle: 'bold',
         align: 'center'
     }
@@ -20,6 +22,8 @@ var languageText = {
 
 var currentLanguage = "es";
 var i18n;
+
+var scaleFactor;
 
 const ACTIVE_COLOR = "#FFDA2F";
 const UNACTIVE_COLOR = "#FFF"
@@ -44,9 +48,15 @@ class LanguageSelect extends Phaser.Scene {
         this.configScoreText = data.configScoreText;
         this.playerStats = data.playerStats;
         this.score = data.score;
+        let scaleHeight = window.innerHeight / STANDARD_HEIGHT;
+        let scaleWidth = window.innerWidth / STANDARD_WIDTH;
+        scaleFactor = Math.min(scaleHeight, scaleWidth);
+        this.acceptEnabled = false;
     }
     create() {
-        window.onresize = () => this.scene.restart();
+        window.onresize = () =>  { 
+            this.scene.restart();
+        }
 
         /* Getting JSON i18n data */
 
@@ -55,8 +65,11 @@ class LanguageSelect extends Phaser.Scene {
         this.setTexts();
 
         this.spaBtn = this.physics.add.sprite(window.innerWidth / 4, window.innerHeight / 2, 'SPA');
+        this.spaBtn.setScale( scaleFactor );
         this.engBtn = this.physics.add.sprite(window.innerWidth * 3 / 4, window.innerHeight / 2, 'GB');
+        this.engBtn.setScale( scaleFactor );
         this.valBtn = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'VAL');
+        this.valBtn.setScale( scaleFactor );
 
         this.spaBtn.setInteractive()
             .on('pointerdown', () => {
@@ -98,18 +111,18 @@ class LanguageSelect extends Phaser.Scene {
         this.engBtn.setOrigin(0.5);
     }
     onButtonOver(button, text) {
-        button.setScale(1.2);
-        text.setFontSize(50);
+        button.setScale(scaleFactor * 1.2);
+        text.setFontSize(50 * scaleFactor);
     }
     onButtonOut(button, text) {
-        button.setScale(1);
-        text.setFontSize(40);
+        button.setScale(scaleFactor);
+        text.setFontSize(40 * scaleFactor);
     }
     onTextOver(text) {
-        text.setFontSize(50);
+        text.setFontSize(50 * scaleFactor);
     }
     onTextOut(text) {
-        text.setFontSize(40);
+        text.setFontSize(40 * scaleFactor);
     }
 
     setTexts() {
@@ -117,26 +130,30 @@ class LanguageSelect extends Phaser.Scene {
 
         this.languageTitle = this.make.text(SettingsText)
             .setText(i18n.LANGUAGE.TITLE)
+            .setX(window.innerWidth / 2)
             .setY(window.innerHeight * 1 / 5)
-            .setFontSize(50);
+            .setFontSize(50 * scaleFactor);
         this.languageTitle.setOrigin(0.5);
 
         this.spaText = this.make.text(languageText)
             .setText(i18n.LANGUAGE.ES)
             .setX(window.innerWidth / 4)
-            .setY(window.innerHeight * 3 / 4);
+            .setY(window.innerHeight * 3 / 4)
+            .setFontSize(40 * scaleFactor);
         this.spaText.setOrigin(0.5);
 
         this.valText = this.make.text(languageText)
             .setText(i18n.LANGUAGE.VA)
             .setX(window.innerWidth / 2)
-            .setY(window.innerHeight * 3 / 4);
+            .setY(window.innerHeight * 3 / 4)
+            .setFontSize(40 * scaleFactor);
         this.valText.setOrigin(0.5);
 
         this.engText = this.make.text(languageText)
             .setText(i18n.LANGUAGE.EN)
             .setX(window.innerWidth * 3 / 4)
-            .setY(window.innerHeight * 3 / 4);
+            .setY(window.innerHeight * 3 / 4)
+            .setFontSize(40 * scaleFactor);
         this.engText.setOrigin(0.5);
     }
 
@@ -153,7 +170,8 @@ class LanguageSelect extends Phaser.Scene {
             this.confirmText = this.make.text(languageText)
                 .setText(i18n.LANGUAGE.ACCEPT)
                 .setX(window.innerWidth / 2)
-                .setY(window.innerHeight - 64);
+                .setY(window.innerHeight - 64 * scaleFactor )
+                .setFontSize(40 * scaleFactor);
             this.confirmText.setOrigin(0.5);
             this.confirmText.setInteractive()
             .on('pointerdown', () => {

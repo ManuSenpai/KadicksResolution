@@ -17,11 +17,12 @@ class Boss3 extends Enemy {
     bullets;
     attackMode = 1;
 
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scaleFactor) {
         super(scene, x, y, type, scale, rotation, health, damage);
         this.scene = scene;
         scene.physics.world.enable(this);
         this.setScale(scale);
+        this.scaleFactor = scaleFactor;
         this.setOrigin(0.5, 0.5);
         this.rotation = rotation;
         this.speed = speed;
@@ -126,7 +127,7 @@ class Boss3 extends Enemy {
 
         this.animation2.add({
             targets: this,
-            x: window.innerWidth - 128,
+            x: window.innerWidth - 128 * this.scaleFactor,
             y: window.innerHeight / 2,
             ease: 'Power1',
             duration: 2000,
@@ -178,7 +179,7 @@ class Boss3 extends Enemy {
 
         this.animation2.add({
             targets: this,
-            x: 128,
+            x: 128 * this.scaleFactor,
             y: window.innerHeight / 2,
             ease: 'Power1',
             duration: 2000,
@@ -229,12 +230,13 @@ class Boss3 extends Enemy {
 
         for (let i = 0; i < nBullets; i++) {
             let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
+            newBullet.setScale(this.scaleFactor);
             that.bullets.add(newBullet);
             newBullet.body.setCollideWorldBounds(true);
             newBullet.body.onWorldBounds = true;
             that.scene.physics.world.enable(newBullet);
             let angle = i * 45 + offset;
-            let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad(angle > 360 ? angle - 360 : angle), BULLET_SPEED);
+            let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad(angle > 360 ? angle - 360 : angle), BULLET_SPEED * this.scaleFactor);
             newBullet.body.setVelocity(bulletVel.x, bulletVel.y);
             offset += 5;
         }
@@ -277,12 +279,13 @@ class Boss3 extends Enemy {
             if (that.scene) {
                 for (let i = 0; i < 8; i++) {
                     let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
+                    newBullet.setScale( that.scaleFactor );
                     that.bullets.add(newBullet);
                     newBullet.body.setCollideWorldBounds(true);
                     newBullet.body.onWorldBounds = true;
                     that.scene.physics.world.enable(newBullet);
                     let angle = i * 45 + offset;
-                    let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad(angle > 360 ? angle - 360 : angle), BULLET_SPEED);
+                    let bulletVel = that.scene.physics.velocityFromRotation(Phaser.Math.DegToRad(angle > 360 ? angle - 360 : angle), BULLET_SPEED * that.scaleFactor);
                     newBullet.body.setVelocity(bulletVel.x, bulletVel.y);
                     offset += 5;
                 }
@@ -295,9 +298,10 @@ class Boss3 extends Enemy {
             if (that.scene) {
                 let sourcepoint = JSON.parse(JSON.stringify({ x: that.x, y: that.y }));
                 let group = [];
-                var circle = new Phaser.Geom.Circle(sourcepoint.x, sourcepoint.y, 150);
+                var circle = new Phaser.Geom.Circle(sourcepoint.x, sourcepoint.y, 150 * that.scaleFactor);
                 for (let i = 0; i < 8; i++) {
                     let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
+                    newBullet.setScale( that.scaleFactor );
                     group.push(newBullet);
                     that.bullets.add(newBullet);
                     newBullet.body.setCollideWorldBounds(true);
@@ -309,8 +313,8 @@ class Boss3 extends Enemy {
                 // Phaser.Actions.PlaceOnCircle(that.bullets.getChildren(), circle);
 
                 that.shootCircleTween = that.scene.tweens.addCounter({
-                    from: 150,
-                    to: 1500,
+                    from: 150 * that.scaleFactor,
+                    to: 1500 * that.scaleFactor,
                     duration: 3000,
                     delay: 0,
                     ease: 'Sine.easeInOut',

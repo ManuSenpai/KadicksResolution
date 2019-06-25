@@ -30,6 +30,9 @@ const config = {
     height: window.innerHeight - 5,
     parent: "container",
     type: Phaser.AUTO,
+    scale: {
+        mode: Phaser.Scale.RESIZE
+    },
     physics: {
         default: 'arcade',
         arcade: {

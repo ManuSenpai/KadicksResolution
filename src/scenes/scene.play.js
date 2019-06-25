@@ -226,6 +226,7 @@ class Scene_play extends Phaser.Scene {
         player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'player');
         player.setScale(0.3);
         player.setOrigin(0.5, 0.5);
+        player.setDepth(10);
         player.setCollideWorldBounds(true);
         this.physics.world.enable(player);
 
@@ -301,17 +302,17 @@ class Scene_play extends Phaser.Scene {
 
     }
 
-    drawShield( shieldStart1, shieldStart2 ) {
+    drawShield(shieldStart1, shieldStart2) {
         bossShieldGr.clear();
         bossShieldGr.lineStyle(10, 0xff00ff, 1);
         bossShieldGr.beginPath();
 
         // arc (x, y, radius, startAngle, endAngle, anticlockwise)
-        bossShieldGr.arc(window.innerWidth/2, 200, 200, Phaser.Math.DegToRad(shieldStart1), Phaser.Math.DegToRad(shieldStart1 - 90), true);
+        bossShieldGr.arc(window.innerWidth / 2, 200, 200, Phaser.Math.DegToRad(shieldStart1), Phaser.Math.DegToRad(shieldStart1 - 90), true);
         bossShieldGr.strokePath();
         bossShieldGr.closePath();
         bossShieldGr.beginPath();
-        bossShieldGr.arc(window.innerWidth/2, 200, 200, Phaser.Math.DegToRad(shieldStart2), Phaser.Math.DegToRad(shieldStart2 - 90), true);
+        bossShieldGr.arc(window.innerWidth / 2, 200, 200, Phaser.Math.DegToRad(shieldStart2), Phaser.Math.DegToRad(shieldStart2 - 90), true);
         bossShieldGr.strokePath();
     }
 
@@ -342,7 +343,7 @@ class Scene_play extends Phaser.Scene {
             // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
-shootFX.play();
+            shootFX.play();
             var velocity = this.physics.velocityFromRotation(angle, playerStats.LASER_SPEED);
             var currentLaser = new Laser(this, player.x, player.y, 'laser', 0.5, angle, velocity, '0xff38c0', playerStats.DAMAGE);
             lasers.add(currentLaser);

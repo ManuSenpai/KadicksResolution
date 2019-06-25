@@ -17,7 +17,7 @@ class Coulomb extends Enemy {
     chargeTimeOut;
     stunTimeOut;
 
-    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score) {
+    constructor(scene, x, y, type, scale, rotation, health, damage, speed, score, scaleFactor) {
         super(scene, x, y, type, scale, rotation, health, damage, true);
         this.scene = scene;
         this.score = score;
@@ -28,8 +28,8 @@ class Coulomb extends Enemy {
         this.body.maxVelocity.y = this.speed;
         this.body.bounce.x = 1;
         this.body.bounce.y = 1;
-        this.body.setSize(this.body.width / 2, this.body.height / 2);
-        this.body.setOffset(this.body.width / 2, this.body.height / 2);
+        this.body.setSize(this.body.width/2 * scaleFactor, this.body.height/2 * scaleFactor);
+        // this.body.setOffset(this.body.width / 2, this.body.height / 2);
         this.chargeTimeOut = setTimeout(this.startCharge.bind(this), TIME_BETWEEN_CHARGES);
         this.isCharging = false;
         this.isStunned = false;
@@ -78,17 +78,22 @@ class Coulomb extends Enemy {
         this.crashFX.play();
         clearTimeout(this.chargeTimeOut);
 
-        setTimeout(() => {
+        if ( this.x < 0 || this.x > window.innerWidth || this.y < 0 || this.y > window.innerHeight ) {
+            this.x = window.innerWidth / 2;
+            this.y = window.innerHeight / 2;
+        }
+
+        this.stunTimeOut = setTimeout(() => {
             this.isStunned = false;
             this.chargeTimeOut = setTimeout(this.startCharge.bind(this), TIME_BETWEEN_CHARGES);
         }, STUN_TIME);
     }
 
     goBackToField() {
-        if ((this.x - this.width / 2) < 128) { this.x = 129; }
-        if ((this.x + this.width / 2) > window.innerWidth - 128) { this.x = window.innerWidth - 129; }
-        if ((this.y - this.height / 2) < 128) { this.y = 129; }
-        if ((this.y + this.height / 2) > window.innerHeight - 135) { this.y = window.innerHeight - 135; }
+        if ((this.x - this.width / 2) * this.scaleFactor < 128 * this.scaleFactor) { this.x = 129 * this.scaleFactor; }
+        if ((this.x + this.width / 2) * this.scaleFactor > window.innerWidth - 128 * this.scaleFactor) { this.x = window.innerWidth - 129 * this.scaleFactor; }
+        if ((this.y - this.height / 2) * this.scaleFactor < 128 * this.scaleFactor) { this.y = 129 * this.scaleFactor; }
+        if ((this.y + this.height / 2) * this.scaleFactor > window.innerHeight - 135 * this.scaleFactor) { this.y = window.innerHeight - 135 * this.scaleFactor; }
     }
 
     tackle(target) {
@@ -109,6 +114,8 @@ class Coulomb extends Enemy {
     }
 
     die() {
+        if ( this.stunTimeOut ){ clearTimeout( this.stunTimeOut ); }
+        if ( this.chargeTimeOut ){ clearTimeout( this.chargeTimeOut ); }
         this.setActive(false);
         this.setVisible(false);
         this.destroy();
