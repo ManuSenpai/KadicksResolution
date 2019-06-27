@@ -49,6 +49,7 @@ var keyFX;
 var pickKeyFX;
 var shootFX;
 var enemShootFX;
+var sparkFX;
 
 let scaleFactor;
 
@@ -111,10 +112,10 @@ function hitEnemy(enemy, laser) {
     enemy.hit();
     score += 20;
     if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.destroy();
+        sparkFX.play();
         enemy.onDestroy();
+        // enemy.destroy();
+        enemies.remove(enemy);
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
         if (enemies.children.entries.length === 0) {
@@ -227,6 +228,7 @@ class Level1_2 extends Hostile {
         keyFX = this.sound.add('dropkey');
         pickKeyFX = this.sound.add('pickkey');
         enemShootFX = this.sound.add('enemlaser');
+        sparkFX = this.sound.add('spark');
         this.load.on('complete', () => { levelloaded = true; });
         scaleFactor = this.setScaleFactor();
         this.setPlayerStats(playerStats);

@@ -143,8 +143,8 @@ function hitEnemy(enemy, laser) {
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
-        enemy.destroy();
         enemy.onDestroy();
+enemy.destroy();
         stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200 * scaleFactor, 'stairnextlevel');
         stairNextLevel.setScale(0.5 * scaleFactor, 0.5 * scaleFactor);
         this.physics.add.overlap(player, stairNextLevel, nextLevel, null, this);

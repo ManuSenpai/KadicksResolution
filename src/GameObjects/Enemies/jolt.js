@@ -38,6 +38,20 @@ class Jolt extends Enemy {
         this.lastFired = 0;
 
         this.forceFX = scene.sound.add('forcefield');
+
+        this.scene.anims.create({
+            key: 'movejolt',
+            frames: this.scene.anims.generateFrameNumbers('jolt', { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'diejolt',
+            frames: this.scene.anims.generateFrameNumbers('jolt', { start: 6, end: 11 }),
+            frameRate: 10,
+            repeat: 0
+        });
     }
 
     activeForcefield() {
@@ -65,6 +79,7 @@ class Jolt extends Enemy {
      * @param target Gameobject: Target that the enemy will chase
      */
     move(target) {
+        this.anims.play('movejolt', true);
         this.shield.x = this.x + this.width * this.scalefactor / 3;
         this.shield.y = this.y;
         this.weapon.x = this.x;
@@ -96,10 +111,16 @@ class Jolt extends Enemy {
     }
 
     onDestroy() {
-        this.shield.destroy();
-        this.weapon.destroy();
-        if ( this.activatedTimeOut ) { clearTimeout( this.activatedTimeOut ); }
+        this.body.setVelocity(0,0);
         if (this.isForceFieldOn && this.forcefield) { this.forcefield.destroy(); }
+        this.anims.remove('movejolt');
+        this.anims.play('diejolt', true);
+        setTimeout(() => {
+            this.shield.destroy();
+            this.weapon.destroy();
+            if ( this.activatedTimeOut ) { clearTimeout( this.activatedTimeOut ); }
+            this.destroy();
+        }, 1000);
     }
 }
 

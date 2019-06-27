@@ -54,11 +54,12 @@ class Bootloader extends Phaser.Scene {
         /* Enemies L1 */
         this.load.image('turret', "./assets/turret.png");
         // this.load.image('scancatcher1', "./assets/scancatcher1.png");
-        this.load.spritesheet('scancatcher1', "./assets/scancatcherss.png", { frameWidth: 48, frameHeight: 48 });
-        this.load.image('jolt', "./assets/jolt.png");
+        // this.load.image('jolt', "./assets/jolt.png");
         this.load.image('joltshield', "./assets/jolt-shield.png");
         this.load.image('joltweapon', "./assets/jolt-weapon.png");
         this.load.image('joltforcefield', "./assets/jolt-forcefield.png");
+        this.load.spritesheet('scancatcher1', "./assets/scancatcherss.png", { frameWidth: 48, frameHeight: 48 });
+        this.load.spritesheet('jolt', './assets/joltss.png', { frameWidth: 87, frameHeight: 126 });
 
         /* Enemies L2 */
         this.load.image('coulomb', "./assets/coulomb.png");
@@ -76,6 +77,7 @@ class Bootloader extends Phaser.Scene {
         this.load.image('boss2botrg', "./assets/boss2-bot-rg.png");
         this.load.image('boss2rotatable', "./assets/boss2-rotable.png");
         this.load.image('boss3', "./assets/boss3.png");
+        this.load.spritesheet('explosion1', './assets/explosionss.png', { frameWidth: 200, frameHeight: 250 })
         
 
         /* Doors */

@@ -15,6 +15,7 @@ class Scancatcher extends Enemy {
             frameRate: 10,
             repeat: -1
         });
+        
         this.scene.anims.create({
             key: 'die',
             frames: this.scene.anims.generateFrameNumbers('scancatcher1', { start: 4, end: 7 }),

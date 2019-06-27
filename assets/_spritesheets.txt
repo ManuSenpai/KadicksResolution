@@ -1,3 +1,8 @@
 coulombss.png,128,128,3
 scancatcherss.png,192,48,2
 scancatcherdie.png,48,48,4
+joltdie.png,87,126,6
+boss1mov.png,252,236,4
+boss2mov.png,128,128,4
+boss3mov.png,128,196,4
+joltmove.png,87,126,6
