@@ -61,6 +61,7 @@ var shootFX;
 var hitFX;
 var hit2FX;
 var enemShootFX;
+var explosionFX;
 
 var scaleFactor;
 
@@ -124,6 +125,7 @@ function hitEnemy(enemy, laser) {
     if (enemy.health <= 0) {
         enemy.setActive(false);
         enemy.setVisible(false);
+        displayExplosion(enemy, this);
         enemy.destroy();
         enemy.onDestroy();
         stairNextLevel = this.physics.add.sprite(window.innerWidth / 2, 200 * scaleFactor, 'stairnextlevel');
@@ -137,6 +139,23 @@ function hitEnemy(enemy, laser) {
         this.setScore(score);
     }
     scoreText.setText('SCORE: ' + score);
+}
+
+function displayExplosion(enemy, context) {
+    explosionFX.play();
+    let explosion = context.physics.add.sprite( enemy.x, enemy.y, 'explosion1');
+    explosion.setScale(scaleFactor);
+    explosion.setDepth(10);
+    context.anims.create({
+        key: 'explosion',
+        frames: context.anims.generateFrameNumbers('explosion1', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: 0
+    });
+    explosion.play('explosion');
+    setTimeout( () => {
+        explosion.destroy();
+    }, 600);
 }
 
 function nextLevel() {
@@ -189,6 +208,7 @@ class Level1_B extends Hostile {
         scaleFactor = this.setScaleFactor();
         shootFX = this.sound.add('laser');
         enemShootFX = this.sound.add('enemlaser');
+        explosionFX = this.sound.add('explosion');
         hitFX = this.sound.add('hit1');
         hit2FX = this.sound.add('hit2');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });

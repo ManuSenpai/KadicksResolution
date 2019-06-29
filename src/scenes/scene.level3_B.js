@@ -56,6 +56,7 @@ var hittable = true;
 // AUDIO
 var shootFX;
 var hit2FX;
+var explosionFX;
 
 let scaleFactor;
 
@@ -100,6 +101,7 @@ function hitEnemy(enemy, laser) {
         if (enemy.health <= 0) {
             enemy.setActive(false);
             enemy.setVisible(false);
+            displayExplosion(enemy, this);
             enemy.onDestroy();
             enemy.destroy();
             this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats });
@@ -111,6 +113,23 @@ function hitEnemy(enemy, laser) {
     }
 
     scoreText.setText('SCORE: ' + score);
+}
+
+function displayExplosion(enemy, context) {
+    explosionFX.play();
+    let explosion = context.physics.add.sprite( enemy.x, enemy.y, 'explosion1');
+    explosion.setScale(scaleFactor);
+    explosion.setDepth(10);
+    context.anims.create({
+        key: 'explosion',
+        frames: context.anims.generateFrameNumbers('explosion1', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: 0
+    });
+    explosion.play('explosion');
+    setTimeout( () => {
+        explosion.destroy();
+    }, 600);
 }
 
 function nextLevel() {
@@ -162,6 +181,7 @@ class Level3_B extends Hostile {
         this.setPlayerStats(playerStats);
         shootFX = this.sound.add('laser');
         hit2FX = this.sound.add('hit2');
+        explosionFX = this.sound.add('explosion');
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         cursors = this.input.keyboard.addKeys(

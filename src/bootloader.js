@@ -81,6 +81,7 @@ class Bootloader extends Phaser.Scene {
         this.load.image('boss2rotatable', "./assets/boss2-rotable.png");
         this.load.image('boss3', "./assets/boss3.png");
         this.load.spritesheet('explosion1', './assets/explosionss.png', { frameWidth: 200, frameHeight: 250 })
+
         
 
         /* Doors */
@@ -156,6 +157,7 @@ class Bootloader extends Phaser.Scene {
         this.load.audio('crash', ['./assets/audio/crash.mp3']);
         this.load.audio('dropkey', ['./assets/audio/dropkey.mp3']);
         this.load.audio('elecestatica', ['./assets/audio/elecestatica.mp3']);
+        this.load.audio('explosion', ['./assets/audio/explosion.mp3']);
         this.load.audio('fire', ['./assets/audio/fire.mp3']);
         this.load.audio('forcefield', ['./assets/audio/forcefield.mp3']);
         this.load.audio('hit1', ['./assets/audio/hit1.mp3']);
