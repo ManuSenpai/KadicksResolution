@@ -173,7 +173,7 @@ function generateEnemies(context) {
                 : entrance === "left" ? Phaser.Math.Between(256 * scaleFactor, player.x - 64 * scaleFactor) : Phaser.Math.Between(256 * scaleFactor, window.innerWidth - 256 * scaleFactor),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64 * scaleFactor, window.innerHeight - 256 * scaleFactor)
                 : entrance === "up" ? Phaser.Math.Between(256 * scaleFactor, player.y - 64 * scaleFactor) : Phaser.Math.Between(256 * scaleFactor, window.innerHeight - 256 * scaleFactor),
-            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 100, damage: 20, speed: 80, score: 350
+            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 60, damage: 20, speed: 80, score: 350
         })
     }
 

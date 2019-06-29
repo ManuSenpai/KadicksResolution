@@ -6,8 +6,8 @@ import Scancatcher from '../GameObjects/Enemies/scancatcher.js';
 import Boss1 from '../GameObjects/Enemies/boss1.js';
 import Hostile from './scene.hostile.js';
 
-const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 },
-{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 100, damage: 20, speed: 50, score: 350 }];
+const ENEMY_VALUES = [{ x: 80, y: 80, type: 'scancatcher1', scale: 2, rotation: 0, health: 60, damage: 20, speed: 50, score: 350 },
+{ x: 400, y: 450, type: 'scancatcher1', scale: 2, rotation: 0, health: 60, damage: 20, speed: 50, score: 350 }];
 
 const TURRET_VALUES = [{ x: 64, y: 64, health: 50, damage: 5 }, { x: (window.innerWidth - 64), y: 64, health: 50, damage: 5 }];
 const LASER_VALUES = [

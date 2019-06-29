@@ -379,6 +379,7 @@ class Level1_2 extends Hostile {
                     enemShootFX.play();
                     var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED * scaleFactor);
                     var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5 * scaleFactor, weaponAngle, velocity, '0x77abff', enem.damage);
+                    currentLaser.setDepth(5);
                     enemyLasers.add(currentLaser);
                     enem.lastFired = time + TURRET_FIRE_RATE;
                 }

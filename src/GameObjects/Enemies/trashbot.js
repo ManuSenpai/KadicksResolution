@@ -151,6 +151,7 @@ class Trashbot extends Enemy {
         });
         this.trailAnimation = null;
         this.alive = false;
+        this.destroy();
     }
 }
 

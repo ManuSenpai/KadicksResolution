@@ -250,7 +250,7 @@ function generateMinions(context) {
                 : entrance === "left" ? Phaser.Math.Between(256, player.x - 64) : Phaser.Math.Between(256, window.innerWidth - 256),
             y: entrance === "down" ? Phaser.Math.Between(player.y + 64, window.innerHeight - 256)
                 : entrance === "up" ? Phaser.Math.Between(256, player.y - 64) : Phaser.Math.Between(256, window.innerHeight - 256),
-            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 100, damage: 20, speed: 80 * scaleFactor, score: 350
+            type: 'scancatcher1', scale: 2 * scaleFactor, rotation: 0, health: 60, damage: 20, speed: 80 * scaleFactor, score: 350
         })
     }
 

@@ -60,6 +60,7 @@ var hit2FX;
 var pickKeyFX;
 var shootFX;
 var enemShootFX;
+var sparkFX;
 
 let scaleFactor;
 
@@ -134,7 +135,7 @@ function untangleFromBumps(bump, agent) {
     if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
-function hitEnemy(enemy, laser) {
+function hitTrashbot(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
     laser.setActive(false);
@@ -143,10 +144,35 @@ function hitEnemy(enemy, laser) {
     if (enemy.hasOwnProperty('hit')) { enemy.hit(); }
     score += 20;
     if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
+        enemy.active = false;
+        sparkFX.play();
         enemy.onDestroy();
-        enemy.destroy();
+        trashbots.remove(enemy);
+        // enemy.destroy();
+        this.dropItems(player, enemy.x, enemy.y);
+        // Life value has changed as the medikit has been taken
+        if (enemies.children.entries.length === 0 && trashbots.children.entries.length === 0) {
+            clearArea.apply(this);
+        }
+        score += enemy.score;
+        this.setScore(score);
+    }
+    scoreText.setText('SCORE: ' + score);
+}
+
+function hitJolt(enemy, laser) {
+    enemy.health -= laser.damage;
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
+    laser.destroy();
+    enemy.hit();
+    score += 20;
+    if (enemy.health <= 0) {
+        sparkFX.play();
+        enemy.onDestroy();
+        // enemy.destroy();
+        enemies.remove(enemy);
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
         if (enemies.children.entries.length === 0 && trashbots.children.entries.length === 0) {
@@ -300,6 +326,7 @@ class Level2_2 extends Hostile {
         hitFX = this.sound.add('hit1');
         hit2FX = this.sound.add('hit2');
         pickKeyFX = this.sound.add('pickkey');
+        sparkFX = this.sound.add('spark');
         enemShootFX = this.sound.add('enemlaser');
         this.load.on('complete', () => { levelloaded = true; });
         scaleFactor = this.setScaleFactor();
@@ -362,8 +389,8 @@ class Level2_2 extends Hostile {
         this.physics.add.collider(trashbots, enemies, bounceOnWalls, null, this);
         this.physics.add.collider(player, enemies, meleeHit, null, this);
         this.physics.add.collider(enemies, lasers);
-        this.physics.add.overlap(enemies, lasers, hitEnemy, null, this);
-        this.physics.add.overlap(trashbots, lasers, hitEnemy, null, this);
+        this.physics.add.overlap(enemies, lasers, hitJolt, null, this);
+        this.physics.add.overlap(trashbots, lasers, hitTrashbot, null, this);
         enemies.children.iterate((enem) => {
             this.physics.add.overlap(enem.forcefield, lasers, hitShield, null, this);
         })
@@ -489,6 +516,7 @@ class Level2_2 extends Hostile {
                     enemShootFX.play();
                     var velocity = this.physics.velocityFromRotation(weaponAngle, TURRET_LASER_SPEED * scaleFactor);
                     var currentLaser = new Laser(this, enem.weapon.x, enem.weapon.y, 'laser', 0.5 * scaleFactor, weaponAngle, velocity, '0x77abff', enem.damage);
+                    currentLaser.setDepth(5);
                     enemyLasers.add(currentLaser);
                     enem.lastFired = time + TURRET_FIRE_RATE;
                 }
