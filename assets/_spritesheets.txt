@@ -6,3 +6,4 @@ boss1mov.png,252,236,4
 boss2mov.png,128,128,4
 boss3mov.png,128,196,4
 joltmove.png,87,126,6
+coulombdie.png,128,128,6

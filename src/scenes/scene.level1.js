@@ -79,6 +79,8 @@ var keyFX;
 var pickKeyFX;
 var shootFX;
 
+let alreadyCrossedDoor;
+
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
@@ -98,77 +100,91 @@ function startRecovery() {
 }
 
 function goDown() {
-    botleftdooropen.destroy();
-    botrightdooropen.destroy();
-    var levelToGo;
-    if (currentPosition.whereIsBoss === 'bot') {
-        levelToGo = 'level1_B';
-    } else {
-        if (scenario[currentPosition.x][currentPosition.y + 1].isClear) {
-            levelToGo = 'Level1';
+    if (!alreadyCrossedDoor) {
+        botleftdooropen.destroy();
+        botrightdooropen.destroy();
+        var levelToGo;
+        if (currentPosition.whereIsBoss === 'bot') {
+            levelToGo = 'level1_B';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            if (scenario[currentPosition.x][currentPosition.y + 1].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            }
         }
+        this.scene.start(levelToGo, {
+            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+            currentPosition: scenario[currentPosition.x][currentPosition.y + 1], entrance: 'down'
+        });
+        alreadyCrossedDoor = true;
     }
-    this.scene.start(levelToGo, {
-        score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: scenario[currentPosition.x][currentPosition.y + 1], entrance: 'down'
-    });
 }
 function goUp() {
-    topleftdooropen.destroy();
-    toprightdooropen.destroy();
-    var levelToGo;
-    if (currentPosition.whereIsBoss === 'top') {
-        levelToGo = 'level1_B';
-    } else {
-        if (scenario[currentPosition.x][currentPosition.y - 1].isClear) {
-            levelToGo = 'Level1';
+    if (!alreadyCrossedDoor) {
+        topleftdooropen.destroy();
+        toprightdooropen.destroy();
+        var levelToGo;
+        if (currentPosition.whereIsBoss === 'top') {
+            levelToGo = 'level1_B';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            if (scenario[currentPosition.x][currentPosition.y - 1].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            }
         }
+        this.scene.start(levelToGo, {
+            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+            currentPosition: scenario[currentPosition.x][currentPosition.y - 1], entrance: 'up'
+        });
+        alreadyCrossedDoor = true;
     }
-    this.scene.start(levelToGo, {
-        score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: scenario[currentPosition.x][currentPosition.y - 1], entrance: 'up'
-    });
 }
+
 function goLeft() {
-    leftleftdooropen.destroy();
-    leftrightdooropen.destroy();
-    var levelToGo;
-    if (currentPosition.whereIsBoss === 'left') {
-        levelToGo = 'level1_B';
-    } else {
-        if (scenario[currentPosition.x - 1][currentPosition.y].isClear) {
-            levelToGo = 'Level1';
+    if (!alreadyCrossedDoor) {
+        leftleftdooropen.destroy();
+        leftrightdooropen.destroy();
+        var levelToGo;
+        if (currentPosition.whereIsBoss === 'left') {
+            levelToGo = 'level1_B';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
-            // levelToGo = 'Level1_2';
+            if (scenario[currentPosition.x - 1][currentPosition.y].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+                // levelToGo = 'Level1_2';
+            }
         }
+        this.scene.start(levelToGo, {
+            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+            currentPosition: scenario[currentPosition.x - 1][currentPosition.y], entrance: 'left'
+        });
+        alreadyCrossedDoor = true;
     }
-    this.scene.start(levelToGo, {
-        score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: scenario[currentPosition.x - 1][currentPosition.y], entrance: 'left'
-    });
 }
+
 function goRight() {
-    rightleftdooropen.destroy();
-    rightrightdooropen.destroy();
-    var levelToGo;
-    if (currentPosition.whereIsBoss === 'left') {
-        levelToGo = 'level1_B';
-    } else {
-        if (scenario[currentPosition.x + 1][currentPosition.y].isClear) {
-            levelToGo = 'Level1';
+    if (!alreadyCrossedDoor) {
+        rightleftdooropen.destroy();
+        rightrightdooropen.destroy();
+        var levelToGo;
+        if (currentPosition.whereIsBoss === 'left') {
+            levelToGo = 'level1_B';
         } else {
-            levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            if (scenario[currentPosition.x + 1][currentPosition.y].isClear) {
+                levelToGo = 'Level1';
+            } else {
+                levelToGo = Math.random() > 0.5 ? 'Level1_1' : 'Level1_2';
+            }
         }
+        this.scene.start(levelToGo, {
+            score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
+            currentPosition: scenario[currentPosition.x + 1][currentPosition.y], entrance: 'right'
+        });
+        alreadyCrossedDoor = true;
     }
-    this.scene.start(levelToGo, {
-        score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        currentPosition: scenario[currentPosition.x + 1][currentPosition.y], entrance: 'right'
-    });
 }
 
 function drawMap(context) {
@@ -454,6 +470,7 @@ class Level1 extends Phaser.Scene {
     }
     create() {
         window.onresize = () => this.scene.restart();
+        alreadyCrossedDoor = false;
         recoverArmor = this.time.addEvent({ delay: 250, callback: onRecover, callbackScope: this, loop: true });
 
         shootFX = this.sound.add('laser');

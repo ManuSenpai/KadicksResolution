@@ -54,15 +54,17 @@ class Hostile extends Phaser.Scene {
 
     powerups;
     powerUpFX;
+    alreadyCrossedDoor;
 
     constructor(key) {
         super({ key: key });
+        
     }
 
     setScaleFactor() {
         scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         scaleWidth = window.innerWidth / STANDARD_WIDTH;
-        scaleFactor = (scaleHeight + scaleWidth)/2;
+        scaleFactor = (scaleHeight + scaleWidth) / 2;
         return scaleFactor;
     }
 
@@ -75,7 +77,7 @@ class Hostile extends Phaser.Scene {
         this.entrance = entrance;
         this.player = player;
         this.powerUpFX = player.scene.sound.add('powerup');
-
+        this.alreadyCrossedDoor = false;
     }
 
     setPlayerStats(_playerStats) {
@@ -104,7 +106,7 @@ class Hostile extends Phaser.Scene {
 
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
-            let currentKey = this.physics.add.sprite(32 * scaleFactor,  (96 + (i * 48)) * scaleFactor, 'keycard');
+            let currentKey = this.physics.add.sprite(32 * scaleFactor, (96 + (i * 48)) * scaleFactor, 'keycard');
             currentKey.setScale(0.1 * scaleFactor);
         }
     }
@@ -330,45 +332,37 @@ class Hostile extends Phaser.Scene {
     }
 
     addDoorColliders(context) {
-        if ( this.currentPosition.top && context.topleftdooropen) 
-        {
-            if ( !context.topleftdooropen.body ) { context.physics.world.enable(context.topleftdooropen); }
+        if (this.currentPosition.top && context.topleftdooropen) {
+            if (!context.topleftdooropen.body) { context.physics.world.enable(context.topleftdooropen); }
             context.topleftdooropen.body.setSize(context.topleftdooropen.width * 1.5, context.topleftdooropen.height * 1.5)
         }
-        if ( this.currentPosition.top && context.toprightdooropen) 
-        {
-            if ( !context.toprightdooropen.body ) { context.physics.world.enable(context.toprightdooropen); }
-            context.toprightdooropen.body.setSize(context.toprightdooropen.width* 1.5, context.toprightdooropen.height * 1.5)
+        if (this.currentPosition.top && context.toprightdooropen) {
+            if (!context.toprightdooropen.body) { context.physics.world.enable(context.toprightdooropen); }
+            context.toprightdooropen.body.setSize(context.toprightdooropen.width * 1.5, context.toprightdooropen.height * 1.5)
         }
-        if ( this.currentPosition.left && context.leftleftdooropen) 
-        {
-            if ( !context.leftleftdooropen.body ) { context.physics.world.enable(context.leftleftdooropen); }
-            context.leftleftdooropen.body.setSize(context.leftleftdooropen.width* 1.5, context.leftleftdooropen.height * 1.5)
+        if (this.currentPosition.left && context.leftleftdooropen) {
+            if (!context.leftleftdooropen.body) { context.physics.world.enable(context.leftleftdooropen); }
+            context.leftleftdooropen.body.setSize(context.leftleftdooropen.width * 1.5, context.leftleftdooropen.height * 1.5)
         }
-        if ( this.currentPosition.left && context.leftrightdooropen) 
-        {
-            if ( !context.leftrightdooropen.body ) { context.physics.world.enable(context.leftrightdooropen); }
-            context.leftrightdooropen.body.setSize(context.leftrightdooropen.width* 1.5, context.leftrightdooropen.height * 1.5)
+        if (this.currentPosition.left && context.leftrightdooropen) {
+            if (!context.leftrightdooropen.body) { context.physics.world.enable(context.leftrightdooropen); }
+            context.leftrightdooropen.body.setSize(context.leftrightdooropen.width * 1.5, context.leftrightdooropen.height * 1.5)
         }
-        if ( this.currentPosition.right && context.rightleftdooropen) 
-        {
-            if ( !context.rightleftdooropen.body ) { context.physics.world.enable(context.rightleftdooropen); }
-            context.rightleftdooropen.body.setSize(context.rightleftdooropen.width* 1.5, context.rightleftdooropen.height * 1.5)
+        if (this.currentPosition.right && context.rightleftdooropen) {
+            if (!context.rightleftdooropen.body) { context.physics.world.enable(context.rightleftdooropen); }
+            context.rightleftdooropen.body.setSize(context.rightleftdooropen.width * 1.5, context.rightleftdooropen.height * 1.5)
         }
-        if ( this.currentPosition.right &&  context.rightrightdooropen) 
-        {
-            if ( !context.rightrightdooropen.body ) { context.physics.world.enable(context.rightrightdooropen); }
-            context.rightrightdooropen.body.setSize(context.rightrightdooropen.width* 1.5, context.rightrightdooropen.height * 1.5)
+        if (this.currentPosition.right && context.rightrightdooropen) {
+            if (!context.rightrightdooropen.body) { context.physics.world.enable(context.rightrightdooropen); }
+            context.rightrightdooropen.body.setSize(context.rightrightdooropen.width * 1.5, context.rightrightdooropen.height * 1.5)
         }
-        if ( this.currentPosition.bottom && context.botleftdooropen) 
-        {
-            if ( !context.botleftdooropen.body ) { context.physics.world.enable(context.botleftdooropen); }
-            context.botleftdooropen.body.setSize(context.botleftdooropen.width* 1.5, context.botleftdooropen.height * 1.5)
+        if (this.currentPosition.bottom && context.botleftdooropen) {
+            if (!context.botleftdooropen.body) { context.physics.world.enable(context.botleftdooropen); }
+            context.botleftdooropen.body.setSize(context.botleftdooropen.width * 1.5, context.botleftdooropen.height * 1.5)
         }
-        if ( this.currentPosition.bottom && context.botrightdooropen) 
-        {
-            if ( !context.botrightdooropen.body ) { context.physics.world.enable(context.botrightdooropen); }
-            context.botrightdooropen.body.setSize(context.botrightdooropen.width* 1.5, context.botrightdooropen.height * 1.5)
+        if (this.currentPosition.bottom && context.botrightdooropen) {
+            if (!context.botrightdooropen.body) { context.physics.world.enable(context.botrightdooropen); }
+            context.botrightdooropen.body.setSize(context.botrightdooropen.width * 1.5, context.botrightdooropen.height * 1.5)
         }
         context.physics.add.collider(this.player, context.topleftdooropen, this.goUp, null, context);
         context.physics.add.collider(this.player, context.toprightdooropen, this.goUp, null, context);
@@ -381,22 +375,25 @@ class Hostile extends Phaser.Scene {
     }
 
     goDown() {
-        this.botleftdooropen.destroy();
-        this.botrightdooropen.destroy();
-        var levelToGo;
-        if (this.currentPosition.whereIsBoss === 'bot') {
-            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
-        } else {
-            if (this.scenario[this.currentPosition.x][this.currentPosition.y + 1].isClear) {
-                levelToGo = 'Level' + this.playerStats.LEVEL;
+        if (!this.alreadyCrossedDoor) {
+            this.botleftdooropen.destroy();
+            this.botrightdooropen.destroy();
+            var levelToGo;
+            if (this.currentPosition.whereIsBoss === 'bot') {
+                levelToGo = 'level' + this.playerStats.LEVEL + '_B';
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                if (this.scenario[this.currentPosition.x][this.currentPosition.y + 1].isClear) {
+                    levelToGo = 'Level' + this.playerStats.LEVEL;
+                } else {
+                    levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                }
             }
+            this.scene.start(levelToGo, {
+                score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
+                currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y + 1], entrance: 'down'
+            });
+            this.alreadyCrossedDoor = true;
         }
-        this.scene.start(levelToGo, {
-            score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
-            currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y + 1], entrance: 'down'
-        });
     }
 
     goToNextLevel() {
@@ -406,58 +403,67 @@ class Hostile extends Phaser.Scene {
         });
     }
     goUp() {
-        this.topleftdooropen.destroy();
-        this.toprightdooropen.destroy();
-        var levelToGo;
-        if (this.currentPosition.whereIsBoss === 'top') {
-            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
-        } else {
-            if (this.scenario[this.currentPosition.x][this.currentPosition.y - 1].isClear) {
-                levelToGo = 'Level' + this.playerStats.LEVEL;
+        if (!this.alreadyCrossedDoor) {
+            this.topleftdooropen.destroy();
+            this.toprightdooropen.destroy();
+            var levelToGo;
+            if (this.currentPosition.whereIsBoss === 'top') {
+                levelToGo = 'level' + this.playerStats.LEVEL + '_B';
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                if (this.scenario[this.currentPosition.x][this.currentPosition.y - 1].isClear) {
+                    levelToGo = 'Level' + this.playerStats.LEVEL;
+                } else {
+                    levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                }
             }
+            this.scene.start(levelToGo, {
+                score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
+                currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y - 1], entrance: 'up'
+            });
+            this.alreadyCrossedDoor = true;
         }
-        this.scene.start(levelToGo, {
-            score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
-            currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y - 1], entrance: 'up'
-        });
     }
     goLeft() {
-        this.leftleftdooropen.destroy();
-        this.leftrightdooropen.destroy();
-        var levelToGo;
-        if (this.currentPosition.whereIsBoss === 'left') {
-            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
-        } else {
-            if (this.scenario[this.currentPosition.x - 1][this.currentPosition.y].isClear) {
-                levelToGo = 'Level' + this.playerStats.LEVEL;
+        if (!this.alreadyCrossedDoor) {
+            this.leftleftdooropen.destroy();
+            this.leftrightdooropen.destroy();
+            var levelToGo;
+            if (this.currentPosition.whereIsBoss === 'left') {
+                levelToGo = 'level' + this.playerStats.LEVEL + '_B';
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                if (this.scenario[this.currentPosition.x - 1][this.currentPosition.y].isClear) {
+                    levelToGo = 'Level' + this.playerStats.LEVEL;
+                } else {
+                    levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                }
             }
+            this.scene.start(levelToGo, {
+                score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
+                currentPosition: this.scenario[this.currentPosition.x - 1][this.currentPosition.y], entrance: 'left'
+            });
+            this.alreadyCrossedDoor = true;
         }
-        this.scene.start(levelToGo, {
-            score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
-            currentPosition: this.scenario[this.currentPosition.x - 1][this.currentPosition.y], entrance: 'left'
-        });
     }
     goRight() {
-        this.rightleftdooropen.destroy();
-        this.rightrightdooropen.destroy();
-        var levelToGo;
-        if (this.currentPosition.whereIsBoss === 'right') {
-            levelToGo = 'level' + this.playerStats.LEVEL + '_B';
-        } else {
-            if (this.scenario[this.currentPosition.x + 1][this.currentPosition.y].isClear) {
-                levelToGo = 'Level' + this.playerStats.LEVEL;
+        if (!this.alreadyCrossedDoor) {
+            this.rightleftdooropen.destroy();
+            this.rightrightdooropen.destroy();
+            var levelToGo;
+            if (this.currentPosition.whereIsBoss === 'right') {
+                levelToGo = 'level' + this.playerStats.LEVEL + '_B';
             } else {
-                levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                if (this.scenario[this.currentPosition.x + 1][this.currentPosition.y].isClear) {
+                    levelToGo = 'Level' + this.playerStats.LEVEL;
+                } else {
+                    levelToGo = Math.random() > 0.5 ? 'Level' + this.playerStats.LEVEL + '_1' : 'Level' + this.playerStats.LEVEL + '_2';
+                }
             }
+            this.scene.start(levelToGo, {
+                score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
+                currentPosition: this.scenario[this.currentPosition.x + 1][this.currentPosition.y], entrance: 'right'
+            });
+            this.alreadyCrossedDoor = true;
         }
-        this.scene.start(levelToGo, {
-            score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
-            currentPosition: this.scenario[this.currentPosition.x + 1][this.currentPosition.y], entrance: 'right'
-        });
     }
 
     drawMap(context) {
@@ -524,7 +530,7 @@ class Hostile extends Phaser.Scene {
     dropItems(player, x, y) {
         if (!this.powerups || (this.powerups && !this.powerups.children)) {
             this.powerups = this.physics.add.group();
-        } 
+        }
         if (Math.random() < POWER_UP_RATE) {
             // The enemy drops a powerUp
             let rand = Math.random();
@@ -621,7 +627,7 @@ class Hostile extends Phaser.Scene {
         this.armorBar = this.add.rectangle(120 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.ARMOR * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
         this.armorBar.setOrigin(0, 0.5);
         if (this.healthIcon) this.healthIcon.destroy();
-        this.healthIcon = this.physics.add.sprite( window.innerWidth - 96 * scaleFactor, (window.innerHeight - 36 * scaleFactor), 'healthIcon');
+        this.healthIcon = this.physics.add.sprite(window.innerWidth - 96 * scaleFactor, (window.innerHeight - 36 * scaleFactor), 'healthIcon');
         this.healthIcon.displayWidth = 36 * scaleFactor;
         this.healthIcon.displayHeight = 36 * scaleFactor;
         if (this.healthBarBg) this.healthBarBg.destroy();
@@ -629,7 +635,7 @@ class Hostile extends Phaser.Scene {
         this.healthBarBg.setOrigin(1, 0.5);
         this.healthBarBg.alpha = 0.4;
         if (this.healthBar) this.healthBar.destroy();
-        this.healthBar = this.add.rectangle( (window.innerWidth - 120 * scaleFactor) - this.playerStats.MAX_HEALTH * 2 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
+        this.healthBar = this.add.rectangle((window.innerWidth - 120 * scaleFactor) - this.playerStats.MAX_HEALTH * 2 * scaleFactor, (window.innerHeight - 36 * scaleFactor), this.playerStats.HEALTH * 2 * scaleFactor, 36 * scaleFactor, '0xffffff');
         this.healthBar.setOrigin(0, 0.5);
     }
 
@@ -670,45 +676,45 @@ class Hostile extends Phaser.Scene {
         let b1 = agent.body;
         let b2 = bump.body;
 
-        if ( b2.touching.left ) {
+        if (b2.touching.left) {
             agent.x -= (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
             b1.stop();
         }
 
-        if ( b2.touching.right ) {
+        if (b2.touching.right) {
             agent.x += (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
             b1.stop();
         }
 
-        if ( b2.touching.up ) {
+        if (b2.touching.up) {
             agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
             b1.stop();
         }
 
-        if ( b2.touching.down ) {
+        if (b2.touching.down) {
             agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
             b1.stop();
         }
 
         // The level starts with one of the enemies overlapping an object so the touching property has not
         // been updated.
-        if ( b2.touching.none ) {
-            let deltaXb1 = Math.abs(b1.x - window.innerWidth/2) * scaleFactor;
-            let deltaXb2 = Math.abs(b2.x - window.innerWidth/2) * scaleFactor;
-            let deltaYb1 = Math.abs(b1.y - window.innerHeight/2) * scaleFactor;
-            let deltaYb2 = Math.abs(b2.y - window.innerHeight/2) * scaleFactor;
-            if ( deltaXb1 < deltaXb2 ) { 
-                if ( agent.x < window.innerWidth / 2 ) agent.x += (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
+        if (b2.touching.none) {
+            let deltaXb1 = Math.abs(b1.x - window.innerWidth / 2) * scaleFactor;
+            let deltaXb2 = Math.abs(b2.x - window.innerWidth / 2) * scaleFactor;
+            let deltaYb1 = Math.abs(b1.y - window.innerHeight / 2) * scaleFactor;
+            let deltaYb2 = Math.abs(b2.y - window.innerHeight / 2) * scaleFactor;
+            if (deltaXb1 < deltaXb2) {
+                if (agent.x < window.innerWidth / 2) agent.x += (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
                 else agent.x -= (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
             } else {
-                if ( agent.x < window.innerWidth / 2 ) agent.x -= (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
+                if (agent.x < window.innerWidth / 2) agent.x -= (Math.abs(b1.left - b2.right) + 20) * scaleFactor;
                 else agent.x += (Math.abs(b1.right - b2.left) + 20) * scaleFactor;
             }
-            if ( deltaYb1 < deltaYb2 ) { 
-                if ( agent.y < window.innerHeight/ 2 ) agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
+            if (deltaYb1 < deltaYb2) {
+                if (agent.y < window.innerHeight / 2) agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
                 else agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
             } else {
-                if ( agent.y < window.innerHeight/ 2 ) agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
+                if (agent.y < window.innerHeight / 2) agent.y -= (Math.abs(b1.bottom - b2.top) + 20) * scaleFactor;
                 else agent.y += (Math.abs(b1.top - b2.bottom) + 20) * scaleFactor;
             }
 
@@ -716,9 +722,9 @@ class Hostile extends Phaser.Scene {
         }
     }
 
-    collideWithBump(bump, agent){
+    collideWithBump(bump, agent) {
         agent.body.setVelocity(0, 0);
-        bump.body.setVelocity(0,0);
+        bump.body.setVelocity(0, 0);
     }
 }
 

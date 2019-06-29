@@ -184,6 +184,7 @@ class Level1_B extends Hostile {
     }
     create() {
         window.onresize = () => this.scene.restart();
+        console.log("Here comes Boss 1");
         this.setPlayerStats(playerStats);
         scaleFactor = this.setScaleFactor();
         shootFX = this.sound.add('laser');

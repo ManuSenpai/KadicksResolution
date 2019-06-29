@@ -75,7 +75,7 @@ class Trashbot extends Enemy {
         this.fireFX.play();
         if (this.trailInterval) clearInterval(this.trailInterval);
         if (this.trailFireInterval) clearInterval(this.trailFireInterval);
-        
+
         this.trailgroup.children.iterate((stain) => {
             let newCollider = this.scene.add.sprite(stain.x, stain.y, 'trashtrail');
             this.scene.physics.world.enable(newCollider);
@@ -133,6 +133,7 @@ class Trashbot extends Enemy {
     }
 
     onDestroy() {
+        this.body.setVelocity(0,0);
         if (this.trailInterval) { clearInterval(this.trailInterval); }
         if (this.trailFireInterval) { clearInterval(this.trailFireInterval); }
         if (this.trailFireTimeout) { clearTimeout(this.trailFireTimeout); }
@@ -140,7 +141,7 @@ class Trashbot extends Enemy {
             emitter.killAll();
             emitter.stop();
         })
-        this.trashFace.destroy();
+
         // this.scene.tweens.killTweensOf(this.trailgroup.children.entries);
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
         currentTweens.forEach((t) => { t.complete(); });
@@ -151,7 +152,11 @@ class Trashbot extends Enemy {
         });
         this.trailAnimation = null;
         this.alive = false;
-        this.destroy();
+        this.trashFace.setTexture('trashbotrekt');
+        setTimeout(() => {
+            this.trashFace.destroy();
+            this.destroy();
+        }, 1000);
     }
 }
 

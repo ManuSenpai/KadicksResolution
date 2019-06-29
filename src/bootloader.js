@@ -64,6 +64,7 @@ class Bootloader extends Phaser.Scene {
         /* Enemies L2 */
         this.load.image('coulomb', "./assets/coulomb.png");
         this.load.image('trashbot', './assets/trashbot.png');
+        this.load.image('trashbotrekt', './assets/trash-rekt.png');
         this.load.image('trashbotniceface', './assets/trash-nice.png');
         this.load.image('trashtrail', './assets/trashtrail.png');
 
