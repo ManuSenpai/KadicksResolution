@@ -127,6 +127,31 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+function hitTougher(toug, laser) {
+    toug.health -= laser.damage;
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
+    laser.destroy();
+    score += 20;
+    if (toug.health <= 0) {
+        sparkFX.play();
+        toug.die();
+        tougherEnemies.remove(toug);
+        // toug.destroy();
+        this.dropItems(player, toug.x, toug.y);
+        // Life value has changed as the medikit has been taken
+
+        if (enemies.children.entries.length === 0 && tougherEnemies.children.entries.length === 0) {
+            clearArea.apply(this);
+            if (timeoutHittable) { clearTimeout(timeoutHittable); }
+        }
+        score += toug.score;
+        this.setScore(score);
+    }
+    scoreText.setText('SCORE: ' + score);
+}
+
 function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
@@ -396,7 +421,7 @@ class Level3_1 extends Hostile {
         this.physics.add.collider(bumps, enemies);
         this.physics.add.overlap(bumps, tougherEnemies, untangleFromBumps, null, this);
         this.physics.add.collider(tougherEnemies, tougherEnemies, collisionBetweenTougher, null, this);
-        this.physics.add.overlap(tougherEnemies, lasers, hitEnemy, null, this);
+        this.physics.add.overlap(tougherEnemies, lasers, hitTougher, null, this);
         this.physics.add.collider(player, tougherEnemies, tacklePlayer, null, this);
         this.physics.add.overlap(tougherEnemies, tougherEnemies, untangleEnemies, null, this);
         this.physics.add.overlap(bumps, lasers, (bump, laser) => {

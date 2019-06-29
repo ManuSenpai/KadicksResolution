@@ -134,6 +134,7 @@ class Trashbot extends Enemy {
 
     onDestroy() {
         this.body.setVelocity(0,0);
+        this.body.immovable = true;
         if (this.trailInterval) { clearInterval(this.trailInterval); }
         if (this.trailFireInterval) { clearInterval(this.trailFireInterval); }
         if (this.trailFireTimeout) { clearTimeout(this.trailFireTimeout); }

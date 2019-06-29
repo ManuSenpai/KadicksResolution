@@ -59,6 +59,7 @@ var keycard;
 var keyFX;
 var pickKeyFX;
 var shootFX;
+var sparkFX;
 var hitFX;
 var hit2FX;
 
@@ -153,6 +154,31 @@ function hitEnemy(enemy, laser) {
         if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
             clearArea.apply(this);
             if (timeoutHittable) { clearTimeout(timeoutHittable); }
+        }
+        score += enemy.score;
+        this.setScore(score);
+    }
+    scoreText.setText('SCORE: ' + score);
+}
+
+function hitTrashbot(enemy, laser) {
+    enemy.health -= laser.damage;
+    laser.setVisible(false);
+    laser.setActive(false);
+    lasers.remove(laser);
+    laser.destroy();
+    if (enemy.hasOwnProperty('hit')) { enemy.hit(); }
+    score += 20;
+    if (enemy.health <= 0) {
+        enemy.active = false;
+        sparkFX.play();
+        enemy.onDestroy();
+        trashbots.remove(enemy);
+        // enemy.destroy();
+        this.dropItems(player, enemy.x, enemy.y);
+        // Life value has changed as the medikit has been taken
+        if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
+            clearArea.apply(this);
         }
         score += enemy.score;
         this.setScore(score);
@@ -307,6 +333,7 @@ class Level3_2 extends Hostile {
         pickKeyFX = this.sound.add('pickkey');
         hitFX = this.sound.add('hit1');
         hit2FX = this.sound.add('hit2');
+        sparkFX = this.sound.add('spark');
         this.setPlayerStats(playerStats);
         scaleFactor = this.setScaleFactor();
         this.setCurrentPosition(currentPosition);
@@ -359,7 +386,7 @@ class Level3_2 extends Hostile {
         this.drawPlayerUI();
 
         /*COLLIDERS */
-        this.physics.add.overlap(trashbots, lasers, hitEnemy, null, this);
+        this.physics.add.overlap(trashbots, lasers, hitTrashbot, null, this);
         this.physics.add.overlap(wavebenders, lasers, hitEnemy, null, this);
         this.drawMap(this);
 

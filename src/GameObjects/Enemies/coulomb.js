@@ -35,6 +35,15 @@ class Coulomb extends Enemy {
         this.isStunned = false;
 
         this.crashFX = scene.sound.add('crash');
+
+        this.scene.anims.create({
+            key: 'couldie',
+            frames: this.scene.anims.generateFrameNumbers('coulomb', { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        // this.anims.play('couldie');
     }
 
     /**
@@ -114,11 +123,16 @@ class Coulomb extends Enemy {
     }
 
     die() {
+        this.body.setVelocity(0,0);
+        this.body.setAcceleration(0, 0);
         if ( this.stunTimeOut ){ clearTimeout( this.stunTimeOut ); }
         if ( this.chargeTimeOut ){ clearTimeout( this.chargeTimeOut ); }
-        this.setActive(false);
-        this.setVisible(false);
-        this.destroy();
+        // this.setVisible(false);
+        this.anims.play('couldie', true);
+        setTimeout( () => {
+            this.setActive(false);
+            this.destroy();
+        }, 1000);
     }
 }
 

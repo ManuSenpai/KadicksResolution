@@ -62,7 +62,8 @@ class Bootloader extends Phaser.Scene {
         this.load.spritesheet('jolt', './assets/joltss.png', { frameWidth: 87, frameHeight: 126 });
 
         /* Enemies L2 */
-        this.load.image('coulomb', "./assets/coulomb.png");
+        // this.load.image('coulomb', "./assets/coulomb.png");
+        this.load.spritesheet('coulomb', "./assets/coulombdie.png", { frameWidth: 128, frameHeight: 128 });
         this.load.image('trashbot', './assets/trashbot.png');
         this.load.image('trashbotrekt', './assets/trash-rekt.png');
         this.load.image('trashbotniceface', './assets/trash-nice.png');
