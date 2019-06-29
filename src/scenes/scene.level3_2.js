@@ -136,26 +136,24 @@ function untangleFromBumps(bump, agent) {
     if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
-function hitEnemy(enemy, laser) {
-    enemy.health -= laser.damage;
+function hitEnemy(wave, laser) {
+    wave.health -= laser.damage;
     laser.setVisible(false);
     laser.setActive(false);
     lasers.remove(laser);
     laser.destroy();
-    if (enemy.hasOwnProperty('hit')) { enemy.hit(); }
+    if (wave.hasOwnProperty('hit')) { wave.hit(); }
     score += 20;
-    if (enemy.health <= 0) {
-        enemy.setActive(false);
-        enemy.setVisible(false);
-        enemy.onDestroy();
-        enemy.destroy();
-        this.dropItems(player, enemy.x, enemy.y);
+    if (wave.health <= 0) {
+        wave.onDestroy();
+        sparkFX.play();
+        this.dropItems(player, wave.x, wave.y);
         // Life value has changed as the medikit has been taken
         if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
             clearArea.apply(this);
             if (timeoutHittable) { clearTimeout(timeoutHittable); }
         }
-        score += enemy.score;
+        score += wave.score;
         this.setScore(score);
     }
     scoreText.setText('SCORE: ' + score);
@@ -490,7 +488,7 @@ class Level3_2 extends Hostile {
             bot.move();
         })
         wavebenders.children.iterate((wb) => {
-            wb.move();
+            if ( wb.health > 0 ) { wb.move(); }
             if (hittable) {
                 if (Phaser.Geom.Intersects.CircleToRectangle(wb.getCircles(), player.body)) {
                     hitPlayer(player, wb, this);

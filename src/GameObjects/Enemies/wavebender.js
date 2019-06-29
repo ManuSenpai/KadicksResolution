@@ -22,6 +22,13 @@ class Wavebender extends Enemy {
         this.setDepth(2);
         this.pulseFX = scene.sound.add('pulse');
 
+        this.scene.anims.create({
+            key: 'wavedie',
+            frames: this.scene.anims.generateFrameNumbers('wavebender', { start: 0, end: 6 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
     }
 
     getCircles() {
@@ -77,10 +84,17 @@ class Wavebender extends Enemy {
     }
 
     onDestroy() {
+        this.anims.play('wavedie', true);
+        this.body.setVelocity(0,0);
+        this.body.immovable = true;
         if (this.circleTween) this.circleTween.complete();
         if (this.opacityTween) this.opacityTween.complete();
         if (this.graphics) this.graphics.clear();
         if ( this.resetWaveTimeout ) clearTimeout( this.resetWaveTimeout );
+        setTimeout( () => {
+            this.setActive(true);
+            this.destroy();
+        }, 1000);
     }
 }
 

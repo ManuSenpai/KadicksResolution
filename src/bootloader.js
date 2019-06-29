@@ -70,7 +70,8 @@ class Bootloader extends Phaser.Scene {
         this.load.image('trashtrail', './assets/trashtrail.png');
 
         /* Enemies L3 */
-        this.load.image('wavebender', "./assets/wavebender.png");
+        // this.load.image('wavebender', "./assets/wavebender.png");
+        this.load.spritesheet('wavebender', "./assets/wavedie.png", { frameWidth: 241, frameHeight: 241 });
 
         /* Bosses */
         this.load.image('boss1', "./assets/bossdemo1.png");
