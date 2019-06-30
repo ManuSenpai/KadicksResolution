@@ -65,6 +65,7 @@ var hit2FX;
 
 let scaleFactor;
 
+/** Enemy hits player */
 function hitPlayer(player, enemy, context) {
     hitFX.play();
     hittable = false;
@@ -86,6 +87,7 @@ function hitPlayer(player, enemy, context) {
     }
 }
 
+/** Manages player's collision with the fire */
 function burnPlayer(context) {
     hit2FX.play();
     recoverArmor.paused = true;
@@ -104,38 +106,7 @@ function burnPlayer(context) {
     }
 }
 
-function meleeHit(player, enemy) {
-    recoverArmor.paused = true;
-    if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
-    timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
-    if (playerStats.ARMOR > 0) {
-        // armorBar.width -= enemy.damage * 2;
-        this.hitArmor(enemy.damage);
-    } else {
-        this.hitHealth(enemy.damage);
-        if (this.playerStats.HEALTH <= 0) {
-            this.scene.start("Continue", {
-                score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-                currentPosition: currentPosition, entrance: 'center'
-            });
-        }
-    }
-
-    let hitAngle = Phaser.Math.Angle.Between(player.x, player.y, enemy.x, enemy.y);
-    var velocity = this.physics.velocityFromRotation(hitAngle, -100);
-    player.x += velocity.x;
-    player.y += velocity.y;
-}
-
-/**
- * Avoids an overlap between a bump element and a gameobject.
- * @param {GameObject} agent Agent that overlaps with a game bump 
- * @param {*} bump Bump Element
- */
-function untangleFromBumps(bump, agent) {
-    if (levelloaded) this.untangleFromBumps(agent, bump);
-}
-
+/** Player hits enemy */
 function hitEnemy(wave, laser) {
     wave.health -= laser.damage;
     laser.setVisible(false);
@@ -147,6 +118,7 @@ function hitEnemy(wave, laser) {
     if (wave.health <= 0) {
         wave.onDestroy();
         sparkFX.play();
+        wavebenders.remove(wave);
         this.dropItems(player, wave.x, wave.y);
         // Life value has changed as the medikit has been taken
         if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
@@ -159,6 +131,7 @@ function hitEnemy(wave, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits trashbot */
 function hitTrashbot(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -172,7 +145,6 @@ function hitTrashbot(enemy, laser) {
         sparkFX.play();
         enemy.onDestroy();
         trashbots.remove(enemy);
-        // enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
         if (wavebenders.children.entries.length === 0 && trashbots.children.entries.length === 0) {
@@ -184,11 +156,13 @@ function hitTrashbot(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits enemy's shield with its laser */
 function hitShield(shield, laser) {
     lasers.remove(laser);
     laser.destroy();
 }
 
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
@@ -200,18 +174,22 @@ function clearArea() {
 
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
 
+/** Displays a key whene enemies are beaten */
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
@@ -219,6 +197,7 @@ function spawnKey(context) {
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
+/** Player picks key */
 function pickKey() {
     pickKeyFX.play();
     currentPosition.keyIsTaken = true;
@@ -229,6 +208,7 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
+/** Generates wavebenders */
 function generateWaveBenders(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
@@ -263,6 +243,7 @@ function generateWaveBenders(context) {
     context.physics.add.collider(wavebenders, wavebenders);
 }
 
+/** Generates trashbots */
 function generateTrashbots(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
@@ -298,6 +279,7 @@ function generateTrashbots(context) {
 
 }
 
+/** Trashbot bounces on wall */
 function bounceOnWalls(trashbot, bump) {
     trashbot.bounceOnWall();
 }
@@ -439,19 +421,15 @@ class Level3_2 extends Hostile {
         player.rotation = angle;
         if (cursors.left.isDown) {
             player.setVelocityX(-400 * scaleFactor);
-            // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
             player.setVelocityX(400 * scaleFactor);
-            // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
             player.setVelocityY(-400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
             player.setVelocityY(400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();

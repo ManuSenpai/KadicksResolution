@@ -63,6 +63,7 @@ var scoreText;
 var configScoreText;
 
 
+/** Enemy laser hits player */
 function hitPlayer(player, laser) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -90,6 +91,7 @@ function hitShield() {
     lasers.remove(laser);
 }
 
+/** Hits player on melee */
 function meleeHit(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
@@ -129,6 +131,7 @@ function hitTurret(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits enemy with its laser */
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -152,10 +155,12 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     if (playerStats.ARMOR < playerStats.MAX_ARMOR) {
         playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
@@ -166,6 +171,7 @@ function onRecover() {
     }
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }

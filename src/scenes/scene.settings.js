@@ -88,12 +88,23 @@ class Settings extends Phaser.Scene {
             .on('pointerout', () => this.onButtonOut(this.goBackBtn));
         this.goBackBtn.setOrigin(0.5);
     }
+    /**
+     * Sets size of button element whenever the mouse is over it
+     * @param {Button} button Button element
+     */
     onButtonOver(button) {
         button.setFontSize(50 * scaleFactor);
     }
+
+    /**
+     * Sets size of button element whenever the mouse is no longer over it
+     * @param {Button} button Button element
+     */
     onButtonOut(button) {
         button.setFontSize(40 * scaleFactor);
     }
+
+    /** Sets difficulty */
     setDifficulty(diffValue) {
         switch (diffValue) {
             case 'EASY':
@@ -119,6 +130,8 @@ class Settings extends Phaser.Scene {
                 break;
         }
     }
+
+    /** Takes the player back to menu */
     goBackToMenu(){
         this.scene.start("Main_Menu", { configScoreText: this.configScoreText, playerStats: this.playerStats });
     }

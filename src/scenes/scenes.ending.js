@@ -9,7 +9,7 @@ const STANDARD_WIDTH = 1536;
 const STANDARD_HEIGHT = 720;
 
 var scaleFactor;
-var textTimeout; 
+var textTimeout;
 
 class Ending extends Phaser.Scene {
 
@@ -28,7 +28,7 @@ class Ending extends Phaser.Scene {
     create() {
 
         window.onresize = () => this.scene.restart();
-        if ( textTimeout ) { clearTimeout( textTimeout ); }
+        if (textTimeout) { clearTimeout(textTimeout); }
 
         let currentIndex = 0;
 
@@ -39,19 +39,27 @@ class Ending extends Phaser.Scene {
         this.showTexts(currentIndex);
 
     }
-
+    /**
+         * Displays a text element on screen
+         * @param {Number} index Index of the text that will be shown
+         */
     showTexts(index) {
         if (index < i18n.END.length) {
             this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.END[index], { fontSize: 40 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
-            this.currentText.x -= this.currentText.width/2;
-            this.currentText.y -= this.currentText.height/2;
+            this.currentText.x -= this.currentText.width / 2;
+            this.currentText.y -= this.currentText.height / 2;
             this.currentText.opacity = 0;
-            this.show( index, currentText );
+            this.show(index, currentText);
         } else {
-            this.scene.start("Credits", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
+            this.scene.start("Credits", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats });
         }
     }
 
+    /**
+     * Displays text on screen
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
     show(index, text) {
         this.tweens.add({
             targets: text,
@@ -61,14 +69,19 @@ class Ending extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
-                textTimeout = setTimeout( () => {
-                    this.hide( index, text );
-                }, i18n.END[index].length * 3000 )
+                textTimeout = setTimeout(() => {
+                    this.hide(index, text);
+                }, i18n.END[index].length * 3000)
             }
         });
     }
 
-    hide (index, text) {
+    /**
+     * Hides text element.
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
+    hide(index, text) {
         this.tweens.add({
             targets: text,
             opacity: 0,
@@ -77,10 +90,10 @@ class Ending extends Phaser.Scene {
                 return Math.pow(t, 1 / 2);
             },
             onComplete: () => {
-                textTimeout = setTimeout( () => {
+                textTimeout = setTimeout(() => {
                     this.currentText.destroy();
-                    this.showTexts( index + 1 );
-                }, 1000 );
+                    this.showTexts(index + 1);
+                }, 1000);
             }
         });
     }

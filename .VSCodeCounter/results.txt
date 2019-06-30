@@ -1,0 +1,75 @@
+Date : 2019-06-30 18:41:26
+Directory : c:\Users\Manu\Desktop\TFG\KadicksResolution\src
+Total : 44 files,  10110 codes, 819 comments, 1200 blanks, all 12129 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         40 |      9,227 |        819 |      1,198 |     11,244 |
+| JSON       |          4 |        883 |          0 |          2 |        885 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------+------------+------------+------------+------------+------------+
+| path                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------+------------+------------+------------+------------+------------+
+| .                                         |         44 |     10,110 |        819 |      1,200 |     12,129 |
+| scenes                                    |         25 |      7,948 |        679 |      1,007 |      9,634 |
+| GameObjects                               |         13 |      1,363 |        116 |        164 |      1,643 |
+| GameObjects\Enemies                       |          9 |      1,221 |        102 |        158 |      1,481 |
+| scenes\scenario                           |          3 |        947 |         50 |         64 |      1,061 |
+| i18n                                      |          3 |        533 |          0 |          1 |        534 |
+| settings                                  |          1 |         65 |          0 |          0 |         65 |
++-------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                  | language   | code       | comment    | blank      | total      |
++-------------------------------------------+------------+------------+------------+------------+------------+
+| GameObjects\Enemies\boss1.js              | JavaScript |        186 |         16 |         27 |        229 |
+| GameObjects\Enemies\boss2.js              | JavaScript |        234 |         25 |         35 |        294 |
+| GameObjects\Enemies\boss3.js              | JavaScript |        300 |          9 |         34 |        343 |
+| GameObjects\Enemies\coulomb.js            | JavaScript |        101 |         20 |         19 |        140 |
+| GameObjects\Enemies\enemy.js              | JavaScript |         15 |          0 |          1 |         16 |
+| GameObjects\Enemies\jolt.js               | JavaScript |        112 |         12 |         11 |        135 |
+| GameObjects\Enemies\scancatcher.js        | JavaScript |         40 |          5 |          6 |         51 |
+| GameObjects\Enemies\trashbot.js           | JavaScript |        146 |          9 |         13 |        168 |
+| GameObjects\Enemies\wavebender.js         | JavaScript |         87 |          6 |         12 |        105 |
+| GameObjects\gauge.js                      | JavaScript |         15 |          0 |          1 |         16 |
+| GameObjects\laser.js                      | JavaScript |         29 |          1 |          2 |         32 |
+| GameObjects\lasertrap.js                  | JavaScript |         85 |         13 |          2 |        100 |
+| GameObjects\turret.js                     | JavaScript |         13 |          0 |          1 |         14 |
+| bootloader.js                             | JavaScript |        133 |         24 |         24 |        181 |
+| i18n\en-GB.json                           | JSON       |        177 |          0 |          0 |        177 |
+| i18n\es-ES.json                           | JSON       |        178 |          0 |          0 |        178 |
+| i18n\val.json                             | JSON       |        178 |          0 |          1 |        179 |
+| init.js                                   | JavaScript |         68 |          0 |          4 |         72 |
+| scenes\scenario\mapUT.js                  | JavaScript |        327 |          9 |         36 |        372 |
+| scenes\scenario\maptest.js                | JavaScript |        270 |         41 |         27 |        338 |
+| scenes\scenario\scenarioDistribution.json | JSON       |        350 |          0 |          1 |        351 |
+| scenes\scene.continue.js                  | JavaScript |        118 |         10 |         21 |        149 |
+| scenes\scene.controls.js                  | JavaScript |        215 |          1 |         39 |        255 |
+| scenes\scene.credits.js                   | JavaScript |         78 |         15 |         14 |        107 |
+| scenes\scene.hostile.js                   | JavaScript |        651 |        146 |         61 |        858 |
+| scenes\scene.language.js                  | JavaScript |        163 |         22 |         29 |        214 |
+| scenes\scene.level1.js                    | JavaScript |        588 |         26 |         52 |        666 |
+| scenes\scene.level1_1.js                  | JavaScript |        297 |         29 |         49 |        375 |
+| scenes\scene.level1_2.js                  | JavaScript |        325 |         29 |         50 |        404 |
+| scenes\scene.level1_B.js                  | JavaScript |        342 |         22 |         47 |        411 |
+| scenes\scene.level2.js                    | JavaScript |        588 |         28 |         47 |        663 |
+| scenes\scene.level2_1.js                  | JavaScript |        418 |         35 |         70 |        523 |
+| scenes\scene.level2_2.js                  | JavaScript |        437 |         35 |         69 |        541 |
+| scenes\scene.level2_B.js                  | JavaScript |        337 |         24 |         48 |        409 |
+| scenes\scene.level3.js                    | JavaScript |        586 |         28 |         47 |        661 |
+| scenes\scene.level3_1.js                  | JavaScript |        418 |         36 |         67 |        521 |
+| scenes\scene.level3_2.js                  | JavaScript |        390 |         29 |         64 |        483 |
+| scenes\scene.level3_B.js                  | JavaScript |        285 |         22 |         42 |        349 |
+| scenes\scene.mainmenu.js                  | JavaScript |        189 |         16 |         27 |        232 |
+| scenes\scene.opening.js                   | JavaScript |         77 |         17 |         17 |        111 |
+| scenes\scene.play.js                      | JavaScript |        316 |         33 |         48 |        397 |
+| scenes\scene.settings.js                  | JavaScript |        110 |         11 |         20 |        141 |
+| scenes\scenes.ending.js                   | JavaScript |         73 |         15 |         15 |        103 |
+| settings\difficulty.js                    | JavaScript |         65 |          0 |          0 |         65 |
+| Total                                     |            |     10,110 |        819 |      1,200 |     12,129 |
++-------------------------------------------+------------+------------+------------+------------+------------+

@@ -16,8 +16,6 @@ var languageText = {
         align: 'center'
     }
 }
-
-var floor;
 var i18n;
 
 const STANDARD_WIDTH = 1536;
@@ -46,7 +44,6 @@ class Continue extends Phaser.Scene {
 
         scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         scaleWidth = window.innerWidth / STANDARD_WIDTH;
-        // scaleFactor = Math.min(scaleHeight, scaleWidth);
         scaleFactor = (scaleHeight + scaleWidth)/2;
     }
 
@@ -92,13 +89,24 @@ class Continue extends Phaser.Scene {
             .on('pointerout', () => this.onTextOut(this.noText));
         this.noText.setOrigin(0.5);
     }
+
+    /**
+     * Sets font of text element whenever the mouse is over it
+     * @param {Text} text text element 
+     */
     onTextOver(text) {
         text.setFontSize(50 * scaleFactor);
     }
+
+    /**
+     * Sets font of text element whenever the mouse is no longer over it
+     * @param {Text} text text element 
+     */
     onTextOut(text) {
         text.setFontSize(40 * scaleFactor);
     }
 
+    /** Creates text elements */
     setTexts() {
 
         this.gameOverText = this.make.text(SettingsText)

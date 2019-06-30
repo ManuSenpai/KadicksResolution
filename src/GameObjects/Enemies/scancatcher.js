@@ -35,6 +35,7 @@ class Scancatcher extends Enemy {
         this.body.setVelocity(velocity.x, velocity.y, 0);
     }
 
+    /** Clear enemy elements when destroyed */
     die() {
         this.body.setVelocity(0, 0);
         this.anims.remove('move');

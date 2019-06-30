@@ -41,26 +41,22 @@ class Boss3 extends Enemy {
 
     }
 
+    /** Starts boss' attack */
     startAttack() {
         this.animation1.play();
     }
 
+    /** Sets boss' target */
     setTarget(target) {
         this.target = target;
     }
 
+    /** Returns bullet elements */
     getBullets() {
         return this.bullets;
     }
 
-    /**
-     * Allows the Boss' movement
-     * @param {GameObject} player Player's Game Object 
-     */
-    move(player) {
-
-    }
-
+    /** Creates boss' first pattern */
     generateBoss1stMovement() {
         this.animation1.add({
             targets: this,
@@ -110,8 +106,8 @@ class Boss3 extends Enemy {
         });
     }
 
+    /** Creates boss' second pattern */
     generateBoss2ndMovement() {
-
         this.animation2.add({
             targets: this,
             x: window.innerWidth * 4 / 5,
@@ -217,8 +213,7 @@ class Boss3 extends Enemy {
         });
     }
 
-
-
+    /** Clear boss elements when destroyed */
     onDestroy() {
         clearInterval(this.shootInterval);
         this.animation1.stop();
@@ -226,8 +221,8 @@ class Boss3 extends Enemy {
         this.bullets.clear(true, true);
     }
 
+    /** Loads bullets before shooting */
     loadBullets(nBullets) {
-
         for (let i = 0; i < nBullets; i++) {
             let newBullet = that.scene.add.sprite(that.x, that.y, 'bossbullet');
             newBullet.setScale(this.scaleFactor);
@@ -242,8 +237,8 @@ class Boss3 extends Enemy {
         }
     }
 
+    /** Changes boss' attack mode */
     changeAttackMode() {
-        // this.animation1.data = [];
         this.hittable = false;
         this.animation1.stop();
         clearInterval(this.shootInterval);
@@ -271,6 +266,7 @@ class Boss3 extends Enemy {
 
     }
 
+    /** Performs shooting */
     shoot(times = 1, timed = false, arc = false, clockwise = true) {
         let offset = 0;
         let current = 0;
@@ -310,7 +306,6 @@ class Boss3 extends Enemy {
                 }
                 that.bulletFX.play();
                 Phaser.Actions.PlaceOnCircle(group, circle);
-                // Phaser.Actions.PlaceOnCircle(that.bullets.getChildren(), circle);
 
                 that.shootCircleTween = that.scene.tweens.addCounter({
                     from: 150 * that.scaleFactor,
@@ -320,7 +315,6 @@ class Boss3 extends Enemy {
                     ease: 'Sine.easeInOut',
                     onUpdate: () => {
                         Phaser.Actions.RotateAroundDistance(group, { x: sourcepoint.x, y: sourcepoint.y }, clockwise ? 0.02 : -0.02, that.shootCircleTween.getValue());
-                        // Phaser.Actions.RotateAroundDistance(that.bullets.getChildren(), { x: sourcepoint.x, y: sourcepoint.y }, 0.03, that.shootCircleTween.getValue());
                     },
                     onComplete: () => {
                         current++;
@@ -342,10 +336,6 @@ class Boss3 extends Enemy {
         } else {
             shootBullets();
         }
-
-    }
-
-    shootBeam(targetPoint) {
 
     }
 }

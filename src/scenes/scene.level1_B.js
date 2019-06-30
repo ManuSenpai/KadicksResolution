@@ -65,6 +65,7 @@ var explosionFX;
 
 var scaleFactor;
 
+/** Enemy laser hits player */
 function hitPlayer(player, laser) {
     hit2FX.play();
     recoverArmor.paused = true;
@@ -87,6 +88,7 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
+/** Shoots beam at player */
 function beamPlayer(damage, context) {
     hitFX.play();
     if (boss.active && hittable) {
@@ -111,6 +113,7 @@ function beamPlayer(damage, context) {
     }
 }
 
+/** Player hits enemy with its laser */
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     if (enemy.health < 0) { enemy.health = 0; }
@@ -141,6 +144,7 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Displays explosion when boss is beaten */
 function displayExplosion(enemy, context) {
     explosionFX.play();
     let explosion = context.physics.add.sprite( enemy.x, enemy.y, 'explosion1');
@@ -158,24 +162,29 @@ function displayExplosion(enemy, context) {
     }, 600);
 }
 
+/** Removes access to next level elements */
 function nextLevel() {
     stairNextLevel.destroy();
     stairNextLevel.setActive(false);
     this.goToNextLevel();
 }
 
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
@@ -310,19 +319,15 @@ class Level1_B extends Hostile {
             player.rotation = angle;
             if (cursors.left.isDown) {
                 player.setVelocityX(-400 * scaleFactor);
-                // player.anims.play('left', true);
             }
             if (cursors.right.isDown) {
                 player.setVelocityX(400 * scaleFactor);
-                // player.anims.play('right', true);
             }
             if (cursors.up.isDown) {
                 player.setVelocityY(-400 * scaleFactor);
-                // player.anims.play('turn');
             }
             if (cursors.down.isDown) {
                 player.setVelocityY(400 * scaleFactor);
-                // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
                 shootFX.play();
@@ -372,7 +377,6 @@ class Level1_B extends Hostile {
 
                 if (time > boss.lastFired && boss.attackMode !== 2 && boss) {
                     if (turret_to_shoot === 0) {
-                        // var laserAngle = Phaser.Math.Angle.Between(boss.leftTurret.x, boss.leftTurret.y, player.x, player.y);
                         var laserAngle = boss.leftTurret.rotation;
                         enemShootFX.play();
                         var velocity = this.physics.velocityFromRotation(laserAngle, TURRETS_LASER_SPEED * scaleFactor);

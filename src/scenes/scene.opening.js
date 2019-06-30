@@ -41,9 +41,12 @@ class Opening extends Phaser.Scene {
 
     }
 
+    /**
+     * Displays a text element on screen
+     * @param {Number} index Index of the text that will be shown
+     */
     showTexts(index) {
         if (index < i18n.OPENING.length) {
-            // this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.OPENING[index], { fontSize: 40, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.OPENING[index], { fontSize: 40 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
             this.currentText.x -= this.currentText.width / 2;
             this.currentText.y -= this.currentText.height / 2;
@@ -56,6 +59,11 @@ class Opening extends Phaser.Scene {
         }
     }
 
+    /**
+     * Displays text on screen
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
     show(index, text) {
         let showTween = this.tweens.add({
             targets: text,
@@ -74,6 +82,11 @@ class Opening extends Phaser.Scene {
         });
     }
 
+    /**
+     * Hides text element.
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
     hide(index, text) {
         let hideTween = this.tweens.add({
             targets: text,

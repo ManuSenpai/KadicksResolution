@@ -54,6 +54,7 @@ class Jolt extends Enemy {
         });
     }
 
+    /** Actives the shield */
     activeForcefield() {
         this.isForceFieldOn = true;
         if (this.forcefield) {
@@ -64,6 +65,7 @@ class Jolt extends Enemy {
         }
     }
 
+    /** Deactivates the shield */
     disableForcefield() {
         this.isForceFieldOn = false;
         if (this.forcefield) {
@@ -93,11 +95,16 @@ class Jolt extends Enemy {
         this.body.setVelocity(velocity.x, velocity.y, 0);
     }
 
+    /**
+     * Aims at target
+     * @param {GameObject} target GameObject the enemy is aiming at 
+     */
     aim(target) {
         let turretAngle = Phaser.Math.Angle.Between(this.weapon.x, this.weapon.y, target.x, target.y);
         this.weapon.rotation = turretAngle;
     }
 
+    /** Checks if the shield is to be displayed */
     hit() {
         if (!this.isForceFieldOn) {
             this.hitCounter++;
@@ -110,6 +117,7 @@ class Jolt extends Enemy {
         }
     }
 
+    /** Clear enemy elements when destroyed */
     onDestroy() {
         this.body.setVelocity(0,0);
         if (this.isForceFieldOn && this.forcefield) { this.forcefield.destroy(); }

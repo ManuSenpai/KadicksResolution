@@ -1,5 +1,4 @@
 import Laser from '../GameObjects/laser.js';
-import LaserTrap from '../GameObjects/lasertrap.js';
 var currentLanguage;
 var i18n;
 const STANDARD_WIDTH = 1536;
@@ -8,16 +7,12 @@ const STANDARD_HEIGHT = 720;
 
 var scaleFactor;
 
-var currentText;
-
 var SettingsText = {
     style: {
         fontStyle: 'bold',
         align: 'center'
     }
 }
-
-const ACTIVE_COLOR = "#FFDA2F";
 
 var cursors;
 
@@ -66,7 +61,6 @@ class Controls extends Phaser.Scene {
     create() {
         window.onresize = () => this.scene.restart();
         shootFX = this.sound.add('laser');
-        let currentIndex = 0;
 
         /* Getting JSON i18n data */
         i18n = this.cache.json.get(currentLanguage);

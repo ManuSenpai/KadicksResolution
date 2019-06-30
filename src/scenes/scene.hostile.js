@@ -61,6 +61,7 @@ class Hostile extends Phaser.Scene {
         
     }
 
+    /** Sets the scale factor for all elements in the scene */
     setScaleFactor() {
         scaleHeight = window.innerHeight / STANDARD_HEIGHT;
         scaleWidth = window.innerWidth / STANDARD_WIDTH;
@@ -68,6 +69,16 @@ class Hostile extends Phaser.Scene {
         return scaleFactor;
     }
 
+    /**
+     * Sets initial data as player enters a room
+     * @param {Scenario} scenario Scenario elements 
+     * @param {Number} score Player score 
+     * @param {Object} configScoreText Config Object for Score text 
+     * @param {Object} playerStats Object for player stats 
+     * @param {Object} currentPosition Current position of the player in the level 
+     * @param {String} entrance Location of player as it enters the room 
+     * @param {GameObject} player Player game object 
+     */
     setData(scenario, score, configScoreText, playerStats, currentPosition, entrance, player) {
         this.scenario = scenario;
         this.score = score;
@@ -80,18 +91,34 @@ class Hostile extends Phaser.Scene {
         this.alreadyCrossedDoor = false;
     }
 
+    /**
+     * Updates player states
+     * @param {Object} _playerStats Player stats to be updated
+     */
     setPlayerStats(_playerStats) {
         this.playerStats = _playerStats;
     }
 
+    /**
+     * Updates current position of player in the level
+     * @param {Object} _currentPosition Position Object to be updated 
+     */
     setCurrentPosition(_currentPosition) {
         this.currentPosition = _currentPosition;
     }
 
+    /**
+     * Updates player score
+     * @param {Number} score Player score 
+     */
     setScore(score) {
         this.score = score;
     }
 
+    /**
+     * Creates cursors
+     * @param {Scene} context Scene where the player is at 
+     */
     createCursors(context) {
         var cursorItem = context.input.keyboard.addKeys(
             {
@@ -104,6 +131,10 @@ class Hostile extends Phaser.Scene {
         return cursorItem;
     }
 
+    /**
+     * Displays collected keycodes.
+     * @param {Number} nKeys Number of keys to be drawn 
+     */
     drawKeys(nKeys) {
         for (let i = 0; i < nKeys; i++) {
             let currentKey = this.physics.add.sprite(32 * scaleFactor, (96 + (i * 48)) * scaleFactor, 'keycard');
@@ -111,6 +142,10 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Generates and displays the scenario
+     * @param {Scene} context Scene where the player is at 
+     */
     drawScenario(context) {
         // FLOOR
         this.floor = context.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor' + this.playerStats.LEVEL);
@@ -118,19 +153,15 @@ class Hostile extends Phaser.Scene {
         // WALLS
         this.topwall = context.add.tileSprite(0, 0, window.innerWidth * 2, 128 * scaleFactor, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.topwall);
-        // this.topwall.body.immovable = true;
         this.topwall.body.moves = false;
         this.botwall = context.add.tileSprite(0, window.innerHeight - 5, window.innerWidth * 2, 128 * scaleFactor, 'topbot' + this.playerStats.LEVEL);
         this.physics.world.enable(this.botwall);
-        // this.botwall.body.immovable = true;
         this.botwall.body.moves = false;
         this.leftwall = context.add.tileSprite(0, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.leftwall);
-        // this.leftwall.body.immovable = true;
         this.leftwall.body.moves = false;
         this.rightwall = context.add.tileSprite(window.innerWidth, 0, 128 * scaleFactor, window.innerHeight * 2, 'leftright' + this.playerStats.LEVEL);
         this.physics.world.enable(this.rightwall);
-        // this.rightwall.body.immovable = true;
         this.rightwall.body.moves = false;
 
         // CORNERS
@@ -164,6 +195,11 @@ class Hostile extends Phaser.Scene {
         });
     }
 
+    /**
+     * Displays room doors.
+     * @param {Scene} context Scene the player is at 
+     * @param {Object} currentPosition Current position of the player in the level 
+     */
     createDoors(context, currentPosition) {
         if (currentPosition.top) {
             if (currentPosition.isClear) {
@@ -331,6 +367,10 @@ class Hostile extends Phaser.Scene {
 
     }
 
+    /**
+     * Generates doors colliders
+     * @param {Scene} context Scene the player is at 
+     */
     addDoorColliders(context) {
         if (this.currentPosition.top && context.topleftdooropen) {
             if (!context.topleftdooropen.body) { context.physics.world.enable(context.topleftdooropen); }
@@ -374,6 +414,7 @@ class Hostile extends Phaser.Scene {
         context.physics.add.collider(this.player, context.botrightdooropen, this.goDown, null, context);
     }
 
+    /** Takes the player to the room at the bottom */
     goDown() {
         if (!this.alreadyCrossedDoor) {
             this.botleftdooropen.destroy();
@@ -396,12 +437,17 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Takes the player to the next level when it's beaten the boss
+     */
     goToNextLevel() {
         this.scene.start('map_test', {
             score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats, scenario: this.scenario,
             currentPosition: this.scenario[this.currentPosition.x][this.currentPosition.y], entrance: 'none'
         });
     }
+
+    /** Takes the player to the room at the top */
     goUp() {
         if (!this.alreadyCrossedDoor) {
             this.topleftdooropen.destroy();
@@ -423,6 +469,8 @@ class Hostile extends Phaser.Scene {
             this.alreadyCrossedDoor = true;
         }
     }
+
+    /** Takes the player to the room at the left */
     goLeft() {
         if (!this.alreadyCrossedDoor) {
             this.leftleftdooropen.destroy();
@@ -444,6 +492,8 @@ class Hostile extends Phaser.Scene {
             this.alreadyCrossedDoor = true;
         }
     }
+
+    /** Takes the player to the room at the right */
     goRight() {
         if (!this.alreadyCrossedDoor) {
             this.rightleftdooropen.destroy();
@@ -466,6 +516,10 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Generates the minimap to be displayed at need
+     * @param {Scene} context The scene the player is at 
+     */
     drawMap(context) {
         this.mapGraphics = context.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
         this.doorGraphics = context.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
@@ -496,6 +550,11 @@ class Hostile extends Phaser.Scene {
         this.mapGraphics.setVisible(false);
     }
 
+    /**
+     * Draws room doors at the minimap
+     * @param {Scene} context The scene the player is at 
+     * @param {Node} node Node that represents the player position in the level 
+     */
     drawDoors(context, node) {
         if (node.top) {
             const topDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 60, (node.x * 60) + 90, (node.y * 60) + 60);
@@ -515,11 +574,13 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /** Displays minimap whenever the player presses Tab button */
     showMap() {
         this.doorGraphics.setVisible(true);
         this.mapGraphics.setVisible(true);
     }
 
+    /** Hides minimap whenever the player stops pressing the Tab button */
     hideMap() {
         if (this.doorGraphics.visible && this.mapGraphics.visible) {
             this.doorGraphics.setVisible(false);
@@ -527,6 +588,12 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * 
+     * @param {Object} player Player game object 
+     * @param {Number} x current X coordinate 
+     * @param {Number} y current y coordinate 
+     */
     dropItems(player, x, y) {
         if (!this.powerups || (this.powerups && !this.powerups.children)) {
             this.powerups = this.physics.add.group();
@@ -546,6 +613,12 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Drops medikit at given position
+     * @param {GameObject} player Player game object 
+     * @param {Number} x current X coordinate 
+     * @param {Number} y current y coordinate 
+     */
     dropMediKit(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentMK = this.physics.add.sprite(x, y, 'medikit');
@@ -554,6 +627,12 @@ class Hostile extends Phaser.Scene {
         if (this.powerups && currentMK) { this.powerups.add(currentMK); }
     }
 
+    /**
+     * Drops Attack power up at given position
+     * @param {GameObject} player Player game object 
+     * @param {Number} x current X coordinate 
+     * @param {Number} y current y coordinate 
+     */
     dropPUAttk(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentAttk = this.physics.add.sprite(x, y, 'powup-attk');
@@ -562,6 +641,12 @@ class Hostile extends Phaser.Scene {
         if (this.powerups && currentAttk) { this.powerups.add(currentAttk); }
     }
 
+    /**
+     * Drops shooting power up at given position
+     * @param {GameObject} player Player game object 
+     * @param {Number} x current X coordinate 
+     * @param {Number} y current y coordinate 
+     */
     dropPURthm(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentRthm = this.physics.add.sprite(x, y, 'powup-rthm');
@@ -570,6 +655,12 @@ class Hostile extends Phaser.Scene {
         if (this.powerups && currentRthm) { this.powerups.add(currentRthm); }
     }
 
+    /**
+     * Drops Health power up at given position
+     * @param {GameObject} player Player game object 
+     * @param {Number} x current X coordinate 
+     * @param {Number} y current y coordinate 
+     */
     dropLifeUp(player, x, y) {
         if (!this.powerups) this.powerups = this.physics.add.group();
         let currentLifeUp = this.physics.add.sprite(x, y, 'lifeup');
@@ -578,19 +669,27 @@ class Hostile extends Phaser.Scene {
         if (this.powerups && currentLifeUp) { this.powerups.add(currentLifeUp); }
     }
 
+    /**
+     * Picks up health power up
+     * @param {Object} player Player game object 
+     * @param {Object} lifeup power up game object
+     */
     getLifeUp(player, lifeup) {
         this.powerUpFX.play();
         this.playerStats.MAX_HEALTH += LIFE_UP_VALUE;
         this.playerStats.MAX_ARMOR += LIFE_UP_VALUE;
         this.playerStats.HEALTH = this.playerStats.MAX_HEALTH;
         this.playerStats.ARMOR = this.playerStats.MAX_ARMOR;
-        // this.armorBar.width = this.playerStats.MAX_ARMOR * 2;
-        // this.healthBar.width = this.playerStats.MAX_HEALTH * 2;
         this.drawPlayerUI();
         this.powerups.remove(lifeup);
         lifeup.destroy();
     }
 
+    /**
+     * Picks up medikit
+     * @param {Object} player Player game object 
+     * @param {Object} lifeup power up game object
+     */
     getMedikit(player, medikit) {
         this.powerUpFX.play();
         this.playerStats.HEALTH += MEDIKIT_VALUE;
@@ -600,6 +699,11 @@ class Hostile extends Phaser.Scene {
         this.healthBar.width = this.playerStats.HEALTH * 2 * scaleFactor;
     }
 
+    /**
+     * Picks up attack power up
+     * @param {Object} player Player game object 
+     * @param {Object} lifeup power up game object
+     */
     getPUAttk(player, Attk) {
         this.powerUpFX.play();
         this.playerStats.DAMAGE += PUATTK_VALUE;
@@ -607,6 +711,11 @@ class Hostile extends Phaser.Scene {
         Attk.destroy();
     }
 
+    /**
+     * Picks up shooting power up
+     * @param {Object} player Player game object 
+     * @param {Object} lifeup power up game object
+     */
     getPURthm(player, Rthm) {
         this.powerUpFX.play();
         this.playerStats.FIRE_RATE += PURTHM_VALUE;
@@ -614,6 +723,7 @@ class Hostile extends Phaser.Scene {
         Rthm.destroy();
     }
 
+    /** Generates and displays player UI */
     drawPlayerUI() {
         if (this.armorIcon) this.armorIcon.destroy();
         this.armorIcon = this.physics.add.sprite(96 * scaleFactor, (window.innerHeight - 36 * scaleFactor), 'armorIcon');
@@ -639,18 +749,27 @@ class Hostile extends Phaser.Scene {
         this.healthBar.setOrigin(0, 0.5);
     }
 
+    /** Checks the damage received by the armor
+     * @param {Number} damage damage received
+     */
     hitArmor(damage) {
         this.playerStats.ARMOR = (this.playerStats.ARMOR - damage < 0) ? 0 : this.playerStats.ARMOR - damage;
         this.armorBar.width -= damage * 2 * scaleFactor;
         if (this.armorBar.width < 0) { this.armorBar.width = 0; }
     }
 
+    /** Checks the damage received by the health
+     * @param {Number} damage damage received
+     */
     hitHealth(damage) {
         this.playerStats.HEALTH = (this.playerStats.HEALTH - damage < 0) ? 0 : this.playerStats.HEALTH - damage;
         this.healthBar.width -= damage * 2 * scaleFactor;
         if (this.healthBar.width < 0) { this.healthBar.width = 0; }
     }
 
+    /**
+     * Manages armor recovery
+     */
     recoverArmor() {
         if (this.playerStats.ARMOR < this.playerStats.MAX_ARMOR) {
             this.playerStats.ARMOR += this.playerStats.ARMOR_RECOVERY;
@@ -661,6 +780,9 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Returns room bumps
+     */
     getBumps() {
         return this.bumps;
     }
@@ -722,6 +844,11 @@ class Hostile extends Phaser.Scene {
         }
     }
 
+    /**
+     * Manages collision between a game object and a bump
+     * @param {Object} bump bump game object 
+     * @param {Object} agent game object that collides with the bump 
+     */
     collideWithBump(bump, agent) {
         agent.body.setVelocity(0, 0);
         bump.body.setVelocity(0, 0);

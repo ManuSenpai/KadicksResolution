@@ -63,9 +63,7 @@ class Main_menu extends Phaser.Scene {
     create() {
         window.onresize = () => this.scene.restart();
         this.playerStats.LEVEL = 0;
-        // floor = this.add.tileSprite(0, 0, window.innerWidth * 2, window.innerWidth * 2, 'floor1');
         this.cameras.main.setBackgroundColor('#880070');
-        // this.playbutton = this.add.text( window.innerWidth/2, window.innerHeight/2, "NEW GAME", { fill: '#0f0' } )
         this.provisionalTitleText = this.make.text(ProvisionalTitle)
         .setY( window.innerHeight / 4)
         .setX( window.innerWidth / 2)
@@ -98,25 +96,37 @@ class Main_menu extends Phaser.Scene {
         this.controlsButton.setY((window.innerHeight * 2 / 3) + 160 * scaleFactor).setX(window.innerWidth/2).setFontSize(40 * scaleFactor);
         this.controlsButton.setOrigin(0.5);
     }
+
+    /**
+     * Sets size of button element and its text whenever the mouse is over it
+     * @param {Button} button Button element
+     */
     onButtonOver(button) {
         button.setFontSize(50 * scaleFactor);
     }
+
+    /**
+     * Sets size of button element and its text whenever the mouse is no longer over it
+     * @param {Button} button Button element
+     */
     onButtonOut(button) {
         button.setFontSize(40 * scaleFactor);
     }
+
+    /** New game is selected */
     newGamePointerDown(seeIntro = true) {
-        // this.playerStats = difficulty.default[this.playerStats.DIFFICULTY].PLAYER_STATS;
-        // this.playerStats.LEVEL = 0;
         if (seeIntro) { this.scene.start("Opening", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats }); } else {
             this.scene.start("map_test", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
         }
     }
+
+    /** Settings button is clicked */
     settingsPointerDown() {
         this.scene.start("Settings", { score: 0, configScoreText: this.configScoreText, playerStats: this.playerStats });
     }
 
+    /** Generates modal to skip introduction */
     createModal() {
-        // modal = this.add.tileSprite(window.innerWidth/2, window.innerHeight/2, 500, 300, 'topbot1');
         modal = this.add.rectangle(window.innerWidth/2, window.innerHeight/2, 500 * scaleFactor, 300* scaleFactor, 0x660053);
         modal.setOrigin(0.5);
         modal.setActive(false);
@@ -182,6 +192,7 @@ class Main_menu extends Phaser.Scene {
         this.noButton.setDepth(5);
     }
 
+    /** Displays modal */
     showModal() {
         this.modalShadow.setActive(true);
         modal.setActive(true);
@@ -199,6 +210,7 @@ class Main_menu extends Phaser.Scene {
         this.noButton.setVisible(true);
     }
 
+    /** Hides modal */
     hideModal() {
         this.modalShadow.setActive(false);
         modal.setActive(false);

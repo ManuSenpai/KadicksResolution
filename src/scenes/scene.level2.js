@@ -82,10 +82,12 @@ var shootFX;
 
 let alreadyCrossedDoor;
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     if (playerStats.ARMOR < playerStats.MAX_ARMOR) {
         playerStats.ARMOR += playerStats.ARMOR_RECOVERY;
@@ -96,10 +98,12 @@ function onRecover() {
     }
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
 
+/** Takes player to the room at the bottom */
 function goDown() {
     if (!alreadyCrossedDoor) {
         botleftdooropen.destroy();
@@ -121,6 +125,7 @@ function goDown() {
         alreadyCrossedDoor = true;
     }
 }
+/** Takes player to the room at the top */
 function goUp() {
     if (!alreadyCrossedDoor) {
         topleftdooropen.destroy();
@@ -142,6 +147,7 @@ function goUp() {
         alreadyCrossedDoor = true;
     }
 }
+/** Takes player to the room at the left */
 function goLeft() {
     if (!alreadyCrossedDoor) {
         leftleftdooropen.destroy();
@@ -166,6 +172,7 @@ function goLeft() {
 
 }
 
+/** Takes player to the room at the right */
 function goRight() {
     if (!alreadyCrossedDoor) {
         rightleftdooropen.destroy();
@@ -188,6 +195,7 @@ function goRight() {
     }
 }
 
+/** Generates minimap */
 function drawMap(context) {
     mapGraphics = context.add.graphics({ lineStyle: { width: 2, color: 0x0000aa } });
     doorGraphics = context.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
@@ -215,6 +223,7 @@ function drawMap(context) {
     }
 }
 
+/** Generates minimap doors */
 function drawDoors(context, node) {
     if (node.top) {
         const topDoor = new Phaser.Geom.Line((node.x * 60) + 80, (node.y * 60) + 60, (node.x * 60) + 90, (node.y * 60) + 60);
@@ -235,6 +244,7 @@ function drawDoors(context, node) {
 
 }
 
+/** Displays room doors */
 function createDoors(context) {
     console.log("whereIsBoss: " + currentPosition.whereIsBoss);
     if (currentPosition.top) {
@@ -428,6 +438,7 @@ function createDoors(context) {
     }
 }
 
+/** Displays a key whene enemies are beaten */
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
@@ -435,6 +446,7 @@ function spawnKey(context) {
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
+/** Player picks key */
 function pickKey() {
     pickKeyFX.play();
     currentPosition.keyIsTaken = true;
@@ -444,6 +456,7 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { createDoors(this); }
 }
 
+/** Draws collected keys */
 function drawKeys(context, nKeys) {
     for (let i = 0; i < nKeys; i++) {
         let currentKey = context.physics.add.sprite(32 * scaleFactor, (96 + (i * 48)) * scaleFactor, 'keycard');
@@ -562,21 +575,13 @@ class Level2 extends Phaser.Scene {
             keyFX.play()
         }
 
-        // this.physics.add.collider(player, topleftdooropen);
         this.physics.add.overlap(player, topleftdooropen, goUp, null, this);
-        // this.physics.add.collider(player, toprightdooropen);
         this.physics.add.overlap(player, toprightdooropen, goUp, null, this);
-        // this.physics.add.collider(player, leftleftdooropen);
         this.physics.add.overlap(player, leftleftdooropen, goLeft, null, this);
-        // this.physics.add.collider(player, leftrightdooropen);
         this.physics.add.overlap(player, leftrightdooropen, goLeft, null, this);
-        // this.physics.add.collider(player, rightleftdooropen);
         this.physics.add.overlap(player, rightleftdooropen, goRight, null, this);
-        // this.physics.add.collider(player, rightrightdooropen);
         this.physics.add.overlap(player, rightrightdooropen, goRight, null, this);
-        // this.physics.add.collider(player, botleftdooropen);
         this.physics.add.overlap(player, botleftdooropen, goDown, null, this);
-        // this.physics.add.collider(player, botrightdooropen);
         this.physics.add.overlap(player, botrightdooropen, goDown, null, this);
         this.physics.add.overlap(bumps, lasers, (bump, laser) => {
             lasers.remove(laser);
@@ -603,19 +608,15 @@ class Level2 extends Phaser.Scene {
         player.rotation = angle;
         if (cursors.left.isDown) {
             player.setVelocityX(-400 * scaleFactor);
-            // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
             player.setVelocityX(400 * scaleFactor);
-            // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
             player.setVelocityY(-400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
             player.setVelocityY(400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();

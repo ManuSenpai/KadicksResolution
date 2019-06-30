@@ -1,8 +1,6 @@
 import Enemy from "./enemy.js";
-import Turret from "../turret.js";
 
 const CROSS_SPEED = 500;
-// const MAX_ANGLE_SPREAD = 45;
 
 class Boss2 extends Enemy {
     lastFired;
@@ -31,7 +29,6 @@ class Boss2 extends Enemy {
     timeouts = new Array(2);
 
     fireRate = 300;
-
     deltaRot = 0;
 
     target;
@@ -74,13 +71,17 @@ class Boss2 extends Enemy {
         }, 3000);
     }
 
+    /** Sets target */
     setTarget(target) {
         this.target = target;
     }
 
+    /** Returns boomerangs */
     getRotatables() {
         return this.rotGroup;
     }
+
+    /** Deploy railgun sprites and sets them in position */
     deployRailguns() {
         this.deployTopRGAnimation = this.scene.tweens.add({
             targets: this.toprg,
@@ -163,8 +164,8 @@ class Boss2 extends Enemy {
 
     /**
      * Makes the rotatables cross the scene.
-     * @param {number} object objeto afectado 
-     * @param {number} id id de animación 
+     * @param {number} object affected object
+     * @param {number} id animation id
      * @param {number} _x x coordinate 
      * @param {number} _y y coordinate
      */
@@ -208,6 +209,7 @@ class Boss2 extends Enemy {
         else return 32 * this.scaleFactor;
     }
 
+    /** Clear boss elements when destroyed */
     onDestroy() {
         this.rotAnimations.forEach((anim) => {
             anim.complete();
@@ -233,6 +235,7 @@ class Boss2 extends Enemy {
 
     }
 
+    /** Shoots beam */
     shootBeam(targetPoint) {
         this.railgun2FX.play();
         this.emitters.forEach((emitter) => {
@@ -285,9 +288,6 @@ class Boss2 extends Enemy {
         setTimeout(() => {
             this.shootingRg = false;
         }, 3000);
-
-        // this.beamLine = new Phaser.Geom.Line(this.toprg.x, this.toprg.y, this.botrg.x, this.botrg.y);
-        // this.beamLine.active = true;
     }
 }
 

@@ -64,6 +64,7 @@ var sparkFX;
 
 let scaleFactor;
 
+/** Enemy laser hits player */
 function hitPlayer(player, laser) {
     hit2FX.play();
     recoverArmor.paused = true;
@@ -84,6 +85,7 @@ function hitPlayer(player, laser) {
     lasers.remove(laser);
 }
 
+/** Manages player's collision with the fire */
 function burnPlayer(context) {
     hit2FX.play();
     recoverArmor.paused = true;
@@ -102,13 +104,13 @@ function burnPlayer(context) {
     }
 }
 
+/** Hits player on melee */
 function meleeHit(player, enemy) {
     hitFX.play();
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
-        // armorBar.width -= enemy.damage * 2;
         this.hitArmor(enemy.damage);
     } else {
         this.hitHealth(enemy.damage);
@@ -135,6 +137,7 @@ function untangleFromBumps(bump, agent) {
     if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
+/** Player hits trashbot */
 function hitTrashbot(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -148,7 +151,6 @@ function hitTrashbot(enemy, laser) {
         sparkFX.play();
         enemy.onDestroy();
         trashbots.remove(enemy);
-        // enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
         if (enemies.children.entries.length === 0 && trashbots.children.entries.length === 0) {
@@ -160,6 +162,7 @@ function hitTrashbot(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits jolt*/
 function hitJolt(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -171,7 +174,6 @@ function hitJolt(enemy, laser) {
     if (enemy.health <= 0) {
         sparkFX.play();
         enemy.onDestroy();
-        // enemy.destroy();
         enemies.remove(enemy);
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
@@ -184,11 +186,13 @@ function hitJolt(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits enemy's shield with its laser */
 function hitShield(shield, laser) {
     lasers.remove(laser);
     laser.destroy();
 }
 
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
@@ -200,18 +204,22 @@ function clearArea() {
 
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
 
+/** Displays a key whene enemies are beaten */
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
@@ -219,6 +227,7 @@ function spawnKey(context) {
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
+/** Player picks key */
 function pickKey() {
     pickKeyFX.play();
     currentPosition.keyIsTaken = true;
@@ -229,6 +238,7 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
+/** Generates jolts */
 function generateJolts(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
@@ -257,6 +267,7 @@ function generateJolts(context) {
     });
 }
 
+/** Generates trashbots */
 function generateTrashbots(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
@@ -293,6 +304,7 @@ function generateTrashbots(context) {
 
 }
 
+/** Trashbot bounces on wall */
 function bounceOnWalls(trashbot, bump) {
     trashbot.bounceOnWall();
 }
@@ -425,13 +437,6 @@ class Level2_2 extends Hostile {
                 result = true;
             }, null, this);
         })
-        // trashbots.children.iterate( (tbot) => {
-        //     tbot.trailColliders.children.iterate( (col) => {
-        //         if ( !col.body.touching.none ) {
-        //             result = true;
-        //         }
-        //     })
-        // })
         return result;
     }
 
@@ -461,19 +466,15 @@ class Level2_2 extends Hostile {
         player.rotation = angle;
         if (cursors.left.isDown) {
             player.setVelocityX(-400 * scaleFactor);
-            // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
             player.setVelocityX(400 * scaleFactor);
-            // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
             player.setVelocityY(-400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
             player.setVelocityY(400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();

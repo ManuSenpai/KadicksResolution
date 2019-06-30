@@ -41,10 +41,12 @@ class Trashbot extends Enemy {
         this.tingFX = scene.sound.add('ting');
     }
 
+    /** Returns trail colliders */
     getTrailColliders() {
         return this.trailColliders;
     }
 
+    /** Generates trail of oil as enemy moves */
     generateTrail() {
         if (this.alive) {
             let newTrail = this.scene.add.sprite(this.x, this.y, 'trashtrail');
@@ -91,7 +93,6 @@ class Trashbot extends Enemy {
                 lifespan: 200,
                 blendMode: 'ADD',
                 tint: [0xf200ff, 0xfcd8ff]
-                // tint: [ 0xff0000, 0xffbc6b, 0xffe16b ]
             }));
         });
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
@@ -112,16 +113,19 @@ class Trashbot extends Enemy {
         }, FIRE_TIME);
     }
 
+    /** Allows enemy's movement */
     move() {
         this.body.setVelocity(this.currentVelocity.x, this.currentVelocity.y, 0);
         this.trashFace.x = this.x;
         this.trashFace.y = this.y;
     }
 
+    /** Sets random angle of movement */
     setRandomAngle() {
         this.angle = Phaser.Math.Between(-60, 60);
     }
 
+    /** Changes direction when enemy hits a wall or a bump */
     bounceOnWall() {
         this.tingFX.play();
         if (this.body.touching.left || this.body.touching.right) {
@@ -132,6 +136,7 @@ class Trashbot extends Enemy {
         }
     }
 
+    /** Clear enemy elements when destroyed */
     onDestroy() {
         this.body.setVelocity(0,0);
         this.body.immovable = true;
@@ -143,7 +148,6 @@ class Trashbot extends Enemy {
             emitter.stop();
         })
 
-        // this.scene.tweens.killTweensOf(this.trailgroup.children.entries);
         let currentTweens = this.scene.tweens.getTweensOf(this.trailgroup.children.entries);
         currentTweens.forEach((t) => { t.complete(); });
         this.trailgroup.clear(true, true);

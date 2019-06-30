@@ -1,5 +1,5 @@
-const NUMBER_OF_ROOMS = 20;     // Número de habitaciones
-const SIZE_OF_SCENARIO = 10;    // Tamaño de escenario en bloques 
+const NUMBER_OF_ROOMS = 20;     // Maximum number of rooms
+const SIZE_OF_SCENARIO = 10;
 
 var score;
 var configScoreText;
@@ -35,7 +35,7 @@ class map_test extends Phaser.Scene {
             scenario.push(row);
         }
 
-        // We set the start point
+        // Setting start point
         let startingX = this.getRandomNumber(2, SIZE_OF_SCENARIO - 3);
         let startingY = this.getRandomNumber(2, SIZE_OF_SCENARIO - 3);
         scenario[startingX][startingY].isStart = true;
@@ -45,7 +45,7 @@ class map_test extends Phaser.Scene {
 
         // Principal bucle of random generation
         while (dungeon.length > 0) {
-            // We take the node outside of the queue
+            // Take node outside of the queue
             let currentNode = dungeon.shift();
             level.push(currentNode)
             currentNode.visited = true;
@@ -58,7 +58,7 @@ class map_test extends Phaser.Scene {
                     bifurcate = contador < NUMBER_OF_ROOMS;
                 }
 
-                // Check how many bifurcations for the node
+                // Check number of bifurcationss for the node
                 if (bifurcate) {
                     let maxNumberOfBifurcations = NUMBER_OF_ROOMS - contador > 3 ? 2 : NUMBER_OF_ROOMS - contador;
                     let numberOfBifurcations = currentNode.isStart ? this.getRandomNumber(2, 4) : Math.floor(Math.random() * maxNumberOfBifurcations) + 1;
@@ -130,14 +130,17 @@ class map_test extends Phaser.Scene {
         this.createBossChamber();
         playerStats.LEVEL++;
         playerStats.KEYCODES = 0;
+        playerStats.DAMAGE = 200;
         this.scene.start("Level" + playerStats.LEVEL, {
             score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
             currentPosition: level[0], entrance: 'center'
         });
-        // this.scene.start("level3_B", { score: score, configScoreText: configScoreText, playerStats: playerStats, scenario: scenario,
-        // currentPosition: level[0], entrance: 'center'});
     }
 
+    /**
+     * Sets random position of keys on level
+     * @param {Array} level Filled level array of nodes. 
+     */
     setKeyRooms(level) {
         let KEYS = 0;
         while (KEYS < 3) {
@@ -149,7 +152,7 @@ class map_test extends Phaser.Scene {
         }
     }
 
-
+    /** Generates Boss chamber */
     createBossChamber() {
         // The last chamber created will have the boss chamber attached;
         let bossChamberCreated = false;
@@ -192,12 +195,14 @@ class map_test extends Phaser.Scene {
         }
     }
 
+    /** Sets boss room ready */
     setBossRoom(room) {
         level.push(room);
         room.visited = true;
         room.isBoss = true;
     }
 
+    /** Draws door between rooms */
     drawDoors(node) {
         var doorGraphics = this.add.graphics({ lineStyle: { width: 8, color: 0xffc260 } });
         if (node.top) {
@@ -218,31 +223,61 @@ class map_test extends Phaser.Scene {
         }
 
     }
+
+    /**
+     * Checks if the bottom left node is available
+     * @param {Node} currentNode Node that is being evaluated 
+     */
     availableByBotLeft(currentNode) {
         if (currentNode.y === SIZE_OF_SCENARIO - 1) { return true; } else {
             return (currentNode.x === 0 || currentNode.y === 0) ? true : !scenario[currentNode.x - 1][currentNode.y - 1].visited;
         }
     }
+
+    /**
+     * Checks if the top left node is available
+     * @param {Node} currentNode Node that is being evaluated 
+     */
     availableByTopLeft(currentNode) {
         if (currentNode.y === 0) { return true; } else {
             return (currentNode.x === 0 || currentNode.y === (SIZE_OF_SCENARIO - 1)) ? true : !scenario[currentNode.x - 1][currentNode.y + 1].visited;
         }
     }
+
+    /**
+     * Checks if the top right node is available
+     * @param {Node} currentNode Node that is being evaluated 
+     */
     availableByTopRight(currentNode) {
         if (currentNode.y === 0) { return true; } else {
             return (currentNode.x === (SIZE_OF_SCENARIO - 1) || currentNode.y === (SIZE_OF_SCENARIO - 1)) ? true : !scenario[currentNode.x + 1][currentNode.y + 1].visited;
         }
     }
+
+    /**
+     * Checks if the bottom right node is available
+     * @param {Node} currentNode Node that is being evaluated 
+     */
     availableByBotRight(currentNode) {
         if (currentNode.y === SIZE_OF_SCENARIO - 1) { return true; } else {
             return (currentNode.x === (SIZE_OF_SCENARIO - 1) || currentNode.y === 0) ? true : !scenario[currentNode.x + 1][currentNode.y - 1].visited;
         }
     }
 
+    /**
+     * Obtains a random number between given range
+     * @param {Number} min Minimum number
+     * @param {Number} max Maximum number
+     */
     getRandomNumber(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    /**
+     * Generates doors as new nodes are chosen for the level
+     * @param {Door element} door Door item
+     * @param {Node} currentNode Node that is being evaluated
+     */
     pickDoor(door, currentNode) {
         if (door.x < currentNode.x) {
             currentNode.left = true;

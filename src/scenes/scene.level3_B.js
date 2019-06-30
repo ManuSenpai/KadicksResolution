@@ -60,6 +60,7 @@ var explosionFX;
 
 let scaleFactor;
 
+/** Player is hit by bullets */
 function bulletPlayer(player, bullet) {
     hit2FX.play();
     recoverArmor.paused = true;
@@ -82,6 +83,7 @@ function bulletPlayer(player, bullet) {
     bossBullets.remove(bullet);
 }
 
+/** Player hits enemy with its laser */
 function hitEnemy(enemy, laser) {
     laser.setVisible(false);
     laser.setActive(false);
@@ -115,6 +117,7 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Displays explosion when boss is beaten */
 function displayExplosion(enemy, context) {
     explosionFX.play();
     let explosion = context.physics.add.sprite( enemy.x, enemy.y, 'explosion1');
@@ -132,24 +135,29 @@ function displayExplosion(enemy, context) {
     }, 600);
 }
 
+/** Removes access to next level elements */
 function nextLevel() {
     stairNextLevel.destroy();
     stairNextLevel.setActive(false);
     this.goToNextLevel();
 }
 
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
@@ -284,19 +292,15 @@ class Level3_B extends Hostile {
             player.rotation = angle;
             if (cursors.left.isDown) {
                 player.setVelocityX(-400 * scaleFactor);
-                // player.anims.play('left', true);
             }
             if (cursors.right.isDown) {
                 player.setVelocityX(400 * scaleFactor);
-                // player.anims.play('right', true);
             }
             if (cursors.up.isDown) {
                 player.setVelocityY(-400 * scaleFactor);
-                // player.anims.play('turn');
             }
             if (cursors.down.isDown) {
                 player.setVelocityY(400 * scaleFactor);
-                // player.anims.play('turn');
             }
             if (this.input.activePointer.isDown && time > lastFired) {
                 shootFX.play();
@@ -334,10 +338,6 @@ class Level3_B extends Hostile {
             lasers.children.iterate((laser) => {
                 if (laser) { laser.move(delta) } else { lasers.remove(laser); }
             });
-
-            if (boss && boss.body) {
-                boss.move(player);
-            }
         }
     }
 }

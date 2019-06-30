@@ -39,11 +39,7 @@ class Bootloader extends Phaser.Scene {
     preload() {
         score = 0;
         this.load.on("complete", () => {
-            // this.scene.start("Main_Menu", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            // this.scene.start("Controls", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
             this.scene.start("LanguageSelect", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            // this.scene.start("Ending", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
-            // this.scene.start("mapUT", { score: score, configScoreText: configScoreText, playerStats: PLAYER_STATS });
 
         })
         /* Image loading */

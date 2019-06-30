@@ -110,21 +110,46 @@ class LanguageSelect extends Phaser.Scene {
             .on('pointerout', () => this.onButtonOut(this.engBtn, this.engText));
         this.engBtn.setOrigin(0.5);
     }
+
+    /**
+     * Sets size of button element and its text whenever the mouse is over it
+     * @param {Button} button Button element
+     * @param {Text} text text element 
+     */
     onButtonOver(button, text) {
         button.setScale(scaleFactor * 1.2);
         text.setFontSize(50 * scaleFactor);
     }
+
+    /**
+     * Sets size of button element and its text whenever the mouse is no longer over it
+     * @param {Button} button Button element
+     * @param {Text} text text element 
+     */
     onButtonOut(button, text) {
         button.setScale(scaleFactor);
         text.setFontSize(40 * scaleFactor);
     }
+
+    /**
+     * Sets font of text element whenever the mouse is over it
+     * @param {Button} button Button element
+     * @param {Text} text text element 
+     */
     onTextOver(text) {
         text.setFontSize(50 * scaleFactor);
     }
+
+    /**
+     * Sets font of text element whenever the mouse is over it
+     * @param {Button} button Button element
+     * @param {Text} text text element 
+     */
     onTextOut(text) {
         text.setFontSize(40 * scaleFactor);
     }
 
+    /** Creates text elements */
     setTexts() {
         i18n = this.cache.json.get(currentLanguage);
 
@@ -176,8 +201,6 @@ class LanguageSelect extends Phaser.Scene {
             this.confirmText.setInteractive()
             .on('pointerdown', () => {
                 this.scene.start("Main_Menu", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
-                // this.scene.start("Ending", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
-                // this.scene.start("Credits", { score: this.score, configScoreText: this.configScoreText, playerStats: this.playerStats});
             })
             .on('pointerover', () => this.onTextOver(this.confirmText))
             .on('pointerout', () => this.onTextOut(this.confirmText));

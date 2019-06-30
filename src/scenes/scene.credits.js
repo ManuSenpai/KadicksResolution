@@ -4,9 +4,7 @@ var i18n;
 var currentText;
 
 const ACTIVE_COLOR = "#00FF20";
-
 const STANDARD_WIDTH = 1536;
-
 const STANDARD_HEIGHT = 720;
 
 var scaleFactor;
@@ -40,6 +38,10 @@ class Credits extends Phaser.Scene {
 
     }
 
+    /**
+     * Displays a text element on screen
+     * @param {Number} index Index of the text that will be shown
+     */
     showTexts(index) {
         if (index < i18n.CREDITS.length) {
             this.currentText = this.add.text(window.innerWidth / 2, window.innerHeight / 2, i18n.CREDITS[index], { fontSize: 40 * scaleFactor, align: 'center', color: ACTIVE_COLOR, lineSpacing: 10 });
@@ -57,6 +59,11 @@ class Credits extends Phaser.Scene {
         }
     }
 
+    /**
+     * Displays text on screen
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
     show(index, text) {
         this.tweens.add({
             targets: text,
@@ -73,6 +80,11 @@ class Credits extends Phaser.Scene {
         });
     }
 
+    /**
+     * Hides text element.
+     * @param {Number} index Index of the text element to be shown 
+     * @param {Text} text Text element
+     */
     hide(index, text) {
         this.tweens.add({
             targets: text,

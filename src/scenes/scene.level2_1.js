@@ -66,12 +66,14 @@ var sparkFX;
 
 let scaleFactor;
 
+/** Manages coulomb tackle */
 function tacklePlayer(player, enemy) {
     hitFX.play();
     if (enemy.isCharging) { enemy.tackle(player); }
     meleeHitPlayer.call(this, player, enemy);
 }
 
+/** Enemy hits player on melee */
 function meleeHitPlayer(player, enemy) {
     hitFX.play();
 
@@ -80,7 +82,6 @@ function meleeHitPlayer(player, enemy) {
         if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
         timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
         if (playerStats.ARMOR > 0) {
-            // armorBar.width -= enemy.damage * 2;
             this.hitArmor(enemy.damage);
         } else {
             this.hitHealth(enemy.damage);
@@ -101,6 +102,7 @@ function meleeHitPlayer(player, enemy) {
     player.y += velocity.y;
 }
 
+/** Player hits enemy with its laser */
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -113,7 +115,6 @@ function hitEnemy(enemy, laser) {
         enemy.die();
         sparkFX.play();
         enemies.remove(enemy);
-        // enemy.destroy();
         this.dropItems(player, enemy.x, enemy.y);
         // Life value has changed as the medikit has been taken
 
@@ -127,6 +128,7 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+/** Player hits tougher enemy */
 function hitTougher(toug, laser) {
     toug.health -= laser.damage;
     laser.setVisible(false);
@@ -138,7 +140,6 @@ function hitTougher(toug, laser) {
         sparkFX.play();
         toug.die();
         tougherEnemies.remove(toug);
-        // toug.destroy();
         this.dropItems(player, toug.x, toug.y);
         // Life value has changed as the medikit has been taken
 
@@ -153,6 +154,7 @@ function hitTougher(toug, laser) {
 }
 
 
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
@@ -164,18 +166,22 @@ function clearArea() {
 
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
 
+/** Displays a key whene enemies are beaten */
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
@@ -183,6 +189,7 @@ function spawnKey(context) {
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
+/** Player picks key */
 function pickKey() {
     pickKeyFX.play();
     currentPosition.keyIsTaken = true;
@@ -193,6 +200,7 @@ function pickKey() {
     if (playerStats.KEYCODES === 3 && currentPosition.whereIsBoss !== "") { this.createDoors(this, currentPosition); }
 }
 
+/** Generates enemies on current room */
 function generateEnemies(context) {
     // The amount of enemies depends on the difficulty setting.
     generateMinions(context);
@@ -200,6 +208,7 @@ function generateEnemies(context) {
 
 }
 
+/** Manages collision between two tougher enemies */
 function collisionBetweenTougher(tough1, tough2) {
     this.cameras.main.shake(50);
     const collisionAngle = Phaser.Math.Angle.Between(tough1.x, tough1.y, tough2.x, tough2.y);
@@ -224,6 +233,7 @@ function collisionBetweenTougher(tough1, tough2) {
     }, 100);
 }
 
+/** Untangle enemies that are stuck on collision */
 function untangleEnemies(enemy1, enemy2) {
     let b1 = enemy1.body;
     let b2 = enemy2.body;
@@ -255,6 +265,7 @@ function untangleFromBumps(bump, agent) {
     if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
+/** Manages when an object hits world bounds */
 function onWorldBounds(bump, enemy) {
     this.cameras.main.shake(150);
     bump.body.setVelocity(0, 0);
@@ -262,6 +273,7 @@ function onWorldBounds(bump, enemy) {
     this.untangleFromBumps(enemy, bump);
 }
 
+/** Generates minion enemies */
 function generateMinions(context) {
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 3;
     var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 4 : 6;
@@ -292,6 +304,7 @@ function generateMinions(context) {
     });
 }
 
+/** Generates tougher enemies */
 function generateTougher(context) {
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 1 : 1;
     var maxAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 1 : playerStats.DIFFICULTY === "NORMAL" ? 2 : 2;
@@ -444,19 +457,15 @@ class Level2_1 extends Hostile {
         player.rotation = angle;
         if (cursors.left.isDown) {
             player.setVelocityX(-400 * scaleFactor);
-            // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
             player.setVelocityX(400 * scaleFactor);
-            // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
             player.setVelocityY(-400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
             player.setVelocityY(400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();

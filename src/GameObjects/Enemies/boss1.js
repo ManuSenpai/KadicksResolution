@@ -3,7 +3,6 @@ import Turret from "../turret.js";
 
 var MAX_ANGLE_SPREAD = Math.PI / 4;
 const TIME_BETWEEN_CHANGE = 5000;
-// const MAX_ANGLE_SPREAD = 45;
 
 class Boss1 extends Enemy {
     leftTurret;
@@ -42,7 +41,6 @@ class Boss1 extends Enemy {
         this.rotation = rotation;
         this.speed = speed;
         this.body.bounce.setTo(10, 10);
-        // this.body.setVelocity( speed, speed, 0);
         this.score = score;
         scene.add.existing(this);
 
@@ -80,7 +78,7 @@ class Boss1 extends Enemy {
         this.rightTurret.y = this.y - 82 * this.scalefactor;
     }
 
-    // Aiming at player
+    /** Aims at given target */
     aim(target) {
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, target.x, target.y);
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, target.x, target.y);
@@ -88,6 +86,7 @@ class Boss1 extends Enemy {
         this.rightTurret.rotation = rightTurretAngle;
     }
 
+    /** Clear boss elements when destroyed */
     onDestroy() {
         this.alive = false;
         clearInterval(this.aimAnimationInterval);
@@ -103,6 +102,7 @@ class Boss1 extends Enemy {
         if (this.rightBeamLine) { this.rightBeamLine.active = false; }
     }
 
+    /** Changes attack mode of the enemy */
     changeAttackMode() {
         var rand = Math.random();
         if (rand < 0.33) {
@@ -134,6 +134,7 @@ class Boss1 extends Enemy {
         }
     }
 
+    /** Aims at player while performing spread attack */
     aimSpread(target) {
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, target.x, target.y);
         let rightTurretAngle = Phaser.Math.Angle.Between(this.rightTurret.x, this.rightTurret.y, target.x, target.y);
@@ -141,10 +142,10 @@ class Boss1 extends Enemy {
         this.spreadAxisRight = rightTurretAngle;
     }
 
+    /** Performs spread pattern */
     spread() {
         if (this.spreadDirection === -1) {
             this.deltaRot += Math.PI / 180;
-            // this.deltaRot += 1;
         } else {
             this.deltaRot -= Math.PI / 180;
         }
@@ -155,6 +156,7 @@ class Boss1 extends Enemy {
         this.rightTurret.rotation = this.spreadAxisRight - this.deltaRot;
     }
 
+    /** Starts railgun aim animation */
     startAimAnimation() {
         if ( this.alive ) {
             this.aimLineWidth = 1;
@@ -175,6 +177,10 @@ class Boss1 extends Enemy {
         }
     }
 
+    /**
+     * Shoots railgun
+     * @param {GameObject} targetPoint The target the railgun is shooting at
+     */
     shootBeam(targetPoint) {
         if (this.alive) {
             let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, targetPoint.x, targetPoint.y);
@@ -205,6 +211,7 @@ class Boss1 extends Enemy {
         }
     }
 
+    /** Draws lines that indicate boss is aiming at player while charging its railgun */
     drawAimLines(target) {
         if (!this.target) { this.target = target; }
         let leftTurretAngle = Phaser.Math.Angle.Between(this.leftTurret.x, this.leftTurret.y, target.x, target.y);

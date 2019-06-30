@@ -63,12 +63,12 @@ var sparkFX;
 
 let scaleFactor;
 
+/** Scancatcher hits player */
 function scanMeleeHitPlayer(player, enemy) {
     recoverArmor.paused = true;
     if (timerUntilRecovery) { timerUntilRecovery.remove(false); }
     timerUntilRecovery = this.time.addEvent({ delay: playerStats.ARMOR_RECOVERY_TIMER, callback: startRecovery, callbackScope: this, loop: false });
     if (playerStats.ARMOR > 0) {
-        // armorBar.width -= enemy.damage * 2;
         this.hitArmor(enemy.damage);
     } else {
         this.hitHealth(enemy.damage);
@@ -86,6 +86,8 @@ function scanMeleeHitPlayer(player, enemy) {
     player.y += velocity.y;
 }
 
+/** Player hits enemy */
+/** Player hits enemy with its laser */
 function hitEnemy(enemy, laser) {
     enemy.health -= laser.damage;
     laser.setVisible(false);
@@ -109,6 +111,8 @@ function hitEnemy(enemy, laser) {
     scoreText.setText('SCORE: ' + score);
 }
 
+
+/** Drops a keycode if all enemies at the scene have been beaten */
 function clearArea() {
     currentPosition.isClear = true;
     if (currentPosition.isKey) {
@@ -120,18 +124,22 @@ function clearArea() {
 
 }
 
+/** Initializes score text */
 function initializeText() {
     scoreText.setText('SCORE: ' + score).setX(64 * scaleFactor).setY(16 * scaleFactor).setFontSize(30 * scaleFactor);
 }
 
+/** Manages armor recovery */
 function onRecover() {
     this.recoverArmor();
 }
 
+/** Starts armor recovery */
 function startRecovery() {
     recoverArmor.paused = false;
 }
 
+/** Displays a key whene enemies are beaten */
 function spawnKey(context) {
     keycard = context.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'keycard');
     keycard.setOrigin(0.5, 0.5);
@@ -139,6 +147,7 @@ function spawnKey(context) {
     context.physics.add.overlap(player, keycard, pickKey, null, context);
 }
 
+/** Player picks key */
 function pickKey() {
     pickKeyFX.play();
     currentPosition.keyIsTaken = true;
@@ -158,6 +167,7 @@ function untangleFromBumps(bump, agent) {
     if (levelloaded) this.untangleFromBumps(agent, bump);
 }
 
+/** Generates enemies on current room */
 function generateEnemies(context) {
     // The amount of enemies depends on the difficulty setting.
     var minAmountOfEnemies = playerStats.DIFFICULTY === "EASY" ? 2 : playerStats.DIFFICULTY === "NORMAL" ? 3 : 4;
@@ -304,19 +314,15 @@ class Level1_1 extends Hostile {
         player.rotation = angle;
         if (cursors.left.isDown) {
             player.setVelocityX(-400 * scaleFactor);
-            // player.anims.play('left', true);
         }
         if (cursors.right.isDown) {
             player.setVelocityX(400 * scaleFactor);
-            // player.anims.play('right', true);
         }
         if (cursors.up.isDown) {
             player.setVelocityY(-400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (cursors.down.isDown) {
             player.setVelocityY(400 * scaleFactor);
-            // player.anims.play('turn');
         }
         if (this.input.activePointer.isDown && time > lastFired) {
             shootFX.play();

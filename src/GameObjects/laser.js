@@ -16,6 +16,8 @@ class Laser extends Phaser.GameObjects.Sprite {
         this.body.setVelocityX( velocity.x );
         this.body.setVelocityY( velocity.y );
     }
+    
+    /** Moves laser */
     move(delta) {
         this.x += this.velocity.x * delta;
         this.y += this.velocity.y * delta;
